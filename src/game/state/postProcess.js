@@ -1,14 +1,26 @@
-import { areAllConnected, isSame, getNeighbors } from '../utils';
+import {areAllConnected, isSame, getNeighbors, isNotSame} from '../utils';
 import { playerColors } from '../constants';
 import { setUtilsFactory } from '../setUtils';
+import {startPositions} from "./setup";
 
 const { subtract } = setUtilsFactory(isSame);
 
 const setColorMap = G => {
+  G.grid.colorMap = {
+    [playerColors[0]]: startPositions[0],//red
+    [playerColors[1]]: startPositions[1],//blue
+    [playerColors[2]]: startPositions[2],//green
+    [playerColors[3]]: startPositions[3]//yellow
+  }
+  let newMap = {}
+  Object.entries(G.grid.colorMap).forEach(([color, points]) => {
+    newMap[color] = points.filter(mapPoint => G.availablePoints.every(availablePoint => isNotSame(mapPoint)(availablePoint)))
+  })
+  G.grid.colorMap = newMap
   G.grid.colorMap['#dd666f'] = G.availablePoints
   // playerColors.forEach((playerColor, idx) => G.grid.colorMap[playerColor] = G.insects.filter(insect => idx === +insect.player).map(insect => insect.point))
   G.grid.colorMap['#8d767f'] = (G.currentInsect && G.currentInsect.point) ? [G.currentInsect.point] : []
-  let newMap = G.grid.colorMap
+
   return {
     ...G,
     grid: {

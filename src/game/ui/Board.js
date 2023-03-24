@@ -102,6 +102,13 @@ export class Board extends React.Component {
                 <div style={styles.move} key={i}>{insect.type}</div>;
             })}
           </div>
+          <div style={styles.moves}>
+            {player.units.map((unit, i) => {
+              return unit.unitState.isClickable ?
+                <div style={{ ...styles.move, ...styles.clickableMove }} onClick={() => this.props.moves.selectNewUnit(unit)} key={i}>{unit.name}</div> :
+                <div style={styles.move} key={i}>{unit.name}</div>;
+            })}
+          </div>
         </div>
         <div>phase: {this.props.ctx.phase}</div>
         <button onClick={this.props.moves.cancel}>Cancel</button>

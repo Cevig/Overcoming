@@ -17,5 +17,18 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "temp": "babel-node --presets zero src/server.js"
-  }
+  },
+  "description": "Simple hexagonal board game",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cevig/Overcoming.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cevig/Overcoming/issues"
+  },
+  "homepage": "https://github.com/Cevig/Overcoming#readme"
 }

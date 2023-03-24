@@ -1,5 +1,6 @@
 import { createPoint, getNeighbors } from '../utils';
 import { availablePointsForInsect } from './availablePointsForInsect';
+import {startPositions} from "./setup";
 
 const flat = array => array.reduce((prev, curr) => prev.concat(curr), []);
 
@@ -22,6 +23,17 @@ export const moves = {
     return {
       ...G,
       currentInsect,
+      availablePoints,
+    };
+  },
+  selectNewUnit: (G, ctx, currentUnit) => {
+    let availablePoints = [];
+    if (G.players[ctx.currentPlayer].units.filter(unit => unit.unitState.isInGame === false).length > 0) {
+      availablePoints = startPositions[ctx.currentPlayer]
+    }
+    return {
+      ...G,
+      currentUnit,
       availablePoints,
     };
   },

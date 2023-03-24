@@ -1,41 +1,59 @@
 import {Biom} from "../constants";
+import {createPoint} from "../utils";
 
 export const UnitTypes = Object.freeze({
-  Prispeshnick: 0,
-  Ispolin: 1,
-  Vestnick: 2,
-  Idol: 3
+  Prispeshnick: "Prispeshnick",
+  Ispolin: "Ispolin",
+  Vestnick: "Vestnick",
+  Idol: "Idol"
 })
 
 export class Unit {
-  name: String
-  type: UnitTypes
-  placeType: Biom
   id: Number
+  name: String
+  type: typeof UnitTypes
+  placeType: typeof Biom
   power: Number
   heals: Number
   initiative: Number
-  status: Array = []
-  isClickable: Boolean = false
-
-  constructor(name, type, placeType, id, power, heals, initiative, status, isClickable) {
+  unitState: UnitState
+  status: Array<string> = []
+  constructor(name, type, placeType, id, power, heals, initiative, unitState, status) {
+    this.id = id;
     this.name = name;
     this.type = type;
     this.placeType = placeType;
-    this.id = id;
     this.power = power;
     this.heals = heals;
     this.initiative = initiative;
+    this.unitState = unitState;
     this.status = status;
+  }
+}
+
+export class UnitState {
+  unitId: Number
+  point: createPoint
+  isClickable: Boolean = false
+  isInGame: Boolean = false
+  constructor(unitId, point = null, isClickable = true, isInGame = false) {
+    this.unitId = unitId;
+    this.point = point
     this.isClickable = isClickable;
+    this.isInGame = isInGame;
   }
 }
 
 export class Creature extends Unit {
-  level: Number = 1
-
-  constructor(name, type, placeType, id, power, heals, initiative, status, isClickable, level) {
-    super(name, type, placeType, id, power, heals, initiative, status, isClickable)
+  level: Number
+  constructor(name, type, placeType, id, power, heals, initiative, unitState, status = [], level = 1) {
+    super(name, type, placeType, id, power, heals, initiative, unitState, status)
     this.level = level;
+  }
+}
+
+export class Idol extends Unit {
+  constructor(name, type, placeType, id, power, heals, initiative, unitState, status = []) {
+    super(name, type, placeType, id, power, heals, initiative, unitState, status)
   }
 }

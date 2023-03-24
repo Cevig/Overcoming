@@ -11,13 +11,13 @@ export const game = Game({
     phases: [
       {
         name: 'selectInsect',
-        allowedMoves: ['selectNew', 'selectOld'],
-        endPhaseIf: G => G.currentInsect !== null,
+        allowedMoves: ['selectNew', 'selectOld', 'selectNewUnit'],
+        endPhaseIf: G => G.currentUnit !== null,
       },
       {
         name: 'moveInsect',
         allowedMoves: ['moveInsect', 'cancel'],
-        endPhaseIf: G => G.currentInsect === null,
+        endPhaseIf: G => G.currentUnit === null,
       },
     ],
     endTurnIf: (G, ctx) => G.moveCount > ctx.turn,
