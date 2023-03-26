@@ -33,11 +33,13 @@ export class Unit {
 
 export class UnitState {
   unitId: Number
+  playerId: Number
   point: createPoint
   isClickable: Boolean = false
   isInGame: Boolean = false
-  constructor(unitId, point = null, isClickable = true, isInGame = false) {
+  constructor(unitId, playerId, point = null, isClickable = true, isInGame = false) {
     this.unitId = unitId;
+    this.playerId = playerId;
     this.point = point
     this.isClickable = isClickable;
     this.isInGame = isInGame;

@@ -1,15 +1,19 @@
 {
-  "name": "game",
+  "name": "Overcoming",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
     "babel-cli": "^6.26.0",
     "babel-preset-zero": "^0.3.2",
-    "boardgame.io": "^0.25.4",
+    "boardgame.io": "^0.50.2",
     "prop-types": "^15.8.1",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
-    "react-scripts": "1.1.4"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -18,17 +22,25 @@
     "eject": "react-scripts eject",
     "temp": "babel-node --presets zero src/server.js"
   },
-  "description": "Simple hexagonal board game",
-  "main": "index.js",
-  "devDependencies": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Cevig/Overcoming.git"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Cevig/Overcoming/issues"
+  "devDependencies": {
+    "postcss-normalize": "^10.0.1"
   },
-  "homepage": "https://github.com/Cevig/Overcoming#readme"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

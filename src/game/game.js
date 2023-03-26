@@ -1,27 +1,52 @@
-import { Game } from 'boardgame.io/core';
-import { moves } from './state/moves';
-import { setup } from './state/setup';
-import { postProcess } from './state/postProcess';
+import {moves} from './state/moves';
+import {setup} from './state/setup';
+import {postProcess} from './state/postProcess';
 
-export const game = Game({
-  name: 'Overcoming',
-  setup,
+export const Overcoming = {
+  setup: setup,
   moves,
-  flow: {
-    phases: [
-      {
-        name: 'selectInsect',
-        allowedMoves: ['selectNew', 'selectOld', 'selectNewUnit'],
-        endPhaseIf: G => G.currentUnit !== null,
+  phases: {
+    Setup: {
+      moves: {
+        selectNew: moves.selectNew,
+        selectOld: moves.selectOld,
+        selectNewUnit: moves.selectNewUnit,
+        selectOldUnit: moves.selectOldUnit,
+        moveUnit: moves.moveUnit,
+        complete: moves.complete
       },
-      {
-        name: 'moveInsect',
-        allowedMoves: ['moveInsect', 'cancel'],
-        endPhaseIf: G => G.currentUnit === null,
-      },
-    ],
-    endTurnIf: (G, ctx) => G.moveCount > ctx.turn,
-    endGameIf: (G, ctx) => G.gameover !== null ? G.gameover : undefined,
-    onMove: (G, ctx) => postProcess(G),
+      endIf: ({ G }) => (G.setupComplete === G.players.length),
+      // onBegin: ({ G }) => { G.availablePoints = []; return G },
+      // next: 'moveUnit',
+      start: true
+    }
   },
-});
+  turn: {
+    // order: TurnOrder.RESET,
+    minMoves: 2,
+    activePlayers: {
+      currentPlayer: { stage: 'pickUnit' }
+    },
+    // endIf: ({ G, ctx }) => (G.moveCount > ctx.turn),
+
+    stages: {
+      pickUnit: {
+        moves: {
+          selectNewUnit: moves.selectNewUnit,
+          selectOldUnit: moves.selectOldUnit,
+          complete: moves.complete,
+        },
+        next: 'placeUnit'
+      },
+      placeUnit: {
+        moves: {
+          moveUnit: moves.moveUnit,
+          complete: moves.complete
+        },
+        next: 'pickUnit'
+      }
+    },
+    onMove: ({ G, events }) => postProcess(G, events)
+  },
+  endIf: ({ G }) => (G.gameover !== null ? G.gameover : undefined),
+};

@@ -1,6 +1,6 @@
 import {createPoint} from "../utils";
 import {Biom, playerColors} from "../constants";
-import {Creature, Idol, UnitState, UnitTypes} from "../Creatures/Unit";
+import {Idol, UnitState, UnitTypes} from "../Creatures/Unit";
 
 let insectId = 0;
 let unitId = 0;
@@ -26,13 +26,10 @@ const createPlayer = id => ({
   id,
   insects: createInsects(),
   units: [
-    new Idol(UnitTypes.Idol, UnitTypes.Idol, Biom.Step, unitId++, 3, 7, 4, new UnitState(unitId)),
-    new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId++, 2, 4, 5, new UnitState(unitId)),
-    new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId++, 2, 4, 5, new UnitState(unitId)),
-    new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId++, 2, 4, 5, new UnitState(unitId)),
-    new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId++, 2, 4, 5, new UnitState(unitId)),
-    new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId++, 2, 4, 5, new UnitState(unitId)),
-    new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId++, 2, 4, 5, new UnitState(unitId))
+    JSON.parse(JSON.stringify(new Idol(UnitTypes.Idol, UnitTypes.Idol, Biom.Step, unitId, 3, 7, 4, new UnitState(unitId++, id)))),
+    // new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId, 2, 4, 5, new UnitState(unitId++, id)),
+    // new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId, 2, 4, 5, new UnitState(unitId++, id)),
+    // new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId, 2, 4, 5, new UnitState(unitId++, id)),
   ],
   moveCount: 0,
 });
@@ -65,5 +62,6 @@ export const setup = () => ({
   availablePoints: [],
   insects: [],
   moveCount: 0,
+  setupComplete: 0,
   gameover: null,
 });

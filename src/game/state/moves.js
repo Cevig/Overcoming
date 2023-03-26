@@ -1,5 +1,5 @@
-import { createPoint, getNeighbors } from '../utils';
-import { availablePointsForInsect } from './availablePointsForInsect';
+import {createPoint, getNeighbors} from '../utils';
+import {availablePointsForInsect} from './availablePointsForInsect';
 import {startPositions} from "./setup";
 
 const flat = array => array.reduce((prev, curr) => prev.concat(curr), []);
@@ -26,16 +26,11 @@ export const moves = {
       availablePoints,
     };
   },
-  selectNewUnit: (G, ctx, currentUnit) => {
-    let availablePoints = [];
+  selectNewUnit: ({G, ctx}, currentUnit) => {
     if (G.players[ctx.currentPlayer].units.filter(unit => unit.unitState.isInGame === false).length > 0) {
-      availablePoints = startPositions[ctx.currentPlayer]
+      G.availablePoints = startPositions[ctx.currentPlayer]
+      G.currentUnit = currentUnit
     }
-    return {
-      ...G,
-      currentUnit,
-      availablePoints,
-    };
   },
   selectOld: (G, ctx, currentInsect) => {
     const availablePoints = availablePointsForInsect[currentInsect.type]({ G, currentInsect });
@@ -45,35 +40,21 @@ export const moves = {
       availablePoints,
     };
   },
-  moveInsect: (G, ctx, point) => {
-    const insect = {
-      ...G.currentInsect,
-      point,
-      player: ctx.currentPlayer,
-    };
-    const insects = [
-      ...G.insects.filter(({ id }) => id !== G.currentInsect.id),
-      insect,
-    ];
-    const players = G.players.map(p => ({
-      ...p,
-      insects: p.insects.filter(({ id }) => id !== G.currentInsect.id),
-      moveCount: p.id === ctx.currentPlayer ? p.moveCount + 1 : p.moveCount,
-    }));
-    return {
-      ...G,
-      currentInsect: null,
-      players,
-      availablePoints: [],
-      insects,
-      moveCount: G.moveCount + 1,
-    };
+  selectOldUnit: ({ G }, currentUnit) => {
+    G.availablePoints = getNeighbors(currentUnit.unitState.point)
+    G.currentUnit = currentUnit
   },
-  cancel: G => {
-    return {
-      ...G,
-      currentInsect: null,
-      availablePoints: [],
-    };
+  moveUnit: ({G, ctx}, point) => {
+    const unit = G.players[ctx.currentPlayer].units.filter(unit => unit.id === G.currentUnit.id)[0]
+    unit.unitState.point = point
+    unit.unitState.isInGame = true
+    G.players[ctx.currentPlayer].moveCount++
+    G.moveCount++
+    G.currentUnit = null
+    G.availablePoints = []
+  },
+  complete: ({G, events}) => {
+    G.setupComplete++
+    events.endTurn()
   },
 };

@@ -1,13 +1,16 @@
 import React from 'react';
-import Client from "./game/Client";
+import {Client} from 'boardgame.io/react';
+import {Overcoming} from "./game/game";
+import {Board} from "./game/ui/Board";
 
-const style = {
-  display: 'flex',
-  justifyContent: 'center'
-};
+const App = Client({
+  game: Overcoming,
+  board: Board,
+  // ai,
+  // multiplayer: { server: 'localhost:8000' },
+  debug: true
+});
 
-export const App = () => (
-  <div style={style}>
-    <Client></Client>
-  </div>
-)
+
+
+export default App;

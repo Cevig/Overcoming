@@ -1,10 +1,10 @@
+const { Overcoming } = require("./game/game");
 const Server = require('boardgame.io/server').Server;
-const game = require('./game/game').game;
 
 const port = 8000;
 
 const server = Server({
-  games: [game]
+  games: [Overcoming]
 });
 
 server.run(port);

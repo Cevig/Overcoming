@@ -1,14 +1,7 @@
 import React from 'react';
 import {playerColors} from "../constants";
 
-const insectColors = {
-  ant: 'blue',
-  queen: 'yellow',
-  spider: 'brown',
-  grasshopper: '#7cfc00',
-}
-
-export class Insect extends React.Component {
+export class UnitUI extends React.Component {
   constructor(props) {
     super();
     this.props = props;
@@ -16,20 +9,8 @@ export class Insect extends React.Component {
   }
 
   render() {
-    // const { unit: { type, isMovable, player: playerId } } = this.props;
     const unit = this.props.unit
     return (
-      // <g transform="scale(.022222,.022222)">
-      //   <g>
-      //     <path
-      //       d="M -10,-10 L -10,10 L 10,10 L 10,-10 Z"
-      //       style={{
-      //         fill: insectColors[type],
-      //         stroke: isMovable ? 'black' : 'grey',
-      //       }}
-      //     />
-      //   </g>
-      // </g>
       <g transform="scale(.0029,.0029)">
         <g style={{cursor: "pointer"}}>
           <polygon strokeWidth="10" id="svg_3" fill=" white" points="7,299.9999694824219 178.5,597.0379638671875 521.5,597.0379638671875 693,299.9999694824219 521.5,2.96197509765625 178.5,2.96197509765625 " style={{
@@ -42,11 +23,11 @@ export class Insect extends React.Component {
           }}/>
           <path stroke="#000" id="svg_1" d="m314.44738,40.64412l27.15998,0l8.39264,-25.80187l8.39265,25.80187l27.15997,0l-21.97284,15.94625l8.39308,25.80187l-21.97285,-15.94668l-21.97285,15.94668l8.39308,-25.80187l-21.97285,-15.94625z" strokeWidth="0" fill="#e5a320"/>
           <path stroke="#000000" id="svg_13" d="m505.93503,341.05112c10.2526,19.65778 12.25416,25.62757 8.86429,26.43829c-6.6219,1.58372 -5.29123,10.64126 3.97724,27.0718c11.62364,20.60569 34.3908,33.25947 55.77617,30.99989c8.30057,-0.87704 17.68472,-2.68706 20.85368,-4.0223c3.16894,-1.33525 1.22436,1.15218 -4.32131,5.52759c-27.74264,21.88829 -62.00602,20.36358 -89.34076,-3.97558c-10.89888,-9.70452 -25.89403,-38.0584 -25.89403,-48.96229c0,-3.089 -2.47219,-6.08212 -5.49374,-6.65135c-4.9414,-0.93091 -4.27779,-3.382 6.60047,-24.37945c6.65182,-12.83948 12.91342,-24.26548 13.91465,-25.39112c1.00126,-1.12564 7.77974,9.37939 15.06332,23.3445l0,0l0.00003,0.00001zm88.12996,37.89778c-10.25262,-19.65778 -12.25416,-25.62758 -8.8643,-26.43829c6.6219,-1.58369 5.29123,-10.64126 -3.97722,-27.0718c-11.62365,-20.6057 -34.39083,-33.25947 -55.77619,-30.99991c-8.30057,0.87703 -17.68471,2.68707 -20.85367,4.02233c-3.16896,1.33523 -1.22437,-1.1522 4.3213,-5.5276c27.74264,-21.8883 62.00602,-20.36361 89.34076,3.97559c10.89888,9.70448 25.89402,38.05838 25.89402,48.96226c0,3.08902 2.47221,6.08212 5.49373,6.65135c4.94142,0.93092 4.2778,3.382 -6.60045,24.37945c-6.65182,12.83946 -12.91342,24.26548 -13.91465,25.39112c-1.00126,1.12564 -7.77974,-9.37937 -15.06332,-23.34449l0,0l0,-0.00001z" strokeWidth="0" fill="#027242"/>
-          <text transform="matrix(1.43406 0 0 1.43406 -219.49 -188.989)" stroke="#ffffff" textAnchor="start" fontFamily="'Arimo'" fontSize="70" id="svg_16" y="405.01469" x="518.18046" strokeWidth="0" fill="#b9bf09">5</text>
+          <text transform="matrix(1.43406 0 0 1.43406 -219.49 -188.989)" stroke="#ffffff" textAnchor="start" fontFamily="'Arimo'" fontSize="70" id="svg_16" y="405.01469" x="518.18046" strokeWidth="0" fill="#b9bf09">{unit.initiative}</text>
           <path stroke="#000000" id="svg_10" d="m53.04625,355.20055l19.13827,1.34399l5.12031,32.74559l16.93111,-7.91667l24.55416,25.1268l9.34847,-14.66383l78.73937,62.70902l-43.74937,-69.9339l36.33959,-9.09176l-11.37129,-13.52713l24.94934,-24.82741l-17.93,-6.00416l5.63784,-32.68052l-18.79607,3.42509l-15.46361,-30.1578l-13.69453,11.7669l-31.65549,-18.06019l-4.24506,16.3728l-37.79697,-0.22861l6.55219,15.78044l-31.93817,17.67556l15.26914,10.17791l-15.93926,29.96787l0.00001,0.00001z" strokeWidth="0" fill="url(#svg_27)"/>
-          <text transform="matrix(1.42857 0 0 1.42857 -33.0198 -124.26)" stroke="#000000" textAnchor="start" fontFamily="'Arimo'" fontSize="70" id="svg_11" y="343.85982" x="97.2" strokeWidth="0" fill="#ffffff">2</text>
+          <text transform="matrix(1.42857 0 0 1.42857 -33.0198 -124.26)" stroke="#000000" textAnchor="start" fontFamily="'Arimo'" fontSize="70" id="svg_11" y="343.85982" x="97.2" strokeWidth="0" fill="#ffffff">{unit.power}</text>
           <path stroke="#000000" id="svg_7" d="m338,317.16848c33.99405,-97.52392 167.18386,0 0,125.3879c-167.18386,-125.3879 -33.99405,-222.91181 0,-125.3879z" strokeWidth="0" fill="#ad0c0c"/>
-          <text transform="matrix(1.34174 0 0 1.34174 -215.608 -70.4942)" stroke="#000000" textAnchor="start" fontFamily="'Arimo'" fontSize="70" id="svg_9" y="346.87784" x="393.13666" strokeWidth="0" fill="#ffffff">4</text>
+          <text transform="matrix(1.34174 0 0 1.34174 -215.608 -70.4942)" stroke="#000000" textAnchor="start" fontFamily="'Arimo'" fontSize="70" id="svg_9" y="346.87784" x="393.13666" strokeWidth="0" fill="#ffffff">{unit.heals}</text>
           <line y2="501.20783" x2="575.1466" y1="501.20783" x1="126.49316" style={{
             strokeWidth: 10,
             stroke: playerColors[unit.unitState.playerId],
