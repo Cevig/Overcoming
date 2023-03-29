@@ -690,11 +690,11 @@
           });
         });
 
-        var t = this.props.cellSize * this.props.levels * 2;
+        var t = this.props.cellSize * this.props.levels * 2 + (4 - this.props.levels);
         return React.createElement(
           'svg',
           {
-            viewBox: (-t+0.9) + ' ' + (-t+0.9) + ' ' + 2 * (t-0.9) + ' ' + 2 * (t-0.9),
+            viewBox: (-t+1) + ' ' + (-t+0.9) + ' ' + 2 * (t-1) + ' ' + 2 * (t-1),
             style: this.props.style
           },
           React.createElement(

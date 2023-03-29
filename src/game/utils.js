@@ -45,3 +45,9 @@ export const getPointByVector = (point, vector) =>
 
 export const getInGameUnits = (G, filter = () => true) =>
   G.players.flatMap(p => p.units.filter(unit => (unit.unitState.isInGame === true) && filter(unit)));
+
+export const skipPositioningTurn = (G, ctx, events) => {
+  if(getInGameUnits(G, (unit) => (unit.unitState.playerId === +ctx.currentPlayer) && unit.unitState.isClickable).length === 0)
+    events.endTurn()
+}
+

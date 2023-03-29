@@ -1,7 +1,7 @@
 import {moves} from './state/moves';
 import {setup} from './state/setup';
-import {postProcess} from './state/postProcess';
-import {getInGameUnits} from "./utils";
+import {postProcess, setGridSize} from './state/postProcess';
+import {getInGameUnits, skipPositioningTurn} from "./utils";
 
 export const Overcoming = {
   setup: setup,
@@ -22,9 +22,11 @@ export const Overcoming = {
     },
 
     Positioning: {
+      onBegin: ({ G }) => { setGridSize(G); return G },
       endIf: ({ G }) => (getInGameUnits(G, (unit) => unit.unitState.isClickable).length === 0),
       next: "Fight",
       turn: {
+        onBegin: ({ G, ctx, events }) => { skipPositioningTurn(G, ctx, events); return G},
         activePlayers: {
           currentPlayer: { stage: 'pickUnitOnBoard' }
         },

@@ -1,4 +1,10 @@
-import {areAllConnected, getNeighbors, isNotSame, isSame} from '../utils';
+import {
+  areAllConnected,
+  getInGameUnits,
+  getNeighbors,
+  isNotSame,
+  isSame
+} from '../utils';
 import {playerColors} from '../constants';
 import {setUtilsFactory} from '../setUtils';
 import {startPositions} from "./setup";
@@ -19,8 +25,19 @@ const setColorMap = G => {
   // playerColors.forEach((playerColor, idx) => G.grid.colorMap[playerColor] = G.insects.filter(insect => idx === +insect.player).map(insect => insect.point))
 };
 
-const setGridSize = G => {
-  G.grid.levels = G.insects.reduce((levels, { point: { x, y, z } }) => Math.max(levels, x, y, z), G.grid.levels - 2) + 2;
+export const setGridSize = G => {
+  // G.grid.levels = G.insects.reduce((levels, { point: { x, y, z } }) => Math.max(levels, x, y, z), G.grid.levels - 2) + 2;
+  if((G.moveOrder >= 2) && (G.moveOrder % 2 == 0)) {
+    getInGameUnits(G, (unit) => {
+      const point = unit.unitState.point
+      const level = G.grid.levels
+      return (Math.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z)) === level) || ((Math.max(Math.abs(point.y), Math.abs(point.z))) === level-1)
+    }).forEach(unit => unit.unitState.isInGame = false)
+    G.players.forEach(p => {
+      if (p.units.every(unit => unit.unitState.isInGame === false)) p.isInGame = false
+    })
+    G.grid.levels--;
+  }
 }
 
 const setMoveableAndClickable = G => {
