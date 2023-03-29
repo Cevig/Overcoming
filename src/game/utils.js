@@ -42,3 +42,6 @@ export const areAllConnected = points => {
 
 export const getPointByVector = (point, vector) =>
   createPoint(point.x + vector.x, point.y + vector.y, point.z + vector.z);
+
+export const getInGameUnits = (G, filter = () => true) =>
+  G.players.flatMap(p => p.units.filter(unit => (unit.unitState.isInGame === true) && filter(unit)));

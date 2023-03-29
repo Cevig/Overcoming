@@ -1,37 +1,18 @@
 import {createPoint} from "../utils";
 import {Biom, playerColors} from "../constants";
-import {Idol, UnitState, UnitTypes} from "../Creatures/Unit";
+import {getCreature, getIdol, getUnitState, UnitTypes} from "../Creatures/Unit";
 
-let insectId = 0;
 let unitId = 0;
-const createInsect = type => ({
-  type,
-  id: insectId++,
-  isClickable: true,
-})
-const createInsects = () => [
-  createInsect('ant'),
-  createInsect('ant'),
-  createInsect('ant'),
-  createInsect('spider'),
-  createInsect('spider'),
-  createInsect('spider'),
-  createInsect('queen'),
-  createInsect('grasshopper'),
-  createInsect('grasshopper'),
-  createInsect('grasshopper'),
-];
 
 const createPlayer = id => ({
   id,
-  insects: createInsects(),
   units: [
-    JSON.parse(JSON.stringify(new Idol(UnitTypes.Idol, UnitTypes.Idol, Biom.Step, unitId, 3, 7, 4, new UnitState(unitId++, id)))),
-    // new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId, 2, 4, 5, new UnitState(unitId++, id)),
-    // new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId, 2, 4, 5, new UnitState(unitId++, id)),
-    // new Creature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId, 2, 4, 5, new UnitState(unitId++, id)),
+    getIdol(UnitTypes.Idol, UnitTypes.Idol, Biom.Step, unitId, 3, 7, 4, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId, 2, 4, 3, 1, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, Biom.Step, unitId, 2, 3, 5, 1, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Vestnick, UnitTypes.Vestnick, Biom.Step, unitId, 3, 2, 4, 1, getUnitState(unitId++, id)),
   ],
-  moveCount: 0,
+  isInGame: true
 });
 
 export const startPositions = [
@@ -42,13 +23,12 @@ export const startPositions = [
 ]
 
 export const setup = () => ({
-  currentInsect: null,
   currentUnit: null,
   players: [
     createPlayer(0),
     createPlayer(1),
-    // createPlayer('2'),
-    // createPlayer('3')
+    createPlayer(2),
+    createPlayer(3)
   ],
   grid: {
     levels: 4,
@@ -60,8 +40,7 @@ export const setup = () => ({
     },
   },
   availablePoints: [],
-  insects: [],
-  moveCount: 0,
   setupComplete: 0,
+  moveOrder: 0,
   gameover: null,
 });

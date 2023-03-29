@@ -1,6 +1,3 @@
-import {Biom} from "../constants";
-import {createPoint} from "../utils";
-
 export const UnitTypes = Object.freeze({
   Prispeshnick: "Prispeshnick",
   Ispolin: "Ispolin",
@@ -8,54 +5,35 @@ export const UnitTypes = Object.freeze({
   Idol: "Idol"
 })
 
-export class Unit {
-  id: Number
-  name: String
-  type: typeof UnitTypes
-  placeType: typeof Biom
-  power: Number
-  heals: Number
-  initiative: Number
-  unitState: UnitState
-  status: Array<string> = []
-  constructor(name, type, placeType, id, power, heals, initiative, unitState, status) {
-    this.id = id;
-    this.name = name;
-    this.type = type;
-    this.placeType = placeType;
-    this.power = power;
-    this.heals = heals;
-    this.initiative = initiative;
-    this.unitState = unitState;
-    this.status = status;
-  }
-}
+export const getCreature = (name, type, placeType, id, power, heals, initiative, level, unitState, status = []) => ({
+  id: id,
+  name: name,
+  type: type,
+  placeType: placeType,
+  power: power,
+  heals: heals,
+  initiative: initiative,
+  level: level,
+  unitState: unitState,
+  status: status
+})
 
-export class UnitState {
-  unitId: Number
-  playerId: Number
-  point: createPoint
-  isClickable: Boolean = false
-  isInGame: Boolean = false
-  constructor(unitId, playerId, point = null, isClickable = true, isInGame = false) {
-    this.unitId = unitId;
-    this.playerId = playerId;
-    this.point = point
-    this.isClickable = isClickable;
-    this.isInGame = isInGame;
-  }
-}
+export const getIdol = (name, type, placeType, id, power, heals, initiative, unitState, status = []) => ({
+  id: id,
+  name: name,
+  type: type,
+  placeType: placeType,
+  power: power,
+  heals: heals,
+  initiative: initiative,
+  unitState: unitState,
+  status: status
+})
 
-export class Creature extends Unit {
-  level: Number
-  constructor(name, type, placeType, id, power, heals, initiative, unitState, status = [], level = 1) {
-    super(name, type, placeType, id, power, heals, initiative, unitState, status)
-    this.level = level;
-  }
-}
-
-export class Idol extends Unit {
-  constructor(name, type, placeType, id, power, heals, initiative, unitState, status = []) {
-    super(name, type, placeType, id, power, heals, initiative, unitState, status)
-  }
-}
+export const getUnitState = (unitId, playerId, point = null, isClickable = true, isInGame = false) => ({
+  unitId: unitId,
+  playerId: playerId,
+  point: point,
+  isClickable: isClickable,
+  isInGame: isInGame
+})

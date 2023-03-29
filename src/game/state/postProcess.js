@@ -17,7 +17,6 @@ const setColorMap = G => {
   })
   G.grid.colorMap['#dd666f'] = G.availablePoints
   // playerColors.forEach((playerColor, idx) => G.grid.colorMap[playerColor] = G.insects.filter(insect => idx === +insect.player).map(insect => insect.point))
-  G.grid.colorMap['#8d767f'] = (G.currentInsect && G.currentInsect.point) ? [G.currentInsect.point] : []
 };
 
 const setGridSize = G => {
@@ -59,7 +58,7 @@ export const postProcess = (G, events) => {
   setColorMap(G)
   // setGridSize(G)
   // setMoveableAndClickable(G)
-  handleGameover(G)
+  // handleGameover(G)
   events.endStage()
   return G
 };

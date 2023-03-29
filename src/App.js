@@ -8,6 +8,7 @@ const App = Client({
   board: Board,
   // ai,
   // multiplayer: { server: 'localhost:8000' },
+  numPlayers: 4,
   debug: true
 });
 

@@ -1,6 +1,7 @@
 import {moves} from './state/moves';
 import {setup} from './state/setup';
 import {postProcess} from './state/postProcess';
+import {getInGameUnits} from "./utils";
 
 export const Overcoming = {
   setup: setup,
@@ -8,8 +9,6 @@ export const Overcoming = {
   phases: {
     Setup: {
       moves: {
-        selectNew: moves.selectNew,
-        selectOld: moves.selectOld,
         selectNewUnit: moves.selectNewUnit,
         selectOldUnit: moves.selectOldUnit,
         moveUnit: moves.moveUnit,
@@ -18,7 +17,44 @@ export const Overcoming = {
       endIf: ({ G }) => (G.setupComplete === G.players.length),
       // onBegin: ({ G }) => { G.availablePoints = []; return G },
       // next: 'moveUnit',
-      start: true
+      start: true,
+      next: "Positioning"
+    },
+
+    Positioning: {
+      endIf: ({ G }) => (getInGameUnits(G, (unit) => unit.unitState.isClickable).length === 0),
+      next: "Fight",
+      turn: {
+        activePlayers: {
+          currentPlayer: { stage: 'pickUnitOnBoard' }
+        },
+        maxMoves: 2,
+        order: {
+          first: ({ G, ctx }) => G.moveOrder % G.players.filter(p => p.isInGame).length,
+          next: ({ G, ctx }) => (ctx.playOrderPos + 1) % G.players.filter(p => p.isInGame).length,
+          playOrder: ({ G, ctx }) => G.players.filter(p => p.isInGame).map(p => p.id)
+        },
+        onMove: ({ G, events }) => postProcess(G, events),
+        stages: {
+          pickUnitOnBoard: {
+            moves: {
+              selectUnitOnBoard: moves.selectUnitOnBoard
+            },
+            next: 'placeUnitOnBoard'
+          },
+          placeUnitOnBoard: {
+            moves: {
+              moveUnitOnBoard: moves.moveUnitOnBoard
+            },
+            next: 'pickUnitOnBoard'
+          }
+        }
+      }
+    },
+
+    Fight: {
+      next: "Positioning",
+      onBegin: ({ G }) => { getInGameUnits(G).forEach(unit => unit.unitState.isClickable = true); return G },
     }
   },
   turn: {
@@ -35,13 +71,15 @@ export const Overcoming = {
           selectNewUnit: moves.selectNewUnit,
           selectOldUnit: moves.selectOldUnit,
           complete: moves.complete,
+          finish: moves.finish
         },
         next: 'placeUnit'
       },
       placeUnit: {
         moves: {
           moveUnit: moves.moveUnit,
-          complete: moves.complete
+          complete: moves.complete,
+          finish: moves.finish
         },
         next: 'pickUnit'
       }

@@ -1,7 +1,7 @@
 import React from 'react';
 // import { HexGrid } from 'boardgame.io/ui';
 import {HexGrid, Token} from './custom/myHex';
-import {createPoint, isSame} from '../utils';
+import {createPoint, getInGameUnits, isSame} from '../utils';
 import {UnitUI} from './UnitUI';
 
 const style = {
@@ -55,25 +55,44 @@ export function Board (props) {
     const phase = props.ctx.phase;
     const point = createPoint(x, y, z);
     if (phase === 'Setup') {
-      const stage = props.ctx.activePlayers[+props.ctx.currentPlayer]
-      if (stage && stage === 'pickUnit'){
-        const found = props.G.players
-          .map(p => p.units.filter(unit => unit.unitState.isInGame)
-            .find((unit) => isSame(point)(unit.unitState.point))
-          ).filter(unitsByPlayer => unitsByPlayer !== undefined)[0]
+      handleSetupMoves(point)
+    } else if (phase === 'Positioning') {
+      handlePositioningMoves(point)
+    } else if (phase === 'Fight') {
 
-        if (found && found.unitState.playerId === +props.ctx.currentPlayer && found.unitState.isClickable === true) {
-          props.moves.selectOldUnit(found);
-        }
-      } else if (stage && stage === 'placeUnit') {
-        const found = props.G.availablePoints.find(isSame(point));
-        if (found !== undefined) {
-          props.moves.moveUnit(found);
-        }
+    }
+  }
+  const handleSetupMoves = (point) => {
+    const stage = props.ctx.activePlayers[+props.ctx.currentPlayer]
+    if (stage && stage === 'pickUnit') {
+      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
+      if (found && found.unitState.playerId === +props.ctx.currentPlayer && found.unitState.isClickable === true) {
+        props.moves.selectOldUnit(found);
+      }
+    } else if (stage && stage === 'placeUnit') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.moveUnit(found);
       }
     }
   }
-  const player = props.G.players[props.ctx.currentPlayer];
+
+  const handlePositioningMoves = (point) => {
+    const stage = props.ctx.activePlayers[+props.ctx.currentPlayer]
+    if (stage && stage === 'pickUnitOnBoard') {
+      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
+      if (found && found.unitState.playerId === +props.ctx.currentPlayer && found.unitState.isClickable === true) {
+        props.moves.selectUnitOnBoard(found);
+      }
+    } else if (stage && stage === 'placeUnitOnBoard') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.moveUnitOnBoard(found);
+      }
+    }
+  }
+
+  const player = props.G.players.find(p => p.id === +props.ctx.currentPlayer);
   return (
       <div style={style}>
         <HexGrid
@@ -82,23 +101,16 @@ export function Board (props) {
           colorMap={props.G.grid.colorMap}
           onClick={cellClicked}>
           {
-            props.G.players.map(p => p.units.filter(unit => unit.unitState.isInGame).map((unit, i) => {
+            getInGameUnits(props.G).map((unit, i) => {
               const { x, y, z } = unit.unitState.point;
               return <Token x={x} y={y} z={z} key={i}>
                 <UnitUI unit={unit} />
               </Token>
-            })).filter(unitsByPlayer => unitsByPlayer.length > 0)
+            })
           }
         </HexGrid>
         <div>
           <div>Player: {player.id}</div>
-          {/*<div style={styles.moves}>*/}
-          {/*  {player.insects.map((insect, i) => {*/}
-          {/*    return insect.isClickable ?*/}
-          {/*      <div style={{ ...styles.move, ...styles.clickableMove }} onClick={() => props.moves.selectNew(insect)} key={i}>{insect.type}</div> :*/}
-          {/*      <div style={styles.move} key={i}>{insect.type}</div>;*/}
-          {/*  })}*/}
-          {/*</div>*/}
           <div style={styles.moves}>
             {player.units.map((unit, i) => {
               return unit.unitState.isInGame ?
@@ -111,6 +123,10 @@ export function Board (props) {
         <button onClick={() => props.undo()}>Cancel</button>
         {props.ctx.phase === 'Setup' ?
           <button onClick={props.moves.complete}>Complete</button>
+          : <div></div>
+        }
+        {props.ctx.phase === 'Fight' ?
+          <button onClick={props.moves.finish}>Finish</button>
           : <div></div>
         }
       </div>
