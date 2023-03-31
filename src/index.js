@@ -11,7 +11,7 @@ const style = {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <div style={style}>
+  <div id="game-body">
     <React.StrictMode>
       <App />
     </React.StrictMode>

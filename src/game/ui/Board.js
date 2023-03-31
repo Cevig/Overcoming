@@ -1,8 +1,8 @@
 import React from 'react';
-// import { HexGrid } from 'boardgame.io/ui';
 import {HexGrid, Token} from './custom/myHex';
 import {createPoint, getInGameUnits, isSame} from '../utils';
 import {UnitUI} from './UnitUI';
+import {motion} from 'framer-motion';
 
 const style = {
   display: 'flex',
@@ -39,7 +39,7 @@ HexGrid.prototype._getCellColor = function(...coords) {
   if (color === 'white') {
     let point = createPoint(...coords)
     for (const playerColor in this.props.colorMap) {
-      let found = this.props.colorMap[playerColor].find(coord => isSame(coord)(point))
+      let found = this.props.colorMap[playerColor].find(isSame(point))
       if (found !== undefined && isSame(found)(point)) {
         result = playerColor;
         break;
@@ -59,7 +59,7 @@ export function Board (props) {
     } else if (phase === 'Positioning') {
       handlePositioningMoves(point)
     } else if (phase === 'Fight') {
-
+      handleFightMoves(point)
     }
   }
   const handleSetupMoves = (point) => {
@@ -92,6 +92,21 @@ export function Board (props) {
     }
   }
 
+  const handleFightMoves = (point) => {
+    const stage = props.ctx.activePlayers[+props.ctx.currentPlayer]
+    if (stage && stage === 'pickUnitForAttack') {
+      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
+      if (found && props.G.fightQueue[0].unitId === found.unitState.unitId) {
+        props.moves.selectUnitForAttack(found);
+      }
+    } else if (stage && stage === 'makeDamage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.attackTarget(found);
+      }
+    }
+  }
+
   const player = props.G.players.find(p => p.id === +props.ctx.currentPlayer);
   return (
       <div style={style}>
@@ -104,31 +119,55 @@ export function Board (props) {
             getInGameUnits(props.G).map((unit, i) => {
               const { x, y, z } = unit.unitState.point;
               return <Token x={x} y={y} z={z} key={i}>
-                <UnitUI unit={unit} />
+                <UnitUI
+                  unit={unit}
+                  highlight={(props.G.currentUnit && props.G.currentUnit.unitState.point && isSame(props.G.currentUnit.unitState.point)(unit.unitState.point))}
+                  markEnemy={(props.ctx.phase === "Fight") && (props.G.availablePoints.length > 0) && (props.G.availablePoints.find(isSame(unit.unitState.point)) !== undefined)}
+                  fightQueue={props.G.fightQueue}
+                />
               </Token>
             })
           }
         </HexGrid>
         <div>
-          <div>Player: {player.id}</div>
+          <div>Player: {player ? player.id + 1 : "Unknown"}</div>
           <div style={styles.moves}>
-            {player.units.map((unit, i) => {
+            {player ? player.units.map((unit, i) => {
               return unit.unitState.isInGame ?
                 <div style={styles.move} key={i}>{unit.name}</div>:
                 <div style={{ ...styles.move, ...styles.clickableMove }} onClick={() => props.moves.selectNewUnit(unit)} key={i}>{unit.name}</div>;
-            })}
+            }) : 0}
           </div>
         </div>
         <div>phase: {props.ctx.phase}</div>
-        <button onClick={() => props.undo()}>Cancel</button>
+        <div style={styles.move}>
+          <button onClick={() => props.undo()}>Cancel</button>
         {props.ctx.phase === 'Setup' ?
           <button onClick={props.moves.complete}>Complete</button>
-          : <div></div>
+          : <span></span>
         }
-        {props.ctx.phase === 'Fight' ?
-          <button onClick={props.moves.finish}>Finish</button>
-          : <div></div>
+        {props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") || (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage")) ?
+          <button onClick={props.moves.skipTurn}>Skip</button>
+          : <span></span>
         }
+        </div>
+        {
+          props.G.winner !== undefined ?
+            <motion.div
+              className="winner-popup-container"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="winner-popup">
+                <h2>Congratulations {props.G.winner === -1 ? "it's a draw" : props.G.players.find(p => p.id === props.G.winner).name}!</h2>
+                <p>You are the winner!</p>
+              </div>
+            </motion.div> :
+            <div></div>
+        }
+
       </div>
+
   )
 }

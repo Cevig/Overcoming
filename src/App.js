@@ -6,12 +6,8 @@ import {Board} from "./game/ui/Board";
 const App = Client({
   game: Overcoming,
   board: Board,
-  // ai,
-  // multiplayer: { server: 'localhost:8000' },
-  numPlayers: 4,
-  debug: true
+  // multiplayer: Local(),
+  numPlayers: 2,
+  debug: false
 });
-
-
-
 export default App;

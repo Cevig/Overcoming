@@ -6,12 +6,13 @@ export const playerColors = [
 ];
 
 export const Biom = Object.freeze({
-  Step: "Step",
+  Steppe: "Steppe",
   Forest: "Forest",
   Mountains: "Mountains",
   Desert: "Desert",
   Tundra: "Tundra",
   Jungle: "Jungle",
+  Water: "Water",
   Mash: "Mash",
-  Geizers: "Geizers"
+  Geysers: "Geysers"
 })

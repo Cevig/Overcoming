@@ -1,7 +1,16 @@
 import {moves} from './state/moves';
 import {setup} from './state/setup';
-import {postProcess, setGridSize} from './state/postProcess';
-import {getInGameUnits, skipPositioningTurn} from "./utils";
+import {
+  cleanFightPhase,
+  endFightPhase,
+  handleGameOver,
+  onGameOver,
+  postProcess,
+  setFightOrder,
+  setGridSize,
+  setInFightUnits
+} from './state/postProcess';
+import {getInGameUnits, getUnitById, skipTurnIfNotActive} from "./utils";
 
 export const Overcoming = {
   setup: setup,
@@ -15,18 +24,17 @@ export const Overcoming = {
         complete: moves.complete
       },
       endIf: ({ G }) => (G.setupComplete === G.players.length),
-      // onBegin: ({ G }) => { G.availablePoints = []; return G },
-      // next: 'moveUnit',
       start: true,
       next: "Positioning"
     },
 
     Positioning: {
-      onBegin: ({ G }) => { setGridSize(G); return G },
-      endIf: ({ G }) => (getInGameUnits(G, (unit) => unit.unitState.isClickable).length === 0),
+      onBegin: ({ G }) => { setGridSize(G) },
       next: "Fight",
+      endIf: ({ G }) => (getInGameUnits(G, (unit) => unit.unitState.isClickable).length === 0),
+      onEnd: ({ G }) => { setInFightUnits(G) },
       turn: {
-        onBegin: ({ G, ctx, events }) => { skipPositioningTurn(G, ctx, events); return G},
+        onBegin: ({ G, ctx, events }) => { skipTurnIfNotActive(G, ctx, events) },
         activePlayers: {
           currentPlayer: { stage: 'pickUnitOnBoard' }
         },
@@ -40,13 +48,14 @@ export const Overcoming = {
         stages: {
           pickUnitOnBoard: {
             moves: {
-              selectUnitOnBoard: moves.selectUnitOnBoard
+              selectUnitOnBoard: moves.selectUnitOnBoard,
             },
             next: 'placeUnitOnBoard'
           },
           placeUnitOnBoard: {
             moves: {
-              moveUnitOnBoard: moves.moveUnitOnBoard
+              moveUnitOnBoard: moves.moveUnitOnBoard,
+              skipTurn: moves.skipTurn
             },
             next: 'pickUnitOnBoard'
           }
@@ -55,38 +64,64 @@ export const Overcoming = {
     },
 
     Fight: {
+      onBegin: ({ G, events }) => { setFightOrder(G, events) },
       next: "Positioning",
-      onBegin: ({ G }) => { getInGameUnits(G).forEach(unit => unit.unitState.isClickable = true); return G },
+      endIf: ({ G }) => (endFightPhase(G)),
+      onEnd: ({ G }) => { cleanFightPhase(G) },
+      turn: {
+        activePlayers: {
+          currentPlayer: { stage: 'pickUnitForAttack' }
+        },
+        maxMoves: 2,
+        order: {
+          first: ({ G }) => G.fightQueue[0].playerId,
+          next: ({ G }) => G.fightQueue[0].playerId
+        },
+        onMove: ({ G, events }) => postProcess(G, events),
+        endIf: ({ G, ctx, events }) => (ctx.numMoves >= 2 ? {next: G.fightQueue.length > 1 ? G.fightQueue[1].playerId : G.fightQueue[0].playerId} : false),
+        onEnd: ({ G, ctx, events }) => { if(G.fightQueue.length && getUnitById(G, G.fightQueue[0].unitId).unitState.isClickable === false) G.fightQueue.shift(); return G },
+        stages: {
+          pickUnitForAttack: {
+            moves: {
+              selectUnitForAttack: moves.selectUnitForAttack,
+            },
+            next: 'makeDamage'
+          },
+          makeDamage: {
+            moves: {
+              attackTarget: moves.attackTarget,
+              skipTurn: moves.skipFightTurn
+            },
+            next: 'pickUnitForAttack'
+          }
+        }
+      }
     }
   },
   turn: {
-    // order: TurnOrder.RESET,
     minMoves: 2,
     activePlayers: {
       currentPlayer: { stage: 'pickUnit' }
     },
-    // endIf: ({ G, ctx }) => (G.moveCount > ctx.turn),
-
     stages: {
       pickUnit: {
         moves: {
           selectNewUnit: moves.selectNewUnit,
           selectOldUnit: moves.selectOldUnit,
-          complete: moves.complete,
-          finish: moves.finish
+          complete: moves.complete
         },
         next: 'placeUnit'
       },
       placeUnit: {
         moves: {
           moveUnit: moves.moveUnit,
-          complete: moves.complete,
-          finish: moves.finish
+          complete: moves.complete
         },
         next: 'pickUnit'
       }
     },
     onMove: ({ G, events }) => postProcess(G, events)
   },
-  endIf: ({ G }) => (G.gameover !== null ? G.gameover : undefined),
+  endIf: ({ G }) => (handleGameOver(G)),
+  onEnd: ({ G }) => { onGameOver(G) }
 };

@@ -4,13 +4,14 @@ import {getCreature, getIdol, getUnitState, UnitTypes} from "../Creatures/Unit";
 
 let unitId = 0;
 
-const createPlayer = id => ({
+const createPlayer = (id, name, biom) => ({
   id,
+  name,
   units: [
-    getIdol(UnitTypes.Idol, UnitTypes.Idol, Biom.Step, unitId, 3, 7, 4, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, Biom.Step, unitId, 2, 4, 3, 1, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, Biom.Step, unitId, 2, 3, 5, 1, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Vestnick, UnitTypes.Vestnick, Biom.Step, unitId, 3, 2, 4, 1, getUnitState(unitId++, id)),
+    getIdol(UnitTypes.Idol, UnitTypes.Idol, biom, unitId, 3, 7, 4, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, biom, unitId, 2, 4, 3, 1, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, biom, unitId, 2, 3, 5, 1, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Vestnick, UnitTypes.Vestnick, biom, unitId, 3, 2, 4, 1, getUnitState(unitId++, id)),
   ],
   isInGame: true
 });
@@ -25,10 +26,10 @@ export const startPositions = [
 export const setup = () => ({
   currentUnit: null,
   players: [
-    createPlayer(0),
-    createPlayer(1),
-    createPlayer(2),
-    createPlayer(3)
+    createPlayer(0, "Player 1", Biom.Jungle),
+    createPlayer(1, "Player 2", Biom.Forest)
+    // createPlayer(2),
+    // createPlayer(3)
   ],
   grid: {
     levels: 4,
@@ -42,5 +43,5 @@ export const setup = () => ({
   availablePoints: [],
   setupComplete: 0,
   moveOrder: 0,
-  gameover: null,
+  fightQueue: []
 });

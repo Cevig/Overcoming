@@ -1,15 +1,7 @@
-import {
-  areAllConnected,
-  getInGameUnits,
-  getNeighbors,
-  isNotSame,
-  isSame
-} from '../utils';
+import {getInGameUnits, getNearestEnemy, isNotSame} from '../utils';
 import {playerColors} from '../constants';
-import {setUtilsFactory} from '../setUtils';
 import {startPositions} from "./setup";
-
-const { subtract } = setUtilsFactory(isSame);
+import {biomComparison} from "./unitPriority";
 
 const setColorMap = G => {
   G.grid.colorMap = {
@@ -22,60 +14,67 @@ const setColorMap = G => {
     G.grid.colorMap[color] = points.filter(mapPoint => G.availablePoints.every(availablePoint => isNotSame(mapPoint)(availablePoint)))
   })
   G.grid.colorMap['#dd666f'] = G.availablePoints
-  // playerColors.forEach((playerColor, idx) => G.grid.colorMap[playerColor] = G.insects.filter(insect => idx === +insect.player).map(insect => insect.point))
 };
 
 export const setGridSize = G => {
-  // G.grid.levels = G.insects.reduce((levels, { point: { x, y, z } }) => Math.max(levels, x, y, z), G.grid.levels - 2) + 2;
   if((G.moveOrder >= 2) && (G.moveOrder % 2 == 0)) {
     getInGameUnits(G, (unit) => {
       const point = unit.unitState.point
       const level = G.grid.levels
-      return (Math.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z)) === level) || ((Math.max(Math.abs(point.y), Math.abs(point.z))) === level-1)
+      return (Math.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z)) === level) || (point.y === level-1) || (point.z === -(level-1))
     }).forEach(unit => unit.unitState.isInGame = false)
     G.players.forEach(p => {
       if (p.units.every(unit => unit.unitState.isInGame === false)) p.isInGame = false
     })
     G.grid.levels--;
   }
+  return G
 }
 
-const setMoveableAndClickable = G => {
-  const insectPoints = G.insects.map(({ point }) => point);
-  const playersHavePlacedQueen = G.players.map(({ insects }) => insects.find(({ type }) => type === 'queen') === undefined);
-  return {
-    ...G,
-    insects: G.insects.map(insect => ({
-      ...insect,
-      isMovable: playersHavePlacedQueen[insect.player] && areAllConnected(insectPoints.filter(i => i !== insect.point)),
-    })),
-    players: G.players.map(player => ({
-      ...player,
-      insects: player.insects.map(insect => ({
-        ...insect,
-        isClickable: playersHavePlacedQueen[player.id] || player.moveCount !== 3 || insect.type === 'queen',
-      })),
-    })),
-  }
+export const handleGameOver = G =>
+  (G.setupComplete == G.players.length) && ([...new Set(getInGameUnits(G).map(unit => unit.unitState.playerId))].length <= 1)
+
+export const onGameOver = G => {
+  const remainPlayers = [...new Set(getInGameUnits(G).map(unit => unit.unitState.playerId))]
+  G.winner = remainPlayers.length == 0 ? -1 : remainPlayers[0]
+  return G
 }
 
-const handleGameover = G => {
-  const insectPoints = G.insects.map(({ point }) => point);
-  const losers = G.insects
-    .filter(({ type }) => type === 'queen')
-    .map(({ point, player }) => ({ player, neighbors: getNeighbors(point) }))
-    .filter(({ neighbors }) => subtract(neighbors, insectPoints).length === 0)
-    .map(({ player }) => player);
-  G.gameover = losers.length > 0 ? {
-    losers,
-  } : null;
+export const cleanFightPhase = G => {
+  getInGameUnits(G).forEach(unit => {
+    unit.unitState.isClickable = true
+    unit.unitState.isInFight = false
+  });
+  G.moveOrder++;
+  G.fightQueue = []
+  return G
+}
+
+export const endFightPhase = G =>
+  getInGameUnits(G, (unit) => unit.unitState.isClickable && unit.unitState.isInFight).length === 0
+
+export const setInFightUnits = G => {
+  getInGameUnits(G).forEach(unit => {
+    if(getNearestEnemy(G, unit.unitState).length > 0) {
+      unit.unitState.isInFight = true
+    } else {
+      unit.unitState.isInFight = false
+    }
+  });
+  if(getInGameUnits(G, (unit) => unit.unitState.isInFight).length > 0)
+    getInGameUnits(G).forEach(unit => unit.unitState.isClickable = unit.unitState.isInFight)
+  return G
+}
+
+export const setFightOrder = (G, events) => {
+  G.fightQueue = getInGameUnits(G, (unit) => unit.unitState.isInFight)
+    .sort((u1, u2) =>
+      (u1.initiative > u2.initiative) ? 1 : (u1.initiative < u2.initiative) ? -1 : biomComparison(u1.biom, u2.biom)
+    ).reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
 }
 
 export const postProcess = (G, events) => {
   setColorMap(G)
-  // setGridSize(G)
-  // setMoveableAndClickable(G)
-  // handleGameover(G)
   events.endStage()
   return G
 };

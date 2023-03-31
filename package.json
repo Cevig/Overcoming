@@ -9,6 +9,7 @@
     "babel-cli": "^6.26.0",
     "babel-preset-zero": "^0.3.2",
     "boardgame.io": "^0.50.2",
+    "framer-motion": "^10.10.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -837,11 +837,11 @@
             stroke: '#000',
             strokeWidth: 0.01
           }),
-          React.createElement('text', {
-            style: {fill: "black", fontSize: 0.5, position: "relative", left: "-10px", cursor: "default"},
-            x: -0.6,
-            y: 0.2
-          }, this.props.x+':'+this.props.y+':'+this.props.z)
+          // React.createElement('text', {
+          //   style: {fill: "black", fontSize: 0.5, position: "relative", left: "-10px", cursor: "default"},
+          //   x: -0.6,
+          //   y: 0.2
+          // }, this.props.x+':'+this.props.y+':'+this.props.z)
         );
       }
     }, {

@@ -5,11 +5,11 @@ export const UnitTypes = Object.freeze({
   Idol: "Idol"
 })
 
-export const getCreature = (name, type, placeType, id, power, heals, initiative, level, unitState, status = []) => ({
+export const getCreature = (name, type, biom, id, power, heals, initiative, level, unitState, status = []) => ({
   id: id,
   name: name,
   type: type,
-  placeType: placeType,
+  biom: biom,
   power: power,
   heals: heals,
   initiative: initiative,
@@ -18,11 +18,11 @@ export const getCreature = (name, type, placeType, id, power, heals, initiative,
   status: status
 })
 
-export const getIdol = (name, type, placeType, id, power, heals, initiative, unitState, status = []) => ({
+export const getIdol = (name, type, biom, id, power, heals, initiative, unitState, status = []) => ({
   id: id,
   name: name,
   type: type,
-  placeType: placeType,
+  biom: biom,
   power: power,
   heals: heals,
   initiative: initiative,
@@ -30,10 +30,12 @@ export const getIdol = (name, type, placeType, id, power, heals, initiative, uni
   status: status
 })
 
-export const getUnitState = (unitId, playerId, point = null, isClickable = true, isInGame = false) => ({
+export const getUnitState = (unitId, playerId, point = null, isClickable = true, isInGame = false, isInFight = false, skippedTurn = false) => ({
   unitId: unitId,
   playerId: playerId,
   point: point,
   isClickable: isClickable,
-  isInGame: isInGame
+  isInGame: isInGame,
+  isInFight: isInFight,
+  skippedTurn: skippedTurn
 })
