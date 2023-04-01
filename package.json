@@ -1,6 +1,6 @@
 {
-  "name": "Overcoming",
-  "version": "0.1.0",
+  "name": "overcoming",
+  "version": "0.0.1",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
@@ -9,19 +9,27 @@
     "babel-cli": "^6.26.0",
     "babel-preset-zero": "^0.3.2",
     "boardgame.io": "^0.50.2",
+    "esm": "^3.2.25",
     "framer-motion": "^10.10.0",
+    "koa-static": "^5.0.0",
+    "ky": "^0.33.3",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
+    "react-device-detect": "^2.2.3",
     "react-dom": "^18.2.0",
+    "react-github-corner": "^2.5.0",
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node -r esm ./server.js",
+    "client": "react-scripts start",
+    "server": "node -r esm src/Server.js",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "temp": "babel-node --presets zero src/Server.js"
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

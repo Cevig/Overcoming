@@ -1,10 +1,9 @@
 const { Overcoming } = require("./game/Game");
 const Server = require('boardgame.io/server').Server;
-
-const port = 8000;
+import {GAME_SERVER_PORT} from "./config";
 
 const server = Server({
   games: [Overcoming]
 });
 
-server.run(port, () => console.log('Server running on port: ' + port));
+server.run(GAME_SERVER_PORT, () => console.log('Server running on port: ' + GAME_SERVER_PORT));
