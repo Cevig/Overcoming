@@ -2,7 +2,7 @@
 import {Server} from "boardgame.io/server";
 import path from "path";
 import serve from "koa-static";
-import {Overcoming} from "./src/game/game";
+import {Overcoming} from "./src/game/Game";
 
 const server = Server({ games: [Overcoming] });
 const PORT = process.env.PORT || 8000;
