@@ -15,7 +15,7 @@ export class LobbyAPI {
     const data = await this.api
       .post("create", { numPlayers: numPlayers })
       .json();
-    return data.gameID;
+    return data.matchID;
   }
 
   async joinRoom(roomID, username, userid) {

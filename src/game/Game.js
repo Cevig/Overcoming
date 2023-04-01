@@ -15,8 +15,10 @@ import {
   getUnitById,
   skipTurnIfNotActive
 } from "./helpers/Utils";
+import {GAME_NAME} from "../config";
 
 export const Overcoming = {
+  name: GAME_NAME,
   setup: setup,
   moves,
   phases: {
