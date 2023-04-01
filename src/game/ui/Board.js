@@ -1,6 +1,6 @@
 import React from 'react';
-import {HexGrid, Token} from './custom/myHex';
-import {createPoint, getInGameUnits, isSame} from '../utils';
+import {HexGrid, Token} from './HexGrid';
+import {createPoint, getInGameUnits, isSame} from '../helpers/Utils';
 import {UnitUI} from './UnitUI';
 import {motion} from 'framer-motion';
 

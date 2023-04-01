@@ -1,6 +1,6 @@
-import {createPoint} from "../utils";
-import {Biom, playerColors} from "../constants";
-import {getCreature, getIdol, getUnitState, UnitTypes} from "../Creatures/Unit";
+import {createPoint} from "../helpers/Utils";
+import {Biom, playerColors} from "../helpers/Constants";
+import {getCreature, getIdol, getUnitState, UnitTypes} from "../units/Unit";
 
 let unitId = 0;
 

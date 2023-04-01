@@ -5,9 +5,9 @@ import {
   getUnitById,
   isNotSame,
   isSame
-} from '../utils';
-import {startPositions} from "./setup";
-import {UnitTypes} from "../Creatures/Unit";
+} from '../helpers/Utils';
+import {startPositions} from "./Setup";
+import {UnitTypes} from "../units/Unit";
 
 export const moves = {
   selectNewUnit: ({G, ctx}, currentUnit) => {
@@ -60,7 +60,7 @@ export const moves = {
     const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     enemy.heals = enemy.heals - G.currentUnit.power
-    if (enemy.heals > 0 && enemy.type != UnitTypes.Ispolin) {
+    if (enemy.heals > 0 && enemy.type !== UnitTypes.Ispolin) {
       unit.heals = unit.heals - Math.trunc(enemy.power / 2)
     }
 

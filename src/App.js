@@ -1,6 +1,5 @@
-import React from 'react';
 import {Client} from 'boardgame.io/react';
-import {Overcoming} from "./game/game";
+import {Overcoming} from "./game/Game";
 import {Board} from "./game/ui/Board";
 
 const App = Client({

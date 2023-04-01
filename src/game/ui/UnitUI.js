@@ -1,5 +1,5 @@
 import React from 'react';
-import {playerColors} from "../constants";
+import {playerColors} from "../helpers/Constants";
 
 export class UnitUI extends React.Component {
   constructor(props) {

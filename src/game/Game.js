@@ -1,5 +1,5 @@
-import {moves} from './state/moves';
-import {setup} from './state/setup';
+import {moves} from './state/Moves';
+import {setup} from './state/Setup';
 import {
   cleanFightPhase,
   endFightPhase,
@@ -9,8 +9,12 @@ import {
   setFightOrder,
   setGridSize,
   setInFightUnits
-} from './state/postProcess';
-import {getInGameUnits, getUnitById, skipTurnIfNotActive} from "./utils";
+} from './state/PostProcess';
+import {
+  getInGameUnits,
+  getUnitById,
+  skipTurnIfNotActive
+} from "./helpers/Utils";
 
 export const Overcoming = {
   setup: setup,

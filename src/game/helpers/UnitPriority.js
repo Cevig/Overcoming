@@ -1,4 +1,4 @@
-import {Biom} from "../constants";
+import {Biom} from "./Constants";
 
 export const biomComparison = (biom1, biom2) => [
   { bioms: [Biom.Steppe, Biom.Forest], result: Biom.Forest },

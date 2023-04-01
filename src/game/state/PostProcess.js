@@ -1,7 +1,7 @@
-import {getInGameUnits, getNearestEnemy, isNotSame} from '../utils';
-import {playerColors} from '../constants';
-import {startPositions} from "./setup";
-import {biomComparison} from "./unitPriority";
+import {getInGameUnits, getNearestEnemy, isNotSame} from '../helpers/Utils';
+import {playerColors} from '../helpers/Constants';
+import {startPositions} from "./Setup";
+import {biomComparison} from "../helpers/UnitPriority";
 
 const setColorMap = G => {
   G.grid.colorMap = {
@@ -17,7 +17,7 @@ const setColorMap = G => {
 };
 
 export const setGridSize = G => {
-  if((G.moveOrder >= 2) && (G.moveOrder % 2 == 0)) {
+  if((G.moveOrder >= 2) && (G.moveOrder % 2 === 0)) {
     getInGameUnits(G, (unit) => {
       const point = unit.unitState.point
       const level = G.grid.levels
@@ -32,11 +32,11 @@ export const setGridSize = G => {
 }
 
 export const handleGameOver = G =>
-  (G.setupComplete == G.players.length) && ([...new Set(getInGameUnits(G).map(unit => unit.unitState.playerId))].length <= 1)
+  (G.setupComplete === G.players.length) && ([...new Set(getInGameUnits(G).map(unit => unit.unitState.playerId))].length <= 1)
 
 export const onGameOver = G => {
   const remainPlayers = [...new Set(getInGameUnits(G).map(unit => unit.unitState.playerId))]
-  G.winner = remainPlayers.length == 0 ? -1 : remainPlayers[0]
+  G.winner = remainPlayers.length === 0 ? -1 : remainPlayers[0]
   return G
 }
 

@@ -21,7 +21,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "temp": "babel-node --presets zero src/server.js"
+    "temp": "babel-node --presets zero src/Server.js"
   },
   "eslintConfig": {
     "extends": [
