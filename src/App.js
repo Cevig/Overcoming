@@ -57,7 +57,7 @@ const AppLocal =
   //   board: Board,
   //   // multiplayer: Local(),
   //   numPlayers: 2,
-  //   debug: false
+  //   debug: true
   // });
 0
 
