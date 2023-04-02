@@ -143,11 +143,11 @@ export function Board (props) {
         <div style={styles.move}>
           <button onClick={() => props.undo()}>Cancel</button>
         {props.ctx.phase === 'Setup' ?
-          <button onClick={props.moves.complete}>Complete</button>
+          <button onClick={() => props.moves.complete()}>Complete</button>
           : <span></span>
         }
         {props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") || (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage")) ?
-          <button onClick={props.moves.skipTurn}>Skip</button>
+          <button onClick={() => props.moves.skipTurn()}>Skip</button>
           : <span></span>
         }
         </div>

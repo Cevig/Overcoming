@@ -110,7 +110,7 @@ class Lobby extends Component {
         return (
           <div>
             <div className="player-item">
-              <a href className="player-item-edit"> (Edit) </a>
+              <span className="player-item-edit"> (Edit) </span>
               {player.name} - You
               <div className="player-ready"></div>
             </div>
