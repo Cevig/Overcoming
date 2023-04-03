@@ -3,6 +3,7 @@ import {HexGrid, Token} from './HexGrid';
 import {createPoint, getInGameUnits, isSame} from '../helpers/Utils';
 import {UnitUI} from './UnitUI';
 import {motion} from 'framer-motion';
+import {Link} from "react-router-dom";
 
 const style = {
   display: 'flex',
@@ -162,6 +163,7 @@ export function Board (props) {
               <div className="winner-popup">
                 <h2>Congratulations {props.G.winner === -1 ? "it's a draw" : props.G.players.find(p => p.id === props.G.winner).name}!</h2>
                 <p>You are the winner!</p>
+                <div className="btn btn-primary"><Link to={"/"}>Restart</Link></div>
               </div>
             </motion.div> :
             <div></div>

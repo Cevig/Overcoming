@@ -43,5 +43,6 @@ export const setup = () => ({
   availablePoints: [],
   setupComplete: 0,
   moveOrder: 0,
-  fightQueue: []
+  fightQueue: [],
+  winner: undefined
 });

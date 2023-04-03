@@ -203,8 +203,7 @@ class Lobby extends Component {
   getGameClient = () => {
     return (
       <GameClient
-        gameID={this.state.id}
-        players={this.state.joined}
+        matchID={this.state.id}
         playerID={String(this.state.myID)}
         credentials={this.state.userAuthToken}
       ></GameClient>

@@ -89,3 +89,36 @@ button {
   font-size: 24px;
   margin-bottom: 20px;
 }
+
+.btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn > a {
+  text-decoration: none;
+  font-size: 20px;
+  color: white;
+  text-transform: uppercase;
+}
+
+.btn-primary {
+  background-color: #405e0a;
+}
+
+.btn-primary:hover {
+  background-color: #0069d9;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}

@@ -2134,9 +2134,9 @@
     "@types/koa" "*"
 
 "@types/koa@*", "@types/koa@^2.13.4":
-  "integrity" "sha512-HSUOdzKz3by4fnqagwthW/1w/yJspTgppyyalPVbgZf8jQWvdIXcVW5h2DGtw4zYntOaeRGx49r1hxoPWrD4aA=="
-  "resolved" "https://registry.npmjs.org/@types/koa/-/koa-2.13.5.tgz"
-  "version" "2.13.5"
+  "integrity" "sha512-diYUfp/GqfWBAiwxHtYJ/FQYIXhlEhlyaU7lB/bWQrx4Il9lCET5UwpFy3StOAohfsxxvEQ11qIJgT1j2tfBvw=="
+  "resolved" "https://registry.npmjs.org/@types/koa/-/koa-2.13.6.tgz"
+  "version" "2.13.6"
   dependencies:
     "@types/accepts" "*"
     "@types/content-disposition" "*"
@@ -10649,7 +10649,7 @@
     "split-string" "^3.0.1"
 
 "setimmediate@^1.0.5":
-  "integrity" "sha1-KQy7Iy4waULX1+qbg3Mqt4VvgoU="
+  "integrity" "sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA=="
   "resolved" "https://registry.npmjs.org/setimmediate/-/setimmediate-1.0.5.tgz"
   "version" "1.0.5"
 
@@ -11234,9 +11234,9 @@
   "version" "0.1.0"
 
 "svelte@^3.41.0":
-  "integrity" "sha512-WMXEvF+RtAaclw0t3bPDTUe19pplMlfyKDsixbHQYgCWi9+O9VN0kXU1OppzrB9gPAvz4NALuoca2LfW2bOjTQ=="
-  "resolved" "https://registry.npmjs.org/svelte/-/svelte-3.57.0.tgz"
-  "version" "3.57.0"
+  "integrity" "sha512-brIBNNB76mXFmU/Kerm4wFnkskBbluBDCjx/8TcpYRb298Yh2dztS2kQ6bhtjMcvUhd5ynClfwpz5h2gnzdQ1A=="
+  "resolved" "https://registry.npmjs.org/svelte/-/svelte-3.58.0.tgz"
+  "version" "3.58.0"
 
 "svg-parser@^2.0.2":
   "integrity" "sha512-e4hG1hRwoOdRb37cIMSgzNsxyzKfayW6VOflrwvR+/bzrkyxY/31WkbgnQpgtrNp1SdpJvpUAGTa/ZoiPNDuRQ=="
