@@ -1,17 +1,23 @@
-import {createPoint} from "../helpers/Utils";
-import {Biom, playerColors} from "../helpers/Constants";
+import {createPoint, getPlayersNumber, shuffledBioms} from "../helpers/Utils";
+import {playerColors} from "../helpers/Constants";
 import {getCreature, getIdol, getUnitState, UnitTypes} from "../units/Unit";
 
 let unitId = 0;
 
-const createPlayer = (id, name, biom) => ({
+const createPlayer = (id, name, bioms) => ({
   id,
   name,
   units: [
-    getIdol(UnitTypes.Idol, UnitTypes.Idol, biom, unitId, 3, 7, 4, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, biom, unitId, 2, 4, 3, 1, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, biom, unitId, 2, 3, 5, 1, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Vestnick, UnitTypes.Vestnick, biom, unitId, 3, 2, 4, 1, getUnitState(unitId++, id)),
+    getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[0], unitId, 3, 7, 4, getUnitState(unitId++, id)),
+    getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[0], unitId, 3, 7, 4, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, bioms[0], unitId, 2, 4, 3, 1, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, bioms[0], unitId, 2, 3, 5, 1, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Vestnick, UnitTypes.Vestnick, bioms[0], unitId, 3, 2, 4, 1, getUnitState(unitId++, id)),
+    getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[1], unitId, 3, 7, 4, getUnitState(unitId++, id)),
+    getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[1], unitId, 3, 7, 4, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, bioms[1], unitId, 2, 4, 3, 1, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, bioms[1], unitId, 2, 3, 5, 1, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Vestnick, UnitTypes.Vestnick, bioms[1], unitId, 3, 2, 4, 1, getUnitState(unitId++, id))
   ],
   isInGame: true
 });
@@ -25,12 +31,7 @@ export const startPositions = [
 
 export const setup = () => ({
   currentUnit: null,
-  players: [
-    createPlayer(0, "Player 1", Biom.Jungle),
-    createPlayer(1, "Player 2", Biom.Forest)
-    // createPlayer(2),
-    // createPlayer(3)
-  ],
+  players: [...Array(getPlayersNumber()).keys()].map(num => createPlayer(num, `Player ${num+1}`, shuffledBioms[num])),
   grid: {
     levels: 4,
     colorMap: {

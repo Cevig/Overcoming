@@ -23,6 +23,7 @@ export const Overcoming = {
   moves,
   phases: {
     Setup: {
+      onBegin: ({ G, ctx }) => { G.players.splice(ctx.numPlayers); return G },
       moves: {
         selectNewUnit: moves.selectNewUnit,
         selectOldUnit: moves.selectOldUnit,

@@ -4,6 +4,7 @@ import {createPoint, getInGameUnits, isSame} from '../helpers/Utils';
 import {UnitUI} from './UnitUI';
 import {motion} from 'framer-motion';
 import {Link} from "react-router-dom";
+import {UnitTypes} from "../units/Unit";
 
 const style = {
   display: 'flex',
@@ -21,15 +22,24 @@ const styles = {
   moves: {
     display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'wrap'
   },
   move: {
     padding: 5,
     border: '1px solid black',
     backgroundColor: 'grey',
+    marginRight: 5,
+    flexBasis: '18%',
+    textAlign: 'center',
+    marginTop: 5
   },
   clickableMove: {
     cursor: 'pointer',
     backgroundColor: 'white',
+  },
+  biom: {
+    fontSize: 12,
+    marginLeft: 3
   }
 }
 const getCellColor_old = HexGrid.prototype._getCellColor;
@@ -136,7 +146,14 @@ export function Board (props) {
             {player ? player.units.map((unit, i) => {
               return unit.unitState.isInGame ?
                 <div style={styles.move} key={i}>{unit.name}</div>:
-                <div style={{ ...styles.move, ...styles.clickableMove }} onClick={() => props.moves.selectNewUnit(unit)} key={i}>{unit.name}</div>;
+                <div style={{ ...styles.move, ...styles.clickableMove }} onClick={() => props.moves.selectNewUnit(unit)} key={i}>{unit.name}
+                  {(unit.type !== UnitTypes.Idol) ?
+                    [...Array(unit.level).keys()].map(() => "*").join('') : ""
+                  }
+                  {(unit.type !== UnitTypes.Idol) ?
+                    <span style={styles.biom}>[{unit.biom}]</span>: ""
+                  }
+                </div>;
             }) : 0}
           </div>
         </div>

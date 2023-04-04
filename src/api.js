@@ -12,8 +12,9 @@ export class LobbyAPI {
     });
   }
   async createRoom(numPlayers) {
+    const payload = { numPlayers: numPlayers };
     const data = await this.api
-      .post("create", { numPlayers: numPlayers })
+      .post("create", { json: payload })
       .json();
     return data.matchID;
   }

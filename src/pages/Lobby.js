@@ -16,6 +16,7 @@ import TemplatePage from "./TemplatePage";
 
 // Constants
 import {APP_PRODUCTION, GAME_SERVER_URL, WEB_SERVER_URL} from "../config.js";
+import {getPlayersNumber, setPlayerNumber} from "../game/helpers/Utils";
 
 const api = new LobbyAPI();
 const server = APP_PRODUCTION
@@ -74,7 +75,9 @@ class Lobby extends Component {
           this.setState({
             joined: joinedPlayers,
           });
-          const myPlayerNum = joinedPlayers.length;
+          const notOrderedPlayer = [...Array(joinedPlayers.length).keys()].find(i => !joinedPlayers.some(p => p.id === i));
+          const myPlayerNum = notOrderedPlayer !== undefined ? notOrderedPlayer : joinedPlayers.length;
+          setPlayerNumber(players.length)
           this.joinRoom(myPlayerNum);
         },
         (error) => {
@@ -154,7 +157,7 @@ class Lobby extends Component {
     );
   };
   gameExistsView = () => {
-    const players = [0, 1];
+    const players = [...Array(getPlayersNumber()).keys()];
     const server = APP_PRODUCTION
       ? `https://${window.location.hostname}`
       : WEB_SERVER_URL;
@@ -210,7 +213,7 @@ class Lobby extends Component {
     );
   };
   render() {
-    if (this.state.joined.length === 2) {
+    if (this.state.joined.length === getPlayersNumber()) {
       return this.getGameClient();
     }
     return (

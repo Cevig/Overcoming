@@ -80,8 +80,8 @@ export const moves = {
   },
 
   complete: ({G, events}) => {
-    G.setupComplete++
     events.endTurn()
+    G.setupComplete++
   },
 
   skipTurn: ({ G }) => {

@@ -11,6 +11,8 @@ import JoinPage from "./pages/JoinPage";
 import {isMobile} from "react-device-detect";
 import MobileCover from "./pages/MobileCover";
 import {Debug} from "boardgame.io/debug";
+import {getPlayersNumber} from "./game/helpers/Utils";
+import SelectPlayersNumberPage from "./pages/SelectPlayersNumberPage";
 
 function App() {
   const history = useHistory();
@@ -21,6 +23,7 @@ function App() {
     game: Overcoming,
     board: Board,
     multiplayer: SocketIO({ server: server }),
+    numPlayers: getPlayersNumber(),
     debug: { impl: Debug }
   });
   const renderOverClient = () => {
@@ -35,6 +38,11 @@ function App() {
         path="/home"
         exact
         render={(props) => <HomePage {...props} history={history} />}
+      />
+      <Route
+        path="/new"
+        exact
+        render={(props) => <SelectPlayersNumberPage {...props} history={history} />}
       />
       <Route
         path="/join"
@@ -56,7 +64,7 @@ const AppLocal =
   //   game: Overcoming,
   //   board: Board,
   //   // multiplayer: Local(),
-  //   numPlayers: 2,
+  //   numPlayers: getPlayersNumber(),
   //   debug: true
   // });
 0

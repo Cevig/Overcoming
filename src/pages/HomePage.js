@@ -1,14 +1,11 @@
 import React, {Component} from "react";
 import "./styles/homePage.css";
-import {LobbyAPI} from "../api";
 import TemplatePage from "./TemplatePage";
 
 const info_texts = {
-  start: "Create a new room and invite your friend to join",
-  help: "Game rules and guide to playing Overcoming",
+  start: "Start new game",
   join: "Join a room using the room code",
 };
-const api = new LobbyAPI();
 class HomePage extends Component {
   state = {
     text: "",
@@ -31,28 +28,6 @@ class HomePage extends Component {
       text: "",
     });
   };
-  createGame = () => {
-    console.log("createGame");
-    if (this.state.loading) {
-      return;
-    } else {
-      this.setState({
-        loading: true,
-      });
-    }
-    api.createRoom(2).then(
-      (roomID) => {
-        const history = this.props.history;
-        console.log("Created room with roomID = ", roomID);
-        this.setState({ loading: false });
-        history.push("/lobby/" + roomID);
-      },
-      (err) => {
-        console.log(err);
-        this.setState({ loading: false });
-      }
-    );
-  };
   render() {
     const history = this.props.history;
     return (
@@ -64,7 +39,7 @@ class HomePage extends Component {
                 className="card start"
                 onMouseEnter={() => this.hoverIn("start")}
                 onMouseLeave={() => this.hoverOut()}
-                onClick={() => this.createGame()}
+                onClick={() => { history.push("/new") }}
               >
                 <div className="card-inside">
                   <h1>new game</h1>
@@ -74,9 +49,7 @@ class HomePage extends Component {
                 className="card join"
                 onMouseEnter={() => this.hoverIn("join")}
                 onMouseLeave={() => this.hoverOut()}
-                onClick={() => {
-                  history.push("/join");
-                }}
+                onClick={() => { history.push("/join"); }}
               >
                 <div className="card-inside">
                   <h1>join game</h1>
