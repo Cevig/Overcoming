@@ -51,12 +51,13 @@ export const moves = {
     G.availablePoints = []
   },
 
-  moveUnitOnBoard: ({G, ctx}, point) => {
+  moveUnitOnBoard: ({G, ctx, events}, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     unit.unitState.point = point
     unit.unitState.isClickable = false
     G.currentUnit = null
     G.availablePoints = []
+    events.endTurn()
   },
 
   attackTarget: ({G, ctx}, point) => {
@@ -87,15 +88,16 @@ export const moves = {
       G.setupComplete = G.setupComplete + 1
       events.endTurn()
     } else {
-      alert("You can't start battle without an Idol on the field")
+      console.log("You can't start battle without an Idol on the field")
     }
   },
 
-  skipTurn: ({ G }) => {
+  skipTurn: ({ G, events }) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     unit.unitState.isClickable = false
     G.currentUnit = null
     G.availablePoints = []
+    events.endTurn()
   },
 
   skipFightTurn: ({ G }) => {

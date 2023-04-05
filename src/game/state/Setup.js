@@ -1,4 +1,4 @@
-import {createPoint, getPlayersNumber, shuffledBioms} from "../helpers/Utils";
+import {createPoint, shuffledBioms} from "../helpers/Utils";
 import {playerColors} from "../helpers/Constants";
 import {getCreature, getIdol, getUnitState, UnitTypes} from "../units/Unit";
 
@@ -29,9 +29,9 @@ export const startPositions = [
   [createPoint(-3, 1, 2), createPoint(-2, 1, 1), createPoint(-2, 0, 2), createPoint(-3, 0, 3), createPoint(-4, 1, 3), createPoint(-4, 2, 2), createPoint(-3, 2, 1)]
 ]
 
-export const setup = (data, setupData) => ({
+export const setup = ({ ctx }) => ({
   currentUnit: null,
-  players: [...Array(getPlayersNumber()).keys()].map(num => createPlayer(num, `Player ${num+1}`, shuffledBioms[num])),
+  players: [...Array(ctx.numPlayers).keys()].map(num => createPlayer(num, `Player ${num+1}`, shuffledBioms[num])),
   grid: {
     levels: 4,
     colorMap: {

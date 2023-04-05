@@ -44,6 +44,7 @@ export const cleanFightPhase = G => {
   getInGameUnits(G).forEach(unit => {
     unit.unitState.isClickable = true
     unit.unitState.isInFight = false
+    unit.unitState.skippedTurn = false
   });
   G.moveOrder++;
   G.fightQueue = []

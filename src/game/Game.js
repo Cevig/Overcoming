@@ -23,7 +23,6 @@ export const Overcoming = {
   moves,
   phases: {
     Setup: {
-      onBegin: ({ G, ctx }) => { G.players.splice(ctx.numPlayers); return G },
       turn: {
         activePlayers: {
           currentPlayer: { stage: 'pickUnit' }
@@ -62,13 +61,12 @@ export const Overcoming = {
         activePlayers: {
           currentPlayer: { stage: 'pickUnitOnBoard' }
         },
-        maxMoves: 2,
         order: {
           first: ({ G, ctx }) => G.moveOrder % G.players.filter(p => p.isInGame).length,
           next: ({ G, ctx }) => (ctx.playOrderPos + 1) % G.players.filter(p => p.isInGame).length,
           playOrder: ({ G, ctx }) => G.players.filter(p => p.isInGame).map(p => p.id)
         },
-        onMove: ({ G, events }) => postProcess(G, events),
+        onMove: (data) => postProcess(data),
         stages: {
           pickUnitOnBoard: {
             moves: {
@@ -79,7 +77,7 @@ export const Overcoming = {
           placeUnitOnBoard: {
             moves: {
               moveUnitOnBoard: moves.moveUnitOnBoard,
-              skipTurn: { move: moves.skipTurn, noLimit: true }
+              skipTurn: moves.skipTurn
             },
             next: 'pickUnitOnBoard'
           }
@@ -96,12 +94,11 @@ export const Overcoming = {
         activePlayers: {
           currentPlayer: { stage: 'pickUnitForAttack' }
         },
-        maxMoves: 2,
         order: {
           first: ({ G }) => G.fightQueue[0].playerId,
           next: ({ G }) => G.fightQueue[0].playerId
         },
-        onMove: ({ G, events }) => postProcess(G, events),
+        onMove: (data) => postProcess(data),
         endIf: ({ G, ctx, events }) => (ctx.numMoves >= 2 ? {next: G.fightQueue.length > 1 ? G.fightQueue[1].playerId : G.fightQueue[0].playerId} : false),
         onEnd: ({ G, ctx, events }) => { if(G.fightQueue.length && getUnitById(G, G.fightQueue[0].unitId).unitState.isClickable === false) G.fightQueue.shift(); return G },
         stages: {
@@ -114,7 +111,7 @@ export const Overcoming = {
           makeDamage: {
             moves: {
               attackTarget: moves.attackTarget,
-              skipTurn: { move: moves.skipFightTurn, noLimit: true }
+              skipTurn: moves.skipFightTurn
             },
             next: 'pickUnitForAttack'
           }
