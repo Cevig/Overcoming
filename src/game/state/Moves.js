@@ -12,7 +12,10 @@ import {UnitTypes} from "../units/Unit";
 export const moves = {
   selectNewUnit: ({G, ctx}, currentUnit) => {
     if (G.players[ctx.currentPlayer].units.filter(unit => unit.unitState.isInGame === false).length > 0) {
-      G.availablePoints = startPositions[ctx.currentPlayer]
+      if (currentUnit.type === UnitTypes.Idol)
+        G.availablePoints = [startPositions[ctx.currentPlayer][0]]
+      else
+        G.availablePoints = startPositions[ctx.currentPlayer].slice(1, startPositions[ctx.currentPlayer].length)
       G.currentUnit = currentUnit
     }
   },
@@ -79,9 +82,13 @@ export const moves = {
     G.availablePoints = []
   },
 
-  complete: ({G, events}) => {
-    events.endTurn()
-    G.setupComplete++
+  complete: ({G, ctx, events}) => {
+    if (getInGameUnits(G, (unit) => (unit.unitState.playerId === +ctx.currentPlayer) && (unit.type === UnitTypes.Idol)).length > 0) {
+      G.setupComplete = G.setupComplete + 1
+      events.endTurn()
+    } else {
+      alert("You can't start battle without an Idol on the field")
+    }
   },
 
   skipTurn: ({ G }) => {

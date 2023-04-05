@@ -73,8 +73,8 @@ export const setFightOrder = (G, events) => {
     ).reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
 }
 
-export const postProcess = (G, events) => {
-  setColorMap(G)
-  events.endStage()
-  return G
+export const postProcess = ({ G, ctx, events, playerID }) => {
+  setColorMap(G);
+  if(ctx._activePlayersNumMoves[playerID] !== 0) events.endStage();
+  return G;
 };

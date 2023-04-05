@@ -24,11 +24,28 @@ export const Overcoming = {
   phases: {
     Setup: {
       onBegin: ({ G, ctx }) => { G.players.splice(ctx.numPlayers); return G },
-      moves: {
-        selectNewUnit: moves.selectNewUnit,
-        selectOldUnit: moves.selectOldUnit,
-        moveUnit: moves.moveUnit,
-        complete: moves.complete
+      turn: {
+        activePlayers: {
+          currentPlayer: { stage: 'pickUnit' }
+        },
+        stages: {
+          pickUnit: {
+            moves: {
+              selectNewUnit: moves.selectNewUnit,
+              selectOldUnit: moves.selectOldUnit,
+              complete: { move: moves.complete, noLimit: true }
+            },
+            next: 'placeUnit'
+          },
+          placeUnit: {
+            moves: {
+              moveUnit: moves.moveUnit,
+              complete: { move: moves.complete, noLimit: true }
+            },
+            next: 'pickUnit'
+          }
+        },
+        onMove: (data) => postProcess(data)
       },
       endIf: ({ G }) => (G.setupComplete === G.players.length),
       start: true,
@@ -62,7 +79,7 @@ export const Overcoming = {
           placeUnitOnBoard: {
             moves: {
               moveUnitOnBoard: moves.moveUnitOnBoard,
-              skipTurn: moves.skipTurn
+              skipTurn: { move: moves.skipTurn, noLimit: true }
             },
             next: 'pickUnitOnBoard'
           }
@@ -97,37 +114,13 @@ export const Overcoming = {
           makeDamage: {
             moves: {
               attackTarget: moves.attackTarget,
-              skipTurn: moves.skipFightTurn
+              skipTurn: { move: moves.skipFightTurn, noLimit: true }
             },
             next: 'pickUnitForAttack'
           }
         }
       }
     }
-  },
-  turn: {
-    minMoves: 2,
-    activePlayers: {
-      currentPlayer: { stage: 'pickUnit' }
-    },
-    stages: {
-      pickUnit: {
-        moves: {
-          selectNewUnit: moves.selectNewUnit,
-          selectOldUnit: moves.selectOldUnit,
-          complete: moves.complete
-        },
-        next: 'placeUnit'
-      },
-      placeUnit: {
-        moves: {
-          moveUnit: moves.moveUnit,
-          complete: moves.complete
-        },
-        next: 'pickUnit'
-      }
-    },
-    onMove: ({ G, events }) => postProcess(G, events)
   },
   endIf: ({ G }) => (handleGameOver(G)),
   onEnd: ({ G }) => { onGameOver(G) }
