@@ -154,7 +154,8 @@ export function Board (props) {
           }
         </HexGrid>
         <div>
-          <div>Player: {player ? player.id + 1 : "Unknown"}</div>
+          <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24}}>TURN: Player {player ? player.id + 1 : "Unknown"}</div>
+          <div>My Units: </div>
           <div style={styles.moves}>
             {props.playerID ? props.G.players.find(p => p.id === +props.playerID).units.map((unit, i) => {
               return unit.unitState.isInGame ?
@@ -177,9 +178,10 @@ export function Board (props) {
             }) : 0}
           </div>
         </div>
-        <div>phase: {props.ctx.phase}</div>
+        {/*<div>phase: {props.ctx.phase}</div>*/}
+        <div>Actions:</div>
         <div style={styles.move}>
-          <button onClick={() => props.undo()}>Cancel</button>
+          <button onClick={() => props.undo()}>Revert move</button>
         {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
           <button onClick={() => props.moves.removeUnit()}>Remove</button>
           : <span></span>
