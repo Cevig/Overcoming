@@ -47,7 +47,7 @@ export const moves = {
   },
 
   moveUnit: ({G, ctx}, point) => {
-    const unit = G.players[ctx.currentPlayer].units.find(unit => unit.id === G.currentUnit.id)
+    const unit = G.players[+ctx.currentPlayer].units.find(unit => unit.id === G.currentUnit.id)
     const unitToReplace = getInGameUnits(G).find(unit => isSame(point)(unit.unitState.point))
     if (unitToReplace !== undefined) {
       if (unit.unitState.point !== null) {

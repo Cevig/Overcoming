@@ -5,6 +5,8 @@ import {UnitUI} from './UnitUI';
 import {motion} from 'framer-motion';
 import {Link} from "react-router-dom";
 import {UnitTypes} from "../units/Unit";
+import {playerColors} from "../helpers/Constants";
+import {startPositions} from "../state/Setup";
 
 const style = {
   display: 'flex',
@@ -119,15 +121,26 @@ export function Board (props) {
   }
 
   const player = props.G.players.find(p => p.id === +props.ctx.currentPlayer);
+  let colorMapSecret = {}
+  if ((props.ctx.phase === "Setup") && (props.ctx.currentPlayer !== props.playerID)) {
+    colorMapSecret = {
+        [playerColors[0]]: startPositions[0],//red
+        [playerColors[1]]: startPositions[1],//blue
+        [playerColors[2]]: startPositions[2],//green
+        [playerColors[3]]: startPositions[3]//yellow
+      }
+  } else {
+    colorMapSecret = props.G.grid.colorMap;
+  }
   return (
       <div style={style}>
         <HexGrid
           levels={props.G.grid.levels}
           style={hexStyle}
-          colorMap={props.G.grid.colorMap}
+          colorMap={colorMapSecret}
           onClick={cellClicked}>
           {
-            getInGameUnits(props.G).map((unit, i) => {
+            getInGameUnits(props.G, (unit) => (props.ctx.phase === "Setup") ? props.playerID && (unit.unitState.playerId === +props.playerID) : true).map((unit, i) => {
               const { x, y, z } = unit.unitState.point;
               return <Token x={x} y={y} z={z} key={i}>
                 <UnitUI
@@ -143,7 +156,7 @@ export function Board (props) {
         <div>
           <div>Player: {player ? player.id + 1 : "Unknown"}</div>
           <div style={styles.moves}>
-            {player ? player.units.map((unit, i) => {
+            {props.playerID ? props.G.players.find(p => p.id === +props.playerID).units.map((unit, i) => {
               return unit.unitState.isInGame ?
                 <div style={styles.move} key={i}>{unit.name}
                   {(unit.type !== UnitTypes.Idol) ?
@@ -175,10 +188,14 @@ export function Board (props) {
           <button onClick={() => props.moves.complete()}>Complete</button>
           : <span></span>
         }
-        {props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") || (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage")) ?
+        {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ?
           <button onClick={() => props.moves.skipTurn()}>Skip</button>
           : <span></span>
         }
+          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage") ?
+            <button onClick={() => props.moves.skipTurn()}>Skip</button>
+            : <span></span>
+          }
         </div>
         {
           props.G.winner !== undefined ?

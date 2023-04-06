@@ -13,7 +13,7 @@ export class UnitUI extends React.Component {
     const unit = this.props.unit
     return (
       <g transform="scale(.0029,.0029)">
-        <g style={{cursor: unit.unitState.isClickable ? "pointer" : "not-allowed"}}>
+        <g style={{cursor: (unit.unitState.isClickable || this.props.markEnemy) ? "pointer" : "not-allowed"}}>
           <polygon strokeWidth="10" id="svg_3" points="7,299.9999694824219 178.5,597.0379638671875 521.5,597.0379638671875 693,299.9999694824219 521.5,2.96197509765625 178.5,2.96197509765625 " style={{
             stroke: playerColors[unit.unitState.playerId],
             fill: this.getUnitColor()

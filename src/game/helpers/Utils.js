@@ -75,3 +75,20 @@ const shuffleArray = (array) => {
   return array;
 }
 export const shuffledBioms = getPlayersBioms()
+
+export const endFightTurnCondition = (G, ctx) => {
+  if (ctx.numMoves >= 2) {
+    const unit = getUnitById(G, G.fightQueue[0].unitId)
+    if ((G.fightQueue.length > 1) && (unit !== undefined) && (unit.unitState.isClickable === false)) {
+      return {next: (G.fightQueue[1].playerId).toString()}
+    } else {
+      return {next: (G.fightQueue[0].playerId).toString()}
+    }
+  } else return false
+}
+
+export const onEndFightTurn = G => {
+  if(G.fightQueue.length && getUnitById(G, G.fightQueue[0].unitId).unitState.isClickable === false)
+    G.fightQueue.shift();
+  return G
+}

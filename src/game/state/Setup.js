@@ -10,8 +10,8 @@ const createPlayer = (id, name, bioms) => ({
   units: [
     getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[0], unitId, 3, 7, 4, getUnitState(unitId++, id)),
     getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[0], unitId, 3, 7, 4, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, bioms[0], unitId, 2, 4, 3, 1, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, bioms[0], unitId, 2, 3, 5, 1, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, bioms[0], unitId, 2, 4, 3, 3, getUnitState(unitId++, id)),
+    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, bioms[0], unitId, 2, 3, 5, 2, getUnitState(unitId++, id)),
     getCreature(UnitTypes.Vestnick, UnitTypes.Vestnick, bioms[0], unitId, 3, 2, 4, 1, getUnitState(unitId++, id)),
     getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[1], unitId, 3, 7, 4, getUnitState(unitId++, id)),
     getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[1], unitId, 3, 7, 4, getUnitState(unitId++, id)),

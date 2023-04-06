@@ -11,8 +11,9 @@ import {
   setInFightUnits
 } from './state/PostProcess';
 import {
+  endFightTurnCondition,
   getInGameUnits,
-  getUnitById,
+  onEndFightTurn,
   skipTurnIfNotActive
 } from "./helpers/Utils";
 import {GAME_NAME} from "../config";
@@ -100,8 +101,8 @@ export const Overcoming = {
           next: ({ G }) => G.fightQueue[0].playerId
         },
         onMove: (data) => postProcess(data),
-        endIf: ({ G, ctx, events }) => (ctx.numMoves >= 2 ? {next: G.fightQueue.length > 1 ? G.fightQueue[1].playerId : G.fightQueue[0].playerId} : false),
-        onEnd: ({ G, ctx, events }) => { if(G.fightQueue.length && getUnitById(G, G.fightQueue[0].unitId).unitState.isClickable === false) G.fightQueue.shift(); return G },
+        endIf: ({ G, ctx }) => (endFightTurnCondition(G, ctx)),
+        onEnd: ({ G }) => { onEndFightTurn(G) },
         stages: {
           pickUnitForAttack: {
             moves: {
