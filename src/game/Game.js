@@ -39,6 +39,7 @@ export const Overcoming = {
           placeUnit: {
             moves: {
               moveUnit: moves.moveUnit,
+              removeUnit: moves.removeUnit,
               complete: { move: moves.complete, noLimit: true }
             },
             next: 'pickUnit'

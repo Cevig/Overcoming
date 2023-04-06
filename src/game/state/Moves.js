@@ -19,8 +19,11 @@ export const moves = {
       G.currentUnit = currentUnit
     }
   },
-  selectOldUnit: ({ G }, currentUnit) => {
-    G.availablePoints = getNeighbors(currentUnit.unitState.point)
+  selectOldUnit: ({ G, ctx }, currentUnit) => {
+    if (currentUnit.type === UnitTypes.Idol)
+      G.availablePoints = [startPositions[ctx.currentPlayer][0]]
+    else
+      G.availablePoints = startPositions[ctx.currentPlayer].slice(1, startPositions[ctx.currentPlayer].length)
     G.currentUnit = currentUnit
   },
 
@@ -44,10 +47,26 @@ export const moves = {
   },
 
   moveUnit: ({G, ctx}, point) => {
-    const unit = G.players[ctx.currentPlayer].units.filter(unit => unit.id === G.currentUnit.id)[0]
+    const unit = G.players[ctx.currentPlayer].units.find(unit => unit.id === G.currentUnit.id)
+    const unitToReplace = getInGameUnits(G).find(unit => isSame(point)(unit.unitState.point))
+    if (unitToReplace !== undefined) {
+      if (unit.unitState.point !== null) {
+        unitToReplace.unitState.point = unit.unitState.point
+      } else {
+        unitToReplace.unitState.point = null
+        unitToReplace.unitState.isInGame = false
+      }
+    }
     unit.unitState.point = point
     unit.unitState.isInGame = true
     G.currentUnit = null
+    G.availablePoints = []
+  },
+
+  removeUnit: ({G, ctx}) => {
+    const unit = G.players[ctx.currentPlayer].units.find(unit => unit.id === G.currentUnit.id)
+    unit.unitState.point = null
+    unit.unitState.isInGame = false
     G.availablePoints = []
   },
 
@@ -84,12 +103,12 @@ export const moves = {
   },
 
   complete: ({G, ctx, events}) => {
-    if (getInGameUnits(G, (unit) => (unit.unitState.playerId === +ctx.currentPlayer) && (unit.type === UnitTypes.Idol)).length > 0) {
-      G.setupComplete = G.setupComplete + 1
+    // if (getInGameUnits(G, (unit) => (unit.unitState.playerId === +ctx.currentPlayer) && (unit.type === UnitTypes.Idol)).length > 0) {
+      G.setupComplete++
       events.endTurn()
-    } else {
-      console.log("You can't start battle without an Idol on the field")
-    }
+    // } else {
+    //   console.log("You can't start battle without an Idol on the field")
+    // }
   },
 
   skipTurn: ({ G, events }) => {

@@ -160,6 +160,10 @@ export function Board (props) {
         <div>phase: {props.ctx.phase}</div>
         <div style={styles.move}>
           <button onClick={() => props.undo()}>Cancel</button>
+        {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
+          <button onClick={() => props.moves.removeUnit()}>Remove</button>
+          : <span></span>
+        }
         {props.ctx.phase === 'Setup' ?
           <button onClick={() => props.moves.complete()}>Complete</button>
           : <span></span>
