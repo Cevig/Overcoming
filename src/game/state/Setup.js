@@ -1,6 +1,6 @@
 import {createPoint, shuffledBioms} from "../helpers/Utils";
-import {playerColors} from "../helpers/Constants";
-import {getCreature, getIdol, getUnitState, UnitTypes} from "../units/Unit";
+import {Biom, playerColors} from "../helpers/Constants";
+import {createUnitObject, UnitTypes} from "../units/Unit";
 
 let unitId = 0;
 
@@ -8,16 +8,17 @@ const createPlayer = (id, name, bioms) => ({
   id,
   name,
   units: [
-    getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[0], unitId, 3, 7, 4, getUnitState(unitId++, id)),
-    getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[0], unitId, 3, 7, 4, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, bioms[0], unitId, 2, 4, 3, 3, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, bioms[0], unitId, 2, 3, 5, 2, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Vestnick, UnitTypes.Vestnick, bioms[0], unitId, 3, 2, 4, 1, getUnitState(unitId++, id)),
-    getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[1], unitId, 3, 7, 4, getUnitState(unitId++, id)),
-    getIdol(UnitTypes.Idol, UnitTypes.Idol, bioms[1], unitId, 3, 7, 4, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Prispeshnick, UnitTypes.Prispeshnick, bioms[1], unitId, 2, 4, 3, 1, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Ispolin, UnitTypes.Ispolin, bioms[1], unitId, 2, 3, 5, 1, getUnitState(unitId++, id)),
-    getCreature(UnitTypes.Vestnick, UnitTypes.Vestnick, bioms[1], unitId, 3, 2, 4, 1, getUnitState(unitId++, id))
+    createUnitObject(unitId++, id, bioms[0]),
+    createUnitObject(unitId++, id, bioms[0], UnitTypes.Idol, 1),
+    createUnitObject(unitId++, id, bioms[0], UnitTypes.Prispeshnick),
+    createUnitObject(unitId++, id, bioms[0], UnitTypes.Ispolin),
+    createUnitObject(unitId++, id, bioms[0], UnitTypes.Vestnick),
+
+    createUnitObject(unitId++, id, bioms[1]),
+    createUnitObject(unitId++, id, bioms[1], UnitTypes.Idol, 1),
+    createUnitObject(unitId++, id, bioms[1], UnitTypes.Prispeshnick),
+    createUnitObject(unitId++, id, bioms[1], UnitTypes.Ispolin),
+    createUnitObject(unitId++, id, bioms[1], UnitTypes.Vestnick)
   ],
   isInGame: true
 });
@@ -45,5 +46,8 @@ export const setup = ({ ctx }) => ({
   setupComplete: 0,
   moveOrder: 0,
   fightQueue: [],
-  winner: undefined
+  winner: undefined,
+  stp: createUnitObject(1, 1, Biom.Steppe, UnitTypes.Prispeshnick),
+  stp1: createUnitObject(1, 2, Biom.Steppe, UnitTypes.Prispeshnick),
+  stp2: createUnitObject(1, 3, Biom.Steppe, UnitTypes.Prispeshnick)
 });
