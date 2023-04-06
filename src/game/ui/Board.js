@@ -145,7 +145,14 @@ export function Board (props) {
           <div style={styles.moves}>
             {player ? player.units.map((unit, i) => {
               return unit.unitState.isInGame ?
-                <div style={styles.move} key={i}>{unit.name}</div>:
+                <div style={styles.move} key={i}>{unit.name}
+                  {(unit.type !== UnitTypes.Idol) ?
+                    [...Array(unit.level).keys()].map(() => "*").join('') : ""
+                  }
+                  {(unit.type !== UnitTypes.Idol) ?
+                    <span style={styles.biom}>[{unit.biom}]</span>: ""
+                  }
+                </div>:
                 <div style={{ ...styles.move, ...styles.clickableMove }} onClick={() => props.moves.selectNewUnit(unit)} key={i}>{unit.name}
                   {(unit.type !== UnitTypes.Idol) ?
                     [...Array(unit.level).keys()].map(() => "*").join('') : ""
@@ -184,7 +191,10 @@ export function Board (props) {
               <div className="winner-popup">
                 <h2>Congratulations {props.G.winner === -1 ? "it's a draw" : props.G.players.find(p => p.id === props.G.winner).name}!</h2>
                 <p>You are the winner!</p>
-                <div className="btn btn-primary"><Link to={"/"}>Restart</Link></div>
+                {props.isMultiplayer ?
+                  <div className="btn btn-primary"><Link to={"/"}>Restart</Link></div> :
+                  <div className="btn btn-primary" onClick={() => props.reset()}>Restart</div>
+                }
               </div>
             </motion.div> :
             <div></div>
