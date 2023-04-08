@@ -41,7 +41,7 @@ class Lobby extends Component {
   }
   componentDidMount() {
     this.checkRoomStateAndJoin();
-    this.interval = setInterval(this.checkRoomState, 1000);
+    this.interval = setInterval(this.checkRoomState, 2000);
     window.addEventListener("beforeunload", this.cleanup.bind(this));
   }
   cleanup() {
@@ -55,10 +55,13 @@ class Lobby extends Component {
   joinRoom = (player_no) => {
     const username = "Player " + player_no;
     if (this.state.id) {
-      api.joinRoom(this.state.id, username, player_no).then(
+      const metadata = (Math.random() + 1).toString(36).substring(7);
+      localStorage.setItem("metadata", metadata);
+      api.joinRoom(this.state.id, username, player_no, metadata).then(
         (authToken) => {
           console.log("Joined room as player ", player_no);
           this.setState({ myID: player_no, userAuthToken: authToken });
+          localStorage.setItem("localAuth", authToken);
         },
         (error) => {
           console.log(error);
@@ -76,9 +79,15 @@ class Lobby extends Component {
             joined: joinedPlayers,
           });
           const notOrderedPlayer = [...Array(joinedPlayers.length).keys()].find(i => !joinedPlayers.some(p => p.id === i));
+
+
+          const sykaConnection = players.find(p => (p.isConnected === true) && (p.data === localStorage.getItem("metadata")))
+          if (sykaConnection !== undefined) {
+            api.leaveRoom(this.state.id, sykaConnection.id, localStorage.getItem("localAuth"));
+          }
           const myPlayerNum = notOrderedPlayer !== undefined ? notOrderedPlayer : joinedPlayers.length;
           setPlayerNumber(players.length)
-          this.joinRoom(myPlayerNum);
+          this.joinRoom(sykaConnection !== undefined ? sykaConnection.id : myPlayerNum);
         },
         (error) => {
           console.log("room does not exist");
