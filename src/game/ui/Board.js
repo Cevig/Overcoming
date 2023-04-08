@@ -157,7 +157,7 @@ export function Board (props) {
           <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24}}>TURN: Player {player ? player.id + 1 : "Unknown"}</div>
           <div>My Units: </div>
           <div style={styles.moves}>
-            {props.playerID ? props.G.players.find(p => p.id === +props.playerID).units.map((unit, i) => {
+            {props.playerID ? props.G.players.find(p => p.id === +props.playerID) ? props.G.players.find(p => p.id === +props.playerID).units.map((unit, i) => {
               return unit.unitState.isInGame ?
                 <div style={styles.move} key={i}>{unit.name}
                   {(unit.type !== UnitTypes.Idol) ?
@@ -175,7 +175,7 @@ export function Board (props) {
                     <span style={styles.biom}>[{unit.biom}]</span>: ""
                   }
                 </div>;
-            }) : 0}
+            }) : 0 : 0}
           </div>
         </div>
         {/*<div>phase: {props.ctx.phase}</div>*/}
