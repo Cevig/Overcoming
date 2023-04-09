@@ -8,6 +8,11 @@ import {UJungle} from "./Jungle";
 import {UWater} from "./Water";
 import {UMash} from "./Mash";
 import {UGeysers} from "./Geysers";
+import {
+  handleFreezeEffectOnAttack,
+  handlePolydnicaSurroundings,
+  handleWholeness
+} from "../state/UnitSkills";
 
 export const UnitTypes = Object.freeze({
   Prispeshnick: "Prispeshnick",
@@ -16,7 +21,7 @@ export const UnitTypes = Object.freeze({
   Idol: "Idol"
 })
 
-export const getCreature = (name, type, biom, id, power, heals, initiative, level, unitState, status = []) => ({
+export const getCreature = (name, type, biom, id, power, heals, initiative, level, unitState, abilities = JSON.parse(JSON.stringify(UnitAbilities)), status = []) => ({
   id: id,
   name: name,
   type: type,
@@ -26,10 +31,11 @@ export const getCreature = (name, type, biom, id, power, heals, initiative, leve
   initiative: initiative,
   level: level,
   unitState: unitState,
+  abilities: abilities,
   status: status
 })
 
-export const getIdol = (name, biom, id, power, heals, initiative, unitState, status = []) => ({
+export const getIdol = (name, biom, id, power, heals, initiative, unitState, status = [], abilities = []) => ({
   id: id,
   name: name,
   type: UnitTypes.Idol,
@@ -38,77 +44,95 @@ export const getIdol = (name, biom, id, power, heals, initiative, unitState, sta
   heals: heals,
   initiative: initiative,
   unitState: unitState,
+  abilities: abilities,
   status: status
 })
 
-export const getUnitState = (unitId, playerId, point = null, isClickable = true, isInGame = false, isInFight = false, skippedTurn = false) => ({
+export const getUnitState = (unitId, playerId, point = null, isClickable = true, isInGame = false, isInFight = false, skippedTurn = false, isCounterAttacked = false) => ({
   unitId: unitId,
   playerId: playerId,
   point: point,
   isClickable: isClickable,
   isInGame: isInGame,
   isInFight: isInFight,
-  skippedTurn: skippedTurn
+  skippedTurn: skippedTurn,
+  isCounterAttacked: false
 })
 
 export const createUnitObject = (...data) => {
   const [id, playerId, biom, type = UnitTypes.Idol, pos = 0, level = 1] = data
   const unitsTree = {
     [Biom.Steppe]: {
-      [UnitTypes.Prispeshnick]: [USteppe.getPolydnica(id, playerId, level)],
-      [UnitTypes.Ispolin]: [USteppe.getMara(id, playerId, level)],
-      [UnitTypes.Vestnick]: [USteppe.getLetavica(id, playerId, level)],
-      [UnitTypes.Idol]: [USteppe.getUrka(id, playerId), USteppe.getViy(id, playerId)]
+      [UnitTypes.Prispeshnick]: [USteppe.getPolydnica],
+      [UnitTypes.Ispolin]: [USteppe.getMara],
+      [UnitTypes.Vestnick]: [USteppe.getLetavica],
+      [UnitTypes.Idol]: [USteppe.getUrka, USteppe.getViy]
     },
     [Biom.Forest]: {
-      [UnitTypes.Prispeshnick]: [UForest.getLesavka(id, playerId, level)],
-      [UnitTypes.Ispolin]: [UForest.getBereginya(id, playerId, level)],
-      [UnitTypes.Vestnick]: [UForest.getSirin(id, playerId, level)],
-      [UnitTypes.Idol]: [UForest.getAbasu(id, playerId), UForest.getChygayster(id, playerId)]
+      [UnitTypes.Prispeshnick]: [UForest.getLesavka],
+      [UnitTypes.Ispolin]: [UForest.getBereginya],
+      [UnitTypes.Vestnick]: [UForest.getSirin],
+      [UnitTypes.Idol]: [UForest.getAbasu, UForest.getChygayster]
     },
     [Biom.Mountains]: {
-      [UnitTypes.Prispeshnick]: [UMountains.getBeytir(id, playerId, level)],
-      [UnitTypes.Ispolin]: [UMountains.getGarzyk(id, playerId, level)],
-      [UnitTypes.Vestnick]: [UMountains.getVeshizaSoroka(id, playerId, level)],
-      [UnitTypes.Idol]: [UMountains.getPsoglav(id, playerId), UMountains.getHala(id, playerId)]
+      [UnitTypes.Prispeshnick]: [UMountains.getBeytir],
+      [UnitTypes.Ispolin]: [UMountains.getGarzyk],
+      [UnitTypes.Vestnick]: [UMountains.getVeshizaSoroka],
+      [UnitTypes.Idol]: [UMountains.getPsoglav, UMountains.getHala]
     },
     [Biom.Desert]: {
-      [UnitTypes.Prispeshnick]: [UDesert.getAmfisbena(id, playerId, level)],
-      [UnitTypes.Ispolin]: [UDesert.getObajifo(id, playerId, level)],
-      [UnitTypes.Vestnick]: [UDesert.getAdze(id, playerId, level)],
-      [UnitTypes.Idol]: [UDesert.getSfinks(id, playerId), UDesert.getVasilisk(id, playerId)]
+      [UnitTypes.Prispeshnick]: [UDesert.getAmfisbena],
+      [UnitTypes.Ispolin]: [UDesert.getObajifo],
+      [UnitTypes.Vestnick]: [UDesert.getAdze],
+      [UnitTypes.Idol]: [UDesert.getSfinks, UDesert.getVasilisk]
     },
     [Biom.Tundra]: {
-      [UnitTypes.Prispeshnick]: [UTundra.getLedyanoyJack(id, playerId, level)],
-      [UnitTypes.Ispolin]: [UTundra.getBonakon(id, playerId, level)],
-      [UnitTypes.Vestnick]: [UTundra.getPlanetnick(id, playerId, level)],
-      [UnitTypes.Idol]: [UTundra.getMedvedOboroten(id, playerId), UTundra.getMarena(id, playerId)]
+      [UnitTypes.Prispeshnick]: [UTundra.getLedyanoyJack],
+      [UnitTypes.Ispolin]: [UTundra.getBonakon],
+      [UnitTypes.Vestnick]: [UTundra.getPlanetnick],
+      [UnitTypes.Idol]: [UTundra.getMedvedOboroten, UTundra.getMarena]
     },
     [Biom.Jungle]: {
-      [UnitTypes.Prispeshnick]: [UJungle.getBlemmii(id, playerId, level)],
-      [UnitTypes.Ispolin]: [UJungle.getPetsyhos(id, playerId, level)],
-      [UnitTypes.Vestnick]: [UJungle.getKaiery(id, playerId, level)],
-      [UnitTypes.Idol]: [UJungle.getEpoko(id, playerId), UJungle.getAdjatar(id, playerId)]
+      [UnitTypes.Prispeshnick]: [UJungle.getBlemmii],
+      [UnitTypes.Ispolin]: [UJungle.getPetsyhos],
+      [UnitTypes.Vestnick]: [UJungle.getKaiery],
+      [UnitTypes.Idol]: [UJungle.getEpoko, UJungle.getAdjatar]
     },
     [Biom.Water]: {
-      [UnitTypes.Prispeshnick]: [UWater.getLerneyskiyRak(id, playerId, level)],
-      [UnitTypes.Ispolin]: [UWater.getBykavaz(id, playerId, level)],
-      [UnitTypes.Vestnick]: [UWater.getAidahar(id, playerId, level)],
-      [UnitTypes.Idol]: [UWater.getBalor(id, playerId), UWater.getVodyanoi(id, playerId)]
+      [UnitTypes.Prispeshnick]: [UWater.getLerneyskiyRak],
+      [UnitTypes.Ispolin]: [UWater.getBykavaz],
+      [UnitTypes.Vestnick]: [UWater.getAidahar],
+      [UnitTypes.Idol]: [UWater.getBalor, UWater.getVodyanoi]
     },
     [Biom.Mash]: {
-      [UnitTypes.Prispeshnick]: [UMash.getMohovik(id, playerId, level)],
-      [UnitTypes.Ispolin]: [UMash.getDrekavaz(id, playerId, level)],
-      [UnitTypes.Vestnick]: [UMash.getMavka(id, playerId, level)],
-      [UnitTypes.Idol]: [UMash.getBegemot(id, playerId), UMash.getFekst(id, playerId)]
+      [UnitTypes.Prispeshnick]: [UMash.getMohovik],
+      [UnitTypes.Ispolin]: [UMash.getDrekavaz],
+      [UnitTypes.Vestnick]: [UMash.getMavka],
+      [UnitTypes.Idol]: [UMash.getBegemot, UMash.getFekst]
     },
     [Biom.Geysers]: {
-      [UnitTypes.Prispeshnick]: [UGeysers.getHimera(id, playerId, level)],
-      [UnitTypes.Ispolin]: [UGeysers.getAly(id, playerId, level)],
-      [UnitTypes.Vestnick]: [UGeysers.getRarog(id, playerId, level)],
-      [UnitTypes.Idol]: [UGeysers.getCherufe(id, playerId), UGeysers.getJarPtiza(id, playerId)]
+      [UnitTypes.Prispeshnick]: [UGeysers.getHimera],
+      [UnitTypes.Ispolin]: [UGeysers.getAly],
+      [UnitTypes.Vestnick]: [UGeysers.getRarog],
+      [UnitTypes.Idol]: [UGeysers.getCherufe, UGeysers.getJarPtiza]
     }
   }
 
-  return unitsTree[biom][type][pos]
+  return unitsTree[biom][type][pos](id, playerId, level)
 }
+
+export const UnitAbilities = {
+  onMove: {
+    game: [],
+    target: []
+  },
+  statUpdates: {
+    game: [],
+    handlers: {
+      attack: [],
+      defence: []
+    }
+  }
+}
+
+

@@ -1,7 +1,8 @@
-import {getInGameUnits, getNearestEnemy, isNotSame} from '../helpers/Utils';
+import {getInGameUnits, getNearestEnemies, isNotSame} from '../helpers/Utils';
 import {playerColors} from '../helpers/Constants';
 import {startPositions} from "./Setup";
 import {biomComparison} from "../helpers/UnitPriority";
+import {handlePositioningOnMoveActions} from "./GameActions";
 
 const setColorMap = G => {
   G.grid.colorMap = {
@@ -22,7 +23,7 @@ export const setGridSize = G => {
       const point = unit.unitState.point
       const level = G.grid.levels
       return (Math.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z)) === level) || (point.y === level-1) || (point.z === -(level-1))
-    }).forEach(unit => unit.unitState.isInGame = false)
+    }).forEach(unit => unit.unitState.isInGame = false) // (UNIT DIES)
     G.players.forEach(p => {
       if (p.units.every(unit => unit.unitState.isInGame === false)) p.isInGame = false
     })
@@ -45,6 +46,7 @@ export const cleanFightPhase = G => {
     unit.unitState.isClickable = true
     unit.unitState.isInFight = false
     unit.unitState.skippedTurn = false
+    unit.unitState.isCounterAttacked = false
   });
   G.moveOrder++;
   G.fightQueue = []
@@ -56,7 +58,7 @@ export const endFightPhase = G =>
 
 export const setInFightUnits = G => {
   getInGameUnits(G).forEach(unit => {
-    if(getNearestEnemy(G, unit.unitState).length > 0) {
+    if(getNearestEnemies(G, unit.unitState).length > 0) {
       unit.unitState.isInFight = true
     } else {
       unit.unitState.isInFight = false
@@ -77,5 +79,9 @@ export const setFightOrder = (G, events) => {
 export const postProcess = ({ G, ctx, events, playerID }) => {
   setColorMap(G);
   if(ctx._activePlayersNumMoves[playerID] !== 0) events.endStage();
+
+  if (ctx.phase !== 'Setup') {
+    handlePositioningOnMoveActions({ G, ctx, events, playerID })
+  }
   return G;
 };

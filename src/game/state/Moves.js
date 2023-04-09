@@ -1,13 +1,17 @@
 import {
   getInGameUnits,
-  getNearestEnemy,
+  getNearestEnemies,
   getNeighbors,
   getUnitById,
+  hasStatus,
   isNotSame,
-  isSame
+  isSame,
+  removeStatus,
+  resolveUnitsInteraction
 } from '../helpers/Utils';
 import {startPositions} from "./Setup";
 import {UnitTypes} from "../units/Unit";
+import {DamageType, UnitStatus} from "../helpers/Constants";
 
 export const moves = {
   selectNewUnit: ({G, ctx}, currentUnit) => {
@@ -28,21 +32,24 @@ export const moves = {
   },
 
   selectUnitOnBoard: ({ G, ctx }, currentUnit) => {
-    const enemies = getNearestEnemy(G, currentUnit.unitState)
-    G.availablePoints = getNeighbors(currentUnit.unitState.point)
-      .filter(point =>
-        getInGameUnits(G).every(unit => isNotSame(unit.unitState.point)(point))
-      ).filter(point => {
-        if (enemies.length > 0) {
-          const surroundings = getNeighbors(point)
-          return enemies.every(enemy => surroundings.find(isSame(enemy.unitState.point)) !== undefined)
-        } else return true
-      })
+    const enemies = getNearestEnemies(G, currentUnit.unitState)
+    if (hasStatus(currentUnit, UnitStatus.Freeze)) {
+      G.availablePoints = []
+    } else {
+      G.availablePoints = getNeighbors(currentUnit.unitState.point)
+        .filter(point => getInGameUnits(G).every(unit => isNotSame(unit.unitState.point)(point)))
+        .filter(point => {
+          if (enemies.length > 0) {
+            const surroundings = getNeighbors(point)
+            return enemies.every(enemy => surroundings.find(isSame(enemy.unitState.point)) !== undefined)
+          } else return true
+        })
+    }
     G.currentUnit = currentUnit
   },
 
   selectUnitForAttack: ({ G, ctx }, currentUnit) => {
-    G.availablePoints = getNearestEnemy(G, currentUnit.unitState).map(unit => unit.unitState.point)
+    G.availablePoints = getNearestEnemies(G, currentUnit.unitState).map(unit => unit.unitState.point)
     G.currentUnit = currentUnit
   },
 
@@ -81,15 +88,33 @@ export const moves = {
 
   attackTarget: ({G, ctx}, point) => {
     const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
-    const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
-    enemy.heals = enemy.heals - G.currentUnit.power
-    if (enemy.heals > 0 && enemy.type !== UnitTypes.Ispolin) {
-      unit.heals = unit.heals - Math.trunc(enemy.power / 2)
+    const unit = getUnitById(G, G.currentUnit.id)
+
+    resolveUnitsInteraction({G: G, ctx: ctx}, {
+      currentUnit: unit,
+      enemy: enemy,
+      updates: {
+        damage: unit.power,
+        damageType: DamageType.Default,
+      }
+    })
+
+    if (enemy.heals > 0 && enemy.type !== UnitTypes.Ispolin && enemy.unitState.isCounterAttacked === false) {
+      enemy.unitState.isCounterAttacked = true
+
+      resolveUnitsInteraction({G: G, ctx: ctx}, {
+        currentUnit: enemy,
+        enemy: unit,
+        updates: {
+          damage: Math.trunc(enemy.power / 2),
+          damageType: DamageType.Counter,
+        }
+      })
     }
 
     [unit, enemy].forEach(u => {
       if(u.heals <= 0) {
-        u.unitState.isInGame = false
+        u.unitState.isInGame = false // (UNIT DIES)
         G.fightQueue.forEach((unitInQ, i, q) => {
           if(unitInQ.unitId === u.id) {
             q.splice(i, 1);
@@ -105,6 +130,7 @@ export const moves = {
   complete: ({G, ctx, events}) => {
     // if (getInGameUnits(G, (unit) => (unit.unitState.playerId === +ctx.currentPlayer) && (unit.type === UnitTypes.Idol)).length > 0) {
       G.setupComplete++
+      G.availablePoints = []
       events.endTurn()
     // } else {
     //   console.log("You can't start battle without an Idol on the field")
@@ -112,7 +138,8 @@ export const moves = {
   },
 
   skipTurn: ({ G, events }) => {
-    const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
+    const unit = getUnitById(G, G.currentUnit.id)
+    removeStatus(unit, UnitStatus.Freeze)
     unit.unitState.isClickable = false
     G.currentUnit = null
     G.availablePoints = []

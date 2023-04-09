@@ -1,18 +1,48 @@
 import {Biom} from "../helpers/Constants";
-import {getCreature, getIdol, getUnitState, UnitTypes} from "./Unit";
+import {
+  getCreature,
+  getIdol,
+  getUnitState,
+  UnitAbilities,
+  UnitTypes
+} from "./Unit";
+
+// import "scope-extensions-js"
 
 export class USteppe {
+
+  // G = undefined
+  // ctx = undefined
+  // event = undefined
+  // playerID = undefined
+  //
+  //
+  // constructor(data) {
+  //   this.G = data.G;
+  //   this.ctx = data.ctx;
+  //   this.event = data.event;
+  //   this.playerID = data.playerID;
+  // }
+  static polydnicaName = "Polydnica"
   static getPolydnica = (id, playerId, level = 1) => {
     const stat = () => {
-      if (level === 1)
-        return [2, 5, 4]
-      if (level === 2)
-        return [2, 6, 4]
-      if (level === 3)
-        return [3, 6, 4]
+      if (level === 1) return [2, 5, 4]
+      if (level === 2) return [2, 6, 4]
+      if (level === 3) return [3, 6, 4]
     }
 
-    return getCreature("Polydnica", UnitTypes.Prispeshnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId))
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    if (level > 0) {
+      abilities.onMove.game.push({name: 'surround3', unitId: id})
+      if (level > 1) {
+        abilities.statUpdates.handlers.defence.push({name: 'wholeness', unitId: id})
+        if (level > 2) {
+          abilities.statUpdates.handlers.attack.push({name: 'addFreezeEffect', unitId: id})
+        }
+      }
+    }
+
+    return getCreature(USteppe.polydnicaName, UnitTypes.Prispeshnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId), abilities)
   }
   static getMara = (id, playerId, level = 1) => {
     const stat = () => {

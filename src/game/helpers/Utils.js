@@ -1,5 +1,9 @@
 import {PLAYER_NUMBER} from "../../config";
 import {Biom} from "./Constants";
+import {
+  handleUnitStatsUpdateInAttack,
+  handleUnitStatsUpdateInDefence
+} from "../state/GameActions";
 
 export const createPoint = (...pos) => {
   const [x, y, z] = pos;
@@ -35,7 +39,7 @@ export const skipTurnIfNotActive = (G, ctx, events) => {
   return G
 }
 
-export const getNearestEnemy = (G, unitState) => {
+export const getNearestEnemies = (G, unitState) => {
   const surroundings = getNeighbors(unitState.point)
   return getInGameUnits(G, (unit) => unit.unitState.playerId !== unitState.playerId)
     .filter(unit => surroundings.find(isSame(unit.unitState.point)))
@@ -92,3 +96,30 @@ export const onEndFightTurn = G => {
     G.fightQueue.shift();
   return G
 }
+
+export const resolveUnitsInteraction = (data, fightData) => {
+  const {currentUnit, enemy, updates} = fightData
+  const onAttackMods = handleUnitStatsUpdateInAttack(data, {
+    unitId: currentUnit.id,
+    updates: updates
+  })
+  const resultMods = handleUnitStatsUpdateInDefence(data, {
+    unitId: enemy.id,
+    updates: onAttackMods
+  })
+
+  enemy.heals = enemy.heals - resultMods.damage
+  enemy.power = resultMods.power !== undefined ? (enemy.power - resultMods.power) : enemy.power;
+  enemy.initiative = resultMods.initiative !== undefined ? (enemy.initiative - resultMods.initiative) : enemy.initiative;
+  if (resultMods.status !== undefined) {
+    enemy.status.push(resultMods.status)
+  }
+}
+
+export const hasStatus = (unit, keyword) =>
+  unit.status.find(status => status === keyword) !== undefined
+
+export const removeStatus = (unit, keyword) => {
+  unit.status = unit.status.filter(status => status !== keyword)
+}
+

@@ -16,3 +16,12 @@ export const Biom = Object.freeze({
   Mash: "Mash",
   Geysers: "Geysers"
 })
+
+export const DamageType = Object.freeze({
+  Default: "Default",
+  Counter: "Counter"
+})
+
+export const UnitStatus = Object.freeze({
+  Freeze: "Freeze"
+})
