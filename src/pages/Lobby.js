@@ -58,10 +58,10 @@ class Lobby extends Component {
       const metadata = (Math.random() + 1).toString(36).substring(7);
       api.joinRoom(this.state.id, username, player_no, metadata).then(
         (authToken) => {
-          localStorage.setItem("metadata", metadata);
+          sessionStorage.setItem(`metadata-${player_no}`, metadata);
           console.log("Joined room as player ", player_no);
           this.setState({ myID: player_no, userAuthToken: authToken });
-          localStorage.setItem("localAuth", authToken);
+          sessionStorage.setItem(`localAuth-${player_no}`, authToken);
         },
         (error) => {
           console.log(error);
@@ -80,14 +80,14 @@ class Lobby extends Component {
           });
           const notOrderedPlayer = [...Array(joinedPlayers.length).keys()].find(i => !joinedPlayers.some(p => p.id === i));
 
+          const metadataConnectionPlayer = players.find(p => [...Array(players.length).keys()].some(id => p.data === sessionStorage.getItem(`metadata-${id}`)))
 
-          const sykaConnection = players.find(p => (p.isConnected === true) && (p.data === localStorage.getItem("metadata")))
-          if (sykaConnection !== undefined) {
-            api.leaveRoom(this.state.id, sykaConnection.id, localStorage.getItem("localAuth"));
+          if (metadataConnectionPlayer !== undefined) { //) && (metadataConnectionPlayer.isConnected === true)
+            api.leaveRoom(this.state.id, metadataConnectionPlayer.id, sessionStorage.getItem(`localAuth-${metadataConnectionPlayer.id}`));
           }
-          const myPlayerNum = notOrderedPlayer !== undefined ? notOrderedPlayer : joinedPlayers.length;
+          const myPlayerNum = metadataConnectionPlayer !== undefined ? metadataConnectionPlayer.id : (notOrderedPlayer !== undefined) ? notOrderedPlayer : joinedPlayers.length;
           setPlayerNumber(players.length)
-          this.joinRoom(sykaConnection !== undefined ? sykaConnection.id : myPlayerNum);
+          this.joinRoom(myPlayerNum);
         },
         (error) => {
           console.log("room does not exist");
