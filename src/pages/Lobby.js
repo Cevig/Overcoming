@@ -47,7 +47,7 @@ class Lobby extends Component {
   cleanup() {
     console.log("cleaning up");
     api.leaveRoom(this.state.id, this.state.myID, this.state.userAuthToken);
-    clearInterval(this.interval);
+    if(this.interval) clearInterval(this.interval);
   }
   componentWillUnmount() {
     window.removeEventListener("beforeunload", this.cleanup.bind(this));
@@ -56,9 +56,9 @@ class Lobby extends Component {
     const username = "Player " + player_no;
     if (this.state.id) {
       const metadata = (Math.random() + 1).toString(36).substring(7);
-      localStorage.setItem("metadata", metadata);
       api.joinRoom(this.state.id, username, player_no, metadata).then(
         (authToken) => {
+          localStorage.setItem("metadata", metadata);
           console.log("Joined room as player ", player_no);
           this.setState({ myID: player_no, userAuthToken: authToken });
           localStorage.setItem("localAuth", authToken);
@@ -223,6 +223,7 @@ class Lobby extends Component {
   };
   render() {
     if (this.state.joined.length === getPlayersNumber()) {
+      if(this.interval) clearInterval(this.interval);
       return this.getGameClient();
     }
     return (

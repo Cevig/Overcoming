@@ -1,5 +1,5 @@
 import {createPoint, shuffledBioms} from "../helpers/Utils";
-import {Biom, playerColors} from "../helpers/Constants";
+import {playerColors} from "../helpers/Constants";
 import {createUnitObject, UnitTypes} from "../units/Unit";
 
 let unitId = 0;
@@ -46,8 +46,5 @@ export const setup = ({ ctx }) => ({
   setupComplete: 0,
   moveOrder: 0,
   fightQueue: [],
-  winner: undefined,
-  stp: createUnitObject(1, 1, Biom.Steppe, UnitTypes.Prispeshnick),
-  stp1: createUnitObject(1, 2, Biom.Steppe, UnitTypes.Prispeshnick),
-  stp2: createUnitObject(1, 3, Biom.Steppe, UnitTypes.Prispeshnick)
+  winner: undefined
 });

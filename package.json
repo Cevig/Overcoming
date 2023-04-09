@@ -3,9 +3,6 @@
   "version": "0.1.2",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
     "babel-cli": "^6.26.0",
     "babel-preset-zero": "^0.3.2",
     "boardgame.io": "^0.50.2",
@@ -20,8 +17,7 @@
     "react-github-corner": "^2.5.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "node -r esm ./server.js",

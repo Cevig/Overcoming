@@ -75,7 +75,7 @@ export const createUnitObject = (...data) => {
     [Biom.Desert]: {
       [UnitTypes.Prispeshnick]: [UDesert.getAmfisbena(id, playerId, level)],
       [UnitTypes.Ispolin]: [UDesert.getObajifo(id, playerId, level)],
-      [UnitTypes.Vestnick]: [UDesert.getAmfisbena(id, playerId, level)],
+      [UnitTypes.Vestnick]: [UDesert.getAdze(id, playerId, level)],
       [UnitTypes.Idol]: [UDesert.getSfinks(id, playerId), UDesert.getVasilisk(id, playerId)]
     },
     [Biom.Tundra]: {
