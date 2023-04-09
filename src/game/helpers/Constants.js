@@ -23,5 +23,11 @@ export const DamageType = Object.freeze({
 })
 
 export const UnitStatus = Object.freeze({
-  Freeze: "Freeze"
+  Freeze: "Freeze",
+  InitiativeDown: "InitiativeDown",
+  PowerDown: "PowerDown"
+})
+
+export const UnitKeywords = Object.freeze({
+  Sneaky: "Sneaky"
 })

@@ -1,8 +1,13 @@
-import {getInGameUnits, getNearestEnemies, isNotSame} from '../helpers/Utils';
+import {
+  getInGameUnits,
+  getNearestEnemies,
+  handleUnitDeath,
+  isNotSame
+} from '../helpers/Utils';
 import {playerColors} from '../helpers/Constants';
 import {startPositions} from "./Setup";
 import {biomComparison} from "../helpers/UnitPriority";
-import {handlePositioningOnMoveActions} from "./GameActions";
+import {handleOnMoveActions} from "./GameActions";
 
 const setColorMap = G => {
   G.grid.colorMap = {
@@ -23,7 +28,7 @@ export const setGridSize = G => {
       const point = unit.unitState.point
       const level = G.grid.levels
       return (Math.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z)) === level) || (point.y === level-1) || (point.z === -(level-1))
-    }).forEach(unit => unit.unitState.isInGame = false) // (UNIT DIES)
+    }).forEach(unit => handleUnitDeath({G: G}, unit))
     G.players.forEach(p => {
       if (p.units.every(unit => unit.unitState.isInGame === false)) p.isInGame = false
     })
@@ -81,7 +86,7 @@ export const postProcess = ({ G, ctx, events, playerID }) => {
   if(ctx._activePlayersNumMoves[playerID] !== 0) events.endStage();
 
   if (ctx.phase !== 'Setup') {
-    handlePositioningOnMoveActions({ G, ctx, events, playerID })
+    handleOnMoveActions({ G, ctx, events, playerID })
   }
   return G;
 };

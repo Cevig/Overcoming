@@ -1,8 +1,8 @@
 import {getInGameUnits, getUnitById} from "../helpers/Utils";
 import {handleAbility} from "./UnitSkills";
 
-export const handlePositioningOnMoveActions = (data) => {
-
+export const handleOnMoveActions = (data) => {
+//TODO: handle only once
   const {G} = data
 
   getInGameUnits(G, unit => unit.abilities.onMove.game.length !== 0)

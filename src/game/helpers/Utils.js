@@ -4,6 +4,7 @@ import {
   handleUnitStatsUpdateInAttack,
   handleUnitStatsUpdateInDefence
 } from "../state/GameActions";
+import {handleAbility} from "../state/UnitSkills";
 
 export const createPoint = (...pos) => {
   const [x, y, z] = pos;
@@ -108,11 +109,17 @@ export const resolveUnitsInteraction = (data, fightData) => {
     updates: onAttackMods
   })
 
-  enemy.heals = enemy.heals - resultMods.damage
+  enemy.heals = resultMods.damage !== undefined ? (enemy.heals - resultMods.damage) : enemy.heals
   enemy.power = resultMods.power !== undefined ? (enemy.power - resultMods.power) : enemy.power;
   enemy.initiative = resultMods.initiative !== undefined ? (enemy.initiative - resultMods.initiative) : enemy.initiative;
   if (resultMods.status !== undefined) {
-    enemy.status.push(resultMods.status)
+    resultMods.status.forEach(status => {
+      if(status.qty < 0) {
+        removeStatus(enemy, status.name)
+      } else {
+        [...Array(status.qty)].forEach(i => enemy.status.push(status.name))
+      }
+    })
   }
 }
 
@@ -123,3 +130,18 @@ export const removeStatus = (unit, keyword) => {
   unit.status = unit.status.filter(status => status !== keyword)
 }
 
+export const checkAndAddStatus = (unit, keyword) => {
+  if(unit.status.find(status => status === keyword) === undefined) unit.status.push(keyword)
+}
+
+export const hasKeyword = (unit, keyword) =>
+  unit.abilities.keywords.find(key => key === keyword) !== undefined
+
+export const handleUnitDeath = (data, unit) => {
+  unit.unitState.isInGame = false
+  unit.unitState.point = createPoint(100, 100, 100)
+  unit.abilities.onMove.game.forEach(skill => {
+    handleAbility(data, skill.name, {unitId: skill.unitId})
+  })
+  unit.unitState.point = null
+}

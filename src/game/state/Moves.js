@@ -3,6 +3,8 @@ import {
   getNearestEnemies,
   getNeighbors,
   getUnitById,
+  handleUnitDeath,
+  hasKeyword,
   hasStatus,
   isNotSame,
   isSame,
@@ -11,7 +13,7 @@ import {
 } from '../helpers/Utils';
 import {startPositions} from "./Setup";
 import {UnitTypes} from "../units/Unit";
-import {DamageType, UnitStatus} from "../helpers/Constants";
+import {DamageType, UnitKeywords, UnitStatus} from "../helpers/Constants";
 
 export const moves = {
   selectNewUnit: ({G, ctx}, currentUnit) => {
@@ -99,7 +101,7 @@ export const moves = {
       }
     })
 
-    if (enemy.heals > 0 && enemy.type !== UnitTypes.Ispolin && enemy.unitState.isCounterAttacked === false) {
+    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && enemy.unitState.isCounterAttacked === false) {
       enemy.unitState.isCounterAttacked = true
 
       resolveUnitsInteraction({G: G, ctx: ctx}, {
@@ -114,7 +116,7 @@ export const moves = {
 
     [unit, enemy].forEach(u => {
       if(u.heals <= 0) {
-        u.unitState.isInGame = false // (UNIT DIES)
+        handleUnitDeath({G: G}, u)
         G.fightQueue.forEach((unitInQ, i, q) => {
           if(unitInQ.unitId === u.id) {
             q.splice(i, 1);

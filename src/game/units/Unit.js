@@ -8,11 +8,6 @@ import {UJungle} from "./Jungle";
 import {UWater} from "./Water";
 import {UMash} from "./Mash";
 import {UGeysers} from "./Geysers";
-import {
-  handleFreezeEffectOnAttack,
-  handlePolydnicaSurroundings,
-  handleWholeness
-} from "../state/UnitSkills";
 
 export const UnitTypes = Object.freeze({
   Prispeshnick: "Prispeshnick",
@@ -132,7 +127,8 @@ export const UnitAbilities = {
       attack: [],
       defence: []
     }
-  }
+  },
+  keywords: []
 }
 
 

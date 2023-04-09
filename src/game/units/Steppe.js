@@ -1,4 +1,4 @@
-import {Biom} from "../helpers/Constants";
+import {Biom, UnitKeywords} from "../helpers/Constants";
 import {
   getCreature,
   getIdol,
@@ -24,6 +24,7 @@ export class USteppe {
   //   this.playerID = data.playerID;
   // }
   static polydnicaName = "Polydnica"
+  static maraName = "Mara"
   static getPolydnica = (id, playerId, level = 1) => {
     const stat = () => {
       if (level === 1) return [2, 5, 4]
@@ -46,15 +47,18 @@ export class USteppe {
   }
   static getMara = (id, playerId, level = 1) => {
     const stat = () => {
-      if (level === 1)
-        return [2, 3, 5]
-      if (level === 2)
-        return [2, 4, 6]
-      if (level === 3)
-        return [4, 4, 5]
+      if (level === 1) return [2, 3, 5]
+      if (level === 2) return [2, 4, 6]
+      if (level === 3) return [4, 4, 5]
     }
 
-    return getCreature("Mara", UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId))
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    if (level > 0) {
+      abilities.keywords.push(UnitKeywords.Sneaky)
+      abilities.onMove.game.push({name: 'maraAura', unitId: id})
+    }
+
+    return getCreature("Mara", UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId), abilities)
   }
 
   static getLetavica = (id, playerId, level = 1) => {
