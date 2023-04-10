@@ -1,6 +1,7 @@
 import {
   getInGameUnits,
   getNearestEnemies,
+  getRaidEnemies,
   getUnitById,
   handleUnitDeath,
   hasStatus,
@@ -16,6 +17,8 @@ export const handleAbility = (data, skill, eventData) => {
     wholeness: handleWholeness,
     addFreezeEffect: handleFreezeEffectOnAttack,
     maraAura: handleMaraAura,
+    raid: handleRaid,
+    lethalGrab: handleLethalGrab,
   }
 
   return abilitiesMap[skill](data, eventData)
@@ -94,4 +97,41 @@ const handleMaraAura = ({G}, {unitId}) => {
       });
     }
   })
+}
+
+const handleRaid = ({G, events}, {unitId}) => {
+  const endTurn = (G, events, unit) => {
+    G.availablePoints = []
+    G.currentUnit = null
+    unit.unitState.isClickable = false
+    events.endTurn()
+  }
+
+  const thisUnit = getUnitById(G, unitId)
+  if (getNearestEnemies(G, thisUnit.unitState).length > 0) {
+    endTurn(G, events, thisUnit)
+  } else {
+    const raidEnemies = getRaidEnemies(G, thisUnit.unitState)
+    if (raidEnemies.length === 0) {
+      endTurn(G, events, thisUnit)
+    } else {
+      G.availablePoints = raidEnemies.map(u => u.unitState.point)
+      events.setActivePlayers({ currentPlayer: 'doRaid' });
+    }
+  }
+}
+
+const handleLethalGrab = ({G}, {unitId, target}) => {
+  const thisUnit = getUnitById(G, unitId)
+  if (target.type === UnitTypes.Idol) {
+    thisUnit.power++
+    thisUnit.heals++
+    thisUnit.initiative++
+  } else if (target.type === UnitTypes.Prispeshnick) {
+    thisUnit.heals++
+  } else if (target.type === UnitTypes.Ispolin) {
+    thisUnit.power++
+  } else if (target.type === UnitTypes.Vestnick) {
+    thisUnit.initiative++
+  }
 }

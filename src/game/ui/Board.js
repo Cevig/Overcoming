@@ -1,6 +1,11 @@
 import React from 'react';
 import {HexGrid, Token} from './HexGrid';
-import {createPoint, getInGameUnits, isSame} from '../helpers/Utils';
+import {
+  createPoint,
+  getInGameUnits,
+  isSame,
+  setEnemyMarks
+} from '../helpers/Utils';
 import {UnitUI} from './UnitUI';
 import {motion} from 'framer-motion';
 import {Link} from "react-router-dom";
@@ -102,6 +107,11 @@ export function Board (props) {
       if (found !== undefined) {
         props.moves.moveUnitOnBoard(found);
       }
+    } else if (stage && stage === 'doRaid') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.attackTarget(found);
+      }
     }
   }
 
@@ -146,7 +156,7 @@ export function Board (props) {
                 <UnitUI
                   unit={unit}
                   highlight={(props.G.currentUnit && props.G.currentUnit.unitState.point && isSame(props.G.currentUnit.unitState.point)(unit.unitState.point))}
-                  markEnemy={(props.ctx.phase === "Fight") && (props.G.availablePoints.length > 0) && (props.G.availablePoints.find(isSame(unit.unitState.point)) !== undefined)}
+                  markEnemy={setEnemyMarks(props, unit)}
                   fightQueue={props.G.fightQueue}
                 />
               </Token>
@@ -194,6 +204,10 @@ export function Board (props) {
           <button onClick={() => props.moves.skipTurn()}>Skip</button>
           : <span></span>
         }
+          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "doRaid") ?
+            <button onClick={() => props.moves.skipTurn()}>Skip</button>
+            : <span></span>
+          }
           {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage") ?
             <button onClick={() => props.moves.skipTurn()}>Skip</button>
             : <span></span>

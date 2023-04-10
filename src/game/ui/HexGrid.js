@@ -842,6 +842,7 @@
           //   x: -0.6,
           //   y: 0.2
           // }, this.props.x+':'+this.props.y+':'+this.props.z)
+          //TODO: coords
         );
       }
     }, {

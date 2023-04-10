@@ -14,9 +14,10 @@ import {
 import {startPositions} from "./Setup";
 import {UnitTypes} from "../units/Unit";
 import {DamageType, UnitKeywords, UnitStatus} from "../helpers/Constants";
+import {handleAbility} from "./UnitSkills";
 
 export const moves = {
-  selectNewUnit: ({G, ctx}, currentUnit) => {
+  selectNewUnit: ({G, ctx, events}, currentUnit) => {
     if (G.players[ctx.currentPlayer].units.filter(unit => unit.unitState.isInGame === false).length > 0) {
       if (currentUnit.type === UnitTypes.Idol)
         G.availablePoints = [startPositions[ctx.currentPlayer][0]]
@@ -24,16 +25,18 @@ export const moves = {
         G.availablePoints = startPositions[ctx.currentPlayer].slice(1, startPositions[ctx.currentPlayer].length)
       G.currentUnit = currentUnit
     }
+    events.endStage();
   },
-  selectOldUnit: ({ G, ctx }, currentUnit) => {
+  selectOldUnit: ({ G, ctx, events }, currentUnit) => {
     if (currentUnit.type === UnitTypes.Idol)
       G.availablePoints = [startPositions[ctx.currentPlayer][0]]
     else
       G.availablePoints = startPositions[ctx.currentPlayer].slice(1, startPositions[ctx.currentPlayer].length)
     G.currentUnit = currentUnit
+    events.endStage();
   },
 
-  selectUnitOnBoard: ({ G, ctx }, currentUnit) => {
+  selectUnitOnBoard: ({ G, ctx, events }, currentUnit) => {
     const enemies = getNearestEnemies(G, currentUnit.unitState)
     if (hasStatus(currentUnit, UnitStatus.Freeze)) {
       G.availablePoints = []
@@ -48,14 +51,16 @@ export const moves = {
         })
     }
     G.currentUnit = currentUnit
+    events.endStage();
   },
 
-  selectUnitForAttack: ({ G, ctx }, currentUnit) => {
+  selectUnitForAttack: ({ G, ctx, events }, currentUnit) => {
     G.availablePoints = getNearestEnemies(G, currentUnit.unitState).map(unit => unit.unitState.point)
     G.currentUnit = currentUnit
+    events.endStage();
   },
 
-  moveUnit: ({G, ctx}, point) => {
+  moveUnit: ({G, ctx, events}, point) => {
     const unit = G.players[+ctx.currentPlayer].units.find(unit => unit.id === G.currentUnit.id)
     const unitToReplace = getInGameUnits(G).find(unit => isSame(point)(unit.unitState.point))
     if (unitToReplace !== undefined) {
@@ -70,22 +75,28 @@ export const moves = {
     unit.unitState.isInGame = true
     G.currentUnit = null
     G.availablePoints = []
+    events.endStage();
   },
 
-  removeUnit: ({G, ctx}) => {
+  removeUnit: ({G, ctx, events}) => {
     const unit = G.players[ctx.currentPlayer].units.find(unit => unit.id === G.currentUnit.id)
     unit.unitState.point = null
     unit.unitState.isInGame = false
     G.availablePoints = []
+    events.endStage();
   },
 
   moveUnitOnBoard: ({G, ctx, events}, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     unit.unitState.point = point
-    unit.unitState.isClickable = false
-    G.currentUnit = null
     G.availablePoints = []
-    events.endTurn()
+    if (G.currentUnit.abilities.actions.find(action => action.name === "raid") !== undefined) {
+      handleAbility({ G, events }, "raid", {unitId: G.currentUnit.id})
+    } else {
+      unit.unitState.isClickable = false
+      G.currentUnit = null
+      events.endTurn()
+    }
   },
 
   attackTarget: ({G, ctx}, point) => {
@@ -101,7 +112,7 @@ export const moves = {
       }
     })
 
-    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && enemy.unitState.isCounterAttacked === false) {
+    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && !hasKeyword(enemy, UnitKeywords.Unfocused) && enemy.unitState.isCounterAttacked === false) {
       enemy.unitState.isCounterAttacked = true
 
       resolveUnitsInteraction({G: G, ctx: ctx}, {
@@ -114,19 +125,55 @@ export const moves = {
       })
     }
 
-    [unit, enemy].forEach(u => {
-      if(u.heals <= 0) {
-        handleUnitDeath({G: G}, u)
-        G.fightQueue.forEach((unitInQ, i, q) => {
-          if(unitInQ.unitId === u.id) {
-            q.splice(i, 1);
-          }
-        })
-      }
-    })
+    if(enemy.heals <= 0) {
+      handleUnitDeath({G: G}, enemy, unit)
+      G.fightQueue.forEach((unitInQ, i, q) => {
+        if(unitInQ.unitId === enemy.id) {
+          q.splice(i, 1);
+        }
+      })
+    }
+    if(unit.heals <= 0) {
+      handleUnitDeath({G: G}, unit, enemy)
+      G.fightQueue.forEach((unitInQ, i, q) => {
+        if(unitInQ.unitId === unit.id) {
+          q.splice(i, 1);
+        }
+      })
+    }
+
     unit.unitState.isClickable = false
     G.currentUnit = null
     G.availablePoints = []
+    G.endFightTurn = true
+  },
+
+  raidAttack: ({G, events}, point) => {
+    const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
+    const thisUnit = getUnitById(G, G.currentUnit.id)
+    resolveUnitsInteraction({G: G}, {
+      currentUnit: thisUnit,
+      enemy: enemy,
+      updates: {
+        damage: Math.trunc(G.currentUnit.power / 2),
+        damageType: DamageType.Raid,
+      }
+    })
+    if(enemy.heals <= 0) {
+      handleUnitDeath({G: G}, enemy, thisUnit)
+    }
+    G.availablePoints = []
+    G.currentUnit = null
+    thisUnit.unitState.isClickable = false
+    events.endTurn()
+  },
+
+  skipRaidTurn: ({ G, events }) => {
+    const thisUnit = getUnitById(G, G.currentUnit.id)
+    G.currentUnit = null
+    G.availablePoints = []
+    thisUnit.unitState.isClickable = false
+    events.endTurn()
   },
 
   complete: ({G, ctx, events}) => {
@@ -142,10 +189,15 @@ export const moves = {
   skipTurn: ({ G, events }) => {
     const unit = getUnitById(G, G.currentUnit.id)
     removeStatus(unit, UnitStatus.Freeze)
-    unit.unitState.isClickable = false
-    G.currentUnit = null
     G.availablePoints = []
-    events.endTurn()
+
+    if (G.currentUnit.abilities.actions.find(action => action.name === "raid") !== undefined) {
+      handleAbility({ G, events }, "raid", {unitId: G.currentUnit.id})
+    } else {
+      unit.unitState.isClickable = false
+      G.currentUnit = null
+      events.endTurn()
+    }
   },
 
   skipFightTurn: ({ G }) => {
@@ -162,6 +214,7 @@ export const moves = {
     }
     G.currentUnit = null
     G.availablePoints = []
+    G.endFightTurn = true
   },
 
 };

@@ -11,18 +11,6 @@ import {
 
 export class USteppe {
 
-  // G = undefined
-  // ctx = undefined
-  // event = undefined
-  // playerID = undefined
-  //
-  //
-  // constructor(data) {
-  //   this.G = data.G;
-  //   this.ctx = data.ctx;
-  //   this.event = data.event;
-  //   this.playerID = data.playerID;
-  // }
   static polydnicaName = "Polydnica"
   static maraName = "Mara"
   static getPolydnica = (id, playerId, level = 1) => {
@@ -34,11 +22,11 @@ export class USteppe {
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {
-      abilities.onMove.game.push({name: 'surround3', unitId: id})
+      abilities.onMove.push({name: 'surround3'})
       if (level > 1) {
-        abilities.statUpdates.handlers.defence.push({name: 'wholeness', unitId: id})
+        abilities.statUpdates.defence.push({name: 'wholeness', unitId: id})
         if (level > 2) {
-          abilities.statUpdates.handlers.attack.push({name: 'addFreezeEffect', unitId: id})
+          abilities.statUpdates.attack.push({name: 'addFreezeEffect', unitId: id})
         }
       }
     }
@@ -55,7 +43,7 @@ export class USteppe {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {
       abilities.keywords.push(UnitKeywords.Sneaky)
-      abilities.onMove.game.push({name: 'maraAura', unitId: id})
+      abilities.onMove.push({name: 'maraAura'})
     }
 
     return getCreature("Mara", UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId), abilities)
@@ -63,15 +51,20 @@ export class USteppe {
 
   static getLetavica = (id, playerId, level = 1) => {
     const stat = () => {
-      if (level === 1)
-        return [2, 4, 4]
-      if (level === 2)
-        return [2, 5, 4]
-      if (level === 3)
-        return [3, 5, 5]
+      if (level === 1) return [2, 4, 4]
+      if (level === 2) return [2, 5, 4]
+      if (level === 3) return [3, 5, 5]
+    }
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    if (level > 0) {
+      abilities.keywords.push(UnitKeywords.Unfocused)
+      abilities.actions.push({name: "raid"})
+      if (level > 1) {
+        abilities.onDeath.push({name: 'lethalGrab'})
+      }
     }
 
-    return getCreature("Letavica", UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId))
+    return getCreature("Letavica", UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId), abilities)
   }
 
   static getUrka = (id, playerId) => {

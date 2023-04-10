@@ -117,18 +117,14 @@ export const createUnitObject = (...data) => {
 }
 
 export const UnitAbilities = {
-  onMove: {
-    game: [],
-    target: []
-  },
+  onMove: [],
   statUpdates: {
-    game: [],
-    handlers: {
-      attack: [],
-      defence: []
-    }
+    attack: [],
+    defence: []
   },
-  keywords: []
+  keywords: [],
+  actions: [],
+  onDeath: []
 }
 
 

@@ -5,10 +5,10 @@ export const handleOnMoveActions = (data) => {
 //TODO: handle only once
   const {G} = data
 
-  getInGameUnits(G, unit => unit.abilities.onMove.game.length !== 0)
+  getInGameUnits(G, unit => unit.abilities.onMove.length !== 0)
     .forEach(unit => {
-      unit.abilities.onMove.game.forEach(skill => {
-        handleAbility(data, skill.name, {unitId: skill.unitId})
+      unit.abilities.onMove.forEach(skill => {
+        handleAbility(data, skill.name, {unitId: unit.id})
       })
     })
 }
@@ -20,8 +20,8 @@ export const handleUnitStatsUpdateInDefence = (data, eventData) => {
   const result = []
 
   const unit = getUnitById(G, unitId)
-  if (unit.abilities.statUpdates.handlers.defence.length !== 0) {
-    unit.abilities.statUpdates.handlers.defence.forEach(skill => {
+  if (unit.abilities.statUpdates.defence.length !== 0) {
+    unit.abilities.statUpdates.defence.forEach(skill => {
       return result.push(handleAbility(data, skill.name, eventData))
     })
   }
@@ -36,8 +36,8 @@ export const handleUnitStatsUpdateInAttack = (data, eventData) => {
   const result = []
 
   const unit = getUnitById(G, unitId)
-  if (unit.abilities.statUpdates.handlers.attack.length !== 0) {
-    unit.abilities.statUpdates.handlers.attack.forEach(skill => {
+  if (unit.abilities.statUpdates.attack.length !== 0) {
+    unit.abilities.statUpdates.attack.forEach(skill => {
       return result.push(handleAbility(data, skill.name, eventData))
     })
   }

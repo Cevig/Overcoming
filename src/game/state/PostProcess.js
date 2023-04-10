@@ -55,6 +55,7 @@ export const cleanFightPhase = G => {
   });
   G.moveOrder++;
   G.fightQueue = []
+  G.endTurn = false
   return G
 }
 
@@ -83,7 +84,6 @@ export const setFightOrder = (G, events) => {
 
 export const postProcess = ({ G, ctx, events, playerID }) => {
   setColorMap(G);
-  if(ctx._activePlayersNumMoves[playerID] !== 0) events.endStage();
 
   if (ctx.phase !== 'Setup') {
     handleOnMoveActions({ G, ctx, events, playerID })

@@ -19,7 +19,8 @@ export const Biom = Object.freeze({
 
 export const DamageType = Object.freeze({
   Default: "Default",
-  Counter: "Counter"
+  Counter: "Counter",
+  Raid: "Raid"
 })
 
 export const UnitStatus = Object.freeze({
@@ -29,5 +30,6 @@ export const UnitStatus = Object.freeze({
 })
 
 export const UnitKeywords = Object.freeze({
-  Sneaky: "Sneaky"
+  Sneaky: "Sneaky",
+  Unfocused: "Unfocused"
 })

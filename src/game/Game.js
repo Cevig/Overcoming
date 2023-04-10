@@ -82,6 +82,12 @@ export const Overcoming = {
               skipTurn: moves.skipTurn
             },
             next: 'pickUnitOnBoard'
+          },
+          doRaid: {
+            moves: {
+              attackTarget: moves.raidAttack,
+              skipTurn: moves.skipRaidTurn
+            }
           }
         }
       }
