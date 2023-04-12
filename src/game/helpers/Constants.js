@@ -5,31 +5,38 @@ export const playerColors = [
   '#f9df00'
 ];
 
+export const UnitTypes = Object.freeze({
+  Idol: "Ідол",
+  Prispeshnick: "Поплічник",
+  Ispolin: "Промінькор",
+  Vestnick: "Вісник"
+})
+
 export const Biom = Object.freeze({
-  Steppe: "Steppe",
-  Forest: "Forest",
-  Mountains: "Mountains",
-  Desert: "Desert",
-  Tundra: "Tundra",
-  Jungle: "Jungle",
-  Water: "Water",
-  Mash: "Mash",
-  Geysers: "Geysers"
+  Steppe: "Степ",
+  Forest: "Ліс",
+  Mountains: "Гори",
+  Desert: "Пустеля",
+  Tundra: "Тундра",
+  Jungle: "Джунглі",
+  Water: "Водоєм",
+  Mash: "Болота",
+  Geysers: "Гейзери"
 })
 
 export const DamageType = Object.freeze({
-  Default: "Default",
-  Counter: "Counter",
-  Raid: "Raid"
+  Default: "Звичайний",
+  Counter: "Відповідь",
+  Raid: "Наліт"
 })
 
 export const UnitStatus = Object.freeze({
-  Freeze: "Freeze",
-  InitiativeDown: "InitiativeDown",
-  PowerDown: "PowerDown"
+  Freeze: "Нерухомість",
+  InitiativeDown: "Зниження ініціативи",
+  PowerDown: "Зниження сили"
 })
 
 export const UnitKeywords = Object.freeze({
-  Sneaky: "Sneaky",
-  Unfocused: "Unfocused"
+  Sneaky: "Слизький",
+  Unfocused: "Розгублений"
 })

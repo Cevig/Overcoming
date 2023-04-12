@@ -1,4 +1,4 @@
-import {Biom} from "../helpers/Constants";
+import {Biom, UnitTypes} from "../helpers/Constants";
 import {USteppe} from "./Steppe";
 import {UForest} from "./Forest";
 import {UMountains} from "./Mountains";
@@ -8,13 +8,6 @@ import {UJungle} from "./Jungle";
 import {UWater} from "./Water";
 import {UMash} from "./Mash";
 import {UGeysers} from "./Geysers";
-
-export const UnitTypes = Object.freeze({
-  Idol: "Idol",
-  Prispeshnick: "Prispeshnick",
-  Ispolin: "Ispolin",
-  Vestnick: "Vestnick"
-})
 
 export const getCreature = (name, type, biom, id, power, heals, initiative, level, unitState, abilities = JSON.parse(JSON.stringify(UnitAbilities)), status = []) => ({
   id: id,

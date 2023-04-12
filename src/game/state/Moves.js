@@ -12,8 +12,12 @@ import {
   resolveUnitsInteraction
 } from '../helpers/Utils';
 import {startPositions} from "./Setup";
-import {UnitTypes} from "../units/Unit";
-import {DamageType, UnitKeywords, UnitStatus} from "../helpers/Constants";
+import {
+  DamageType,
+  UnitKeywords,
+  UnitStatus,
+  UnitTypes
+} from "../helpers/Constants";
 import {handleAbility} from "./UnitSkills";
 import {gameLog} from "../helpers/Log";
 
@@ -29,8 +33,8 @@ export const moves = {
       else
         G.availablePoints = startPositions[ctx.currentPlayer].slice(1, startPositions[ctx.currentPlayer].length)
       G.currentUnit = currentUnit
+      events.endStage();
     }
-    events.endStage();
   },
   selectOldUnit: ({ G, ctx, events }, currentUnit) => {
     if (currentUnit.type === UnitTypes.Idol)

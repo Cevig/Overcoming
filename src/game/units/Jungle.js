@@ -1,5 +1,5 @@
-import {Biom} from "../helpers/Constants";
-import {getCreature, getIdol, getUnitState, UnitTypes} from "./Unit";
+import {Biom, UnitTypes} from "../helpers/Constants";
+import {getCreature, getIdol, getUnitState} from "./Unit";
 
 export class UJungle {
   static getBlemmii = (id, playerId, level, createPosition) => {
@@ -12,7 +12,7 @@ export class UJungle {
         return [3, 7, 4]
     }
 
-    return getCreature("Blemmii", UnitTypes.Prispeshnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    return getCreature("Блемміі", UnitTypes.Prispeshnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, createPosition))
   }
   static getPetsyhos = (id, playerId, level, createPosition) => {
     const stat = () => {
@@ -24,7 +24,7 @@ export class UJungle {
         return [4, 5, 5]
     }
 
-    return getCreature("Petsyhos", UnitTypes.Ispolin, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    return getCreature("Петсухос", UnitTypes.Ispolin, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, createPosition))
   }
 
   static getKaiery = (id, playerId, level, createPosition) => {
@@ -37,16 +37,16 @@ export class UJungle {
         return [2, 5, 5]
     }
 
-    return getCreature("Kaiery", UnitTypes.Vestnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    return getCreature("Кайєрі", UnitTypes.Vestnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, createPosition))
   }
 
   static getEpoko = (id, playerId, _, createPosition) => {
     const stat = [2, 7, 4]
-    return getIdol("Epoko", Biom.Jungle, id, ...stat, getUnitState(id, playerId, createPosition))
+    return getIdol("Епоко", Biom.Jungle, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 
   static getAdjatar = (id, playerId, _, createPosition) => {
     const stat = [2, 9, 6]
-    return getIdol("Adjatar", Biom.Jungle, id, ...stat, getUnitState(id, playerId, createPosition))
+    return getIdol("Аджатар", Biom.Jungle, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 }

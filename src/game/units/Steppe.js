@@ -1,18 +1,12 @@
-import {Biom, UnitKeywords} from "../helpers/Constants";
-import {
-  getCreature,
-  getIdol,
-  getUnitState,
-  UnitAbilities,
-  UnitTypes
-} from "./Unit";
+import {Biom, UnitKeywords, UnitTypes} from "../helpers/Constants";
+import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 // import "scope-extensions-js"
 
 export class USteppe {
 
-  static polydnicaName = "Polydnica"
-  static maraName = "Mara"
+  static polydnicaName = "Полудниця"
+  static maraName = "Мара"
   static getPolydnica = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1) return [2, 5, 4]
@@ -46,7 +40,7 @@ export class USteppe {
       abilities.onMove.push({name: 'maraAura'})
     }
 
-    return getCreature("Mara", UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
+    return getCreature(USteppe.maraName, UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
   }
 
   static getLetavica = (id, playerId, level, createPosition) => {
@@ -64,16 +58,16 @@ export class USteppe {
       }
     }
 
-    return getCreature("Letavica", UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
+    return getCreature("Летавиця", UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
   }
 
   static getUrka = (id, playerId, _, createPosition) => {
     const stat = [3, 7, 4]
-    return getIdol("Urka", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition))
+    return getIdol("Урка", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 
   static getViy = (id, playerId, _, createPosition) => {
     const stat = [2, 10, 2]
-    return getIdol("Viy", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition))
+    return getIdol("Вій", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 }

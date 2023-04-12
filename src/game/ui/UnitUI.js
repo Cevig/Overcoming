@@ -1,6 +1,5 @@
 import React from 'react';
-import {Biom, playerColors, UnitStatus} from "../helpers/Constants";
-import {UnitTypes} from "../units/Unit";
+import {Biom, playerColors, UnitStatus, UnitTypes} from "../helpers/Constants";
 import {hasStatus} from "../helpers/Utils";
 
 export class UnitUI extends React.Component {

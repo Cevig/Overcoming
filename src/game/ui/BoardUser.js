@@ -55,27 +55,27 @@ export class BoardUser extends React.Component {
       <div style={styles.mainStyles}>
         <UnitList data={props} />
         {/*<div>phase: {props.ctx.phase}</div>*/}
-        <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20}}>Actions</div>
+        <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20}}>Дії</div>
         <div style={styles.actions}>
-          <button onClick={() => props.undo()}>Back</button>
+          <button onClick={() => props.undo()}>Назад</button>
           {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
-            <button onClick={() => props.moves.removeUnit()}>Remove</button>
+            <button onClick={() => props.moves.removeUnit()}>Видалити</button>
             : <span></span>
           }
           {props.ctx.phase === 'Setup' ?
-            <button onClick={() => props.moves.complete()}>Complete</button>
+            <button onClick={() => props.moves.complete()}>Завершити</button>
             : <span></span>
           }
           {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ?
-            <button onClick={() => props.moves.skipTurn()}>Skip</button>
+            <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
             : <span></span>
           }
           {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "doRaid") ?
-            <button onClick={() => props.moves.skipTurn()}>Skip</button>
+            <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
             : <span></span>
           }
           {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage") ?
-            <button onClick={() => props.moves.skipTurn()}>Skip</button>
+            <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
             : <span></span>
           }
         </div>

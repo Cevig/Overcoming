@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import './UnitList.css';
-import {createUnitObject, UnitTypes} from "../units/Unit";
-import {playerColors} from "../helpers/Constants";
+import {createUnitObject} from "../units/Unit";
+import {playerColors, UnitTypes} from "../helpers/Constants";
 
 const UnitList = (data) => {
 
@@ -77,7 +77,7 @@ const UnitList = (data) => {
             className="unit-create-button"
             onClick={() => handleCreateUnit(unit.id)}
           >
-            Create
+            Призвати
           </button>
         </div>
       );
@@ -140,7 +140,7 @@ const UnitList = (data) => {
   const renderCreatedUnits = () => {
     return (
       <div className="created-wrapper">
-        <h2>Created Units:</h2>
+        <h2>Призвані істоти:</h2>
         <ul className="unit-instance-list">
           {createdUnits.filter(unit => unit.unitState.playerId === player.id).map((unit) => {
             return (
@@ -160,7 +160,7 @@ const UnitList = (data) => {
   return (
     <div className="unit-list">
       <div className="unit-types">
-        <h2>Available Units</h2>
+        <h2>Доступні істоти</h2>
         {renderUnitTypes()}
       </div>
       {renderCreatedUnits()}

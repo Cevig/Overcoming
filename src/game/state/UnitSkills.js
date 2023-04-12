@@ -7,9 +7,8 @@ import {
   handleUnitDeath,
   resolveUnitsInteraction
 } from "../helpers/Utils";
-import {UnitTypes} from "../units/Unit";
 import {USteppe} from "../units/Steppe";
-import {DamageType, UnitStatus} from "../helpers/Constants";
+import {DamageType, UnitStatus, UnitTypes} from "../helpers/Constants";
 import {gameLog} from "../helpers/Log";
 
 export const handleAbility = (data, skill, eventData) => {
