@@ -1,0 +1,137 @@
+.unit-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  background-color: #f2f2f2;
+  padding: 10px;
+}
+
+.unit-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.unit-section h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  border-bottom: 1px solid gray;
+}
+
+.unit-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.unit-row h3{
+  margin: 0 7px 0 0;
+  font-size: 1.25em;
+}
+
+.unit-name {
+  flex: 1;
+  font-size: 1em;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.unit-stars {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.unit-stars .star {
+  color: #666;
+  font-size: 1.5em;
+  margin-right: 5px;
+}
+
+.unit-stars .star {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0 2px;
+  cursor: pointer;
+  clip-path: polygon(
+    50% 0%,
+    63% 38%,
+    100% 38%,
+    69% 59%,
+    82% 100%,
+    50% 75%,
+    18% 100%,
+    31% 59%,
+    0% 38%,
+    37% 38%
+  )
+}
+
+.star.star-active {
+  background-color: #ffc107;
+}
+
+.star.star-sad {
+  background-color: gray;
+}
+
+.unit-create-button {
+  background-color: #4b4b4b;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.unit-create-button:hover {
+  background-color: #333;
+}
+
+.unit-instance-list {
+  margin: 0;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.unit-instance {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.unit-instance:hover{
+  background-color: #e5e5e5;
+}
+
+.unit-instance h3 {
+  font-size: 1.25em;
+  margin: 0;
+  text-align: center;
+}
+
+.unit-instance p {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.unit-types > h2 {
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+.created-wrapper h2 {
+  text-align: center;
+}

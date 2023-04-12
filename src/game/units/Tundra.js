@@ -2,7 +2,7 @@ import {Biom} from "../helpers/Constants";
 import {getCreature, getIdol, getUnitState, UnitTypes} from "./Unit";
 
 export class UTundra {
-  static getLedyanoyJack = (id, playerId, level = 1) => {
+  static getLedyanoyJack = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1)
         return [2, 4, 3]
@@ -12,9 +12,9 @@ export class UTundra {
         return [3, 7, 3]
     }
 
-    return getCreature("LedyanoyJack", UnitTypes.Prispeshnick, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId))
+    return getCreature("LedyanoyJack", UnitTypes.Prispeshnick, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId, createPosition))
   }
-  static getBonakon = (id, playerId, level = 1) => {
+  static getBonakon = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1)
         return [2, 3, 5]
@@ -24,10 +24,10 @@ export class UTundra {
         return [3, 4, 5]
     }
 
-    return getCreature("Bonakon", UnitTypes.Ispolin, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId))
+    return getCreature("Bonakon", UnitTypes.Ispolin, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId, createPosition))
   }
 
-  static getPlanetnick = (id, playerId, level = 1) => {
+  static getPlanetnick = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1)
         return [2, 4, 4]
@@ -37,16 +37,16 @@ export class UTundra {
         return [3, 5, 5]
     }
 
-    return getCreature("Planetnick", UnitTypes.Vestnick, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId))
+    return getCreature("Planetnick", UnitTypes.Vestnick, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId, createPosition))
   }
 
-  static getMedvedOboroten = (id, playerId) => {
+  static getMedvedOboroten = (id, playerId, _, createPosition) => {
     const stat = [2, 8, 3]
-    return getIdol("Medved-oboroten", Biom.Tundra, id, ...stat, getUnitState(id, playerId))
+    return getIdol("Medved-oboroten", Biom.Tundra, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 
-  static getMarena = (id, playerId) => {
+  static getMarena = (id, playerId, _, createPosition) => {
     const stat = [1, 10, 1]
-    return getIdol("Marena", Biom.Tundra, id, ...stat, getUnitState(id, playerId))
+    return getIdol("Marena", Biom.Tundra, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 }

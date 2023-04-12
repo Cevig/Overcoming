@@ -5,6 +5,7 @@ import {
   handleUnitStatsUpdateInDefence
 } from "../state/GameActions";
 import {handleAbility} from "../state/UnitSkills";
+import {gameLog} from "./Log";
 
 export const createPoint = (...pos) => {
   const [x, y, z] = pos;
@@ -116,7 +117,7 @@ const shuffleArray = (array) => {
 }
 export const shuffledBioms = getPlayersBioms()
 
-export const endFightTurnCondition = (G) => {
+export const endFightTurnCondition = (G, ctx) => {
   if (G.endFightTurn) {
     const unit = getUnitById(G, G.fightQueue[0].unitId)
     if ((G.fightQueue.length > 1) && (unit !== undefined) && (unit.unitState.isClickable === false)) {
@@ -127,7 +128,7 @@ export const endFightTurnCondition = (G) => {
   } else return false
 }
 
-export const onEndFightTurn = G => {
+export const onEndFightTurn = (G, ctx) => {
   if(G.fightQueue.length && getUnitById(G, G.fightQueue[0].unitId).unitState.isClickable === false)
     G.fightQueue.shift();
   G.endFightTurn = false
@@ -136,6 +137,7 @@ export const onEndFightTurn = G => {
 
 export const resolveUnitsInteraction = (data, fightData) => {
   const {currentUnit, enemy, updates} = fightData
+  const {ctx} = data
   const onAttackMods = handleUnitStatsUpdateInAttack(data, {
     unitId: currentUnit.id,
     updates: updates
@@ -145,36 +147,96 @@ export const resolveUnitsInteraction = (data, fightData) => {
     updates: onAttackMods
   })
 
-  enemy.heals = resultMods.damage !== undefined ? (enemy.heals - resultMods.damage) : enemy.heals
-  enemy.power = resultMods.power !== undefined ? (enemy.power - resultMods.power) : enemy.power;
-  enemy.initiative = resultMods.initiative !== undefined ? (enemy.initiative - resultMods.initiative) : enemy.initiative;
+  if(resultMods.damage !== undefined) {
+    enemy.heals = (enemy.heals - resultMods.damage)
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${enemy.name} отримав ${-resultMods.damage} до життя від ${currentUnit.name}`,
+    })
+  }
+  if(resultMods.power !== undefined) {
+    enemy.power = (enemy.power - resultMods.power)
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `Силу ${enemy.name} знижено на ${resultMods.power}`,
+    })
+  }
+  if(resultMods.initiative !== undefined) {
+    enemy.initiative = (enemy.initiative - resultMods.initiative)
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `Ініціативу ${enemy.name} знижено на ${resultMods.initiative}`,
+    })
+  }
   if (resultMods.status !== undefined) {
     resultMods.status.forEach(status => {
-      if(status.qty < 0) {
-        removeStatus(enemy, status.name)
-      } else {
-        [...Array(status.qty)].forEach(i => enemy.status.push(status.name))
+      const enemyStatus = getStatus(enemy, status.name)
+      if (enemyStatus !== undefined) {
+        if ((enemyStatus.qty + status.qty) > 0) {
+          enemyStatus.qty = enemyStatus.qty + status.qty
+          gameLog.addLog({
+            id: Math.random().toString(10).slice(2),
+            turn: ctx.turn,
+            player: +ctx.currentPlayer,
+            phase: ctx.phase,
+            text: `${enemy.name} отримує статус ${status.name}`,
+          })
+        } else {
+          removeStatus(enemy, status.name)
+          gameLog.addLog({
+            id: Math.random().toString(10).slice(2),
+            turn: ctx.turn,
+            player: +ctx.currentPlayer,
+            phase: ctx.phase,
+            text: `${enemy.name} втрачає статус ${status.name}`,
+          })
+        }
+      } else if(status.qty > 0) {
+        enemy.status.push(status)
+        gameLog.addLog({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `${enemy.name} отримує статус ${status.name}`,
+        })
       }
     })
   }
 }
 
 export const hasStatus = (unit, keyword) =>
-  unit.status.find(status => status === keyword) !== undefined
+  unit.status.find(status => status.name === keyword) !== undefined
+
+export const getStatus = (unit, keyword) =>
+  unit.status.find(status => status.name === keyword)
 
 export const removeStatus = (unit, keyword) => {
-  unit.status = unit.status.filter(status => status !== keyword)
-}
-
-export const checkAndAddStatus = (unit, keyword) => {
-  if(unit.status.find(status => status === keyword) === undefined) unit.status.push(keyword)
+  unit.status = unit.status.filter(status => status.name !== keyword)
 }
 
 export const hasKeyword = (unit, keyword) =>
   unit.abilities.keywords.find(key => key === keyword) !== undefined
 
 export const handleUnitDeath = (data, unit, killer = null) => {
+  const {ctx} = data
   unit.unitState.isInGame = false
+  gameLog.addLog({
+    id: Math.random().toString(10).slice(2),
+    turn: ctx.turn,
+    player: +ctx.currentPlayer,
+    phase: ctx.phase,
+    text: `Було вбито ${unit.name} гравця ${unit.unitState.playerId+1}`,
+  })
   unit.unitState.point = createPoint(100, 100, 100)
   unit.abilities.onMove.forEach(skill => {
     handleAbility(data, skill.name, {unitId: unit.id})

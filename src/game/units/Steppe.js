@@ -13,7 +13,7 @@ export class USteppe {
 
   static polydnicaName = "Polydnica"
   static maraName = "Mara"
-  static getPolydnica = (id, playerId, level = 1) => {
+  static getPolydnica = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1) return [2, 5, 4]
       if (level === 2) return [2, 6, 4]
@@ -31,9 +31,9 @@ export class USteppe {
       }
     }
 
-    return getCreature(USteppe.polydnicaName, UnitTypes.Prispeshnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId), abilities)
+    return getCreature(USteppe.polydnicaName, UnitTypes.Prispeshnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
   }
-  static getMara = (id, playerId, level = 1) => {
+  static getMara = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1) return [2, 3, 5]
       if (level === 2) return [2, 4, 6]
@@ -46,10 +46,10 @@ export class USteppe {
       abilities.onMove.push({name: 'maraAura'})
     }
 
-    return getCreature("Mara", UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId), abilities)
+    return getCreature("Mara", UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
   }
 
-  static getLetavica = (id, playerId, level = 1) => {
+  static getLetavica = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1) return [2, 4, 4]
       if (level === 2) return [2, 5, 4]
@@ -64,16 +64,16 @@ export class USteppe {
       }
     }
 
-    return getCreature("Letavica", UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId), abilities)
+    return getCreature("Letavica", UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
   }
 
-  static getUrka = (id, playerId) => {
+  static getUrka = (id, playerId, _, createPosition) => {
     const stat = [3, 7, 4]
-    return getIdol("Urka", Biom.Steppe, id, ...stat, getUnitState(id, playerId))
+    return getIdol("Urka", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 
-  static getViy = (id, playerId) => {
+  static getViy = (id, playerId, _, createPosition) => {
     const stat = [2, 10, 2]
-    return getIdol("Viy", Biom.Steppe, id, ...stat, getUnitState(id, playerId))
+    return getIdol("Viy", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 }

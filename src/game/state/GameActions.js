@@ -2,13 +2,16 @@ import {getInGameUnits, getUnitById} from "../helpers/Utils";
 import {handleAbility} from "./UnitSkills";
 
 export const handleOnMoveActions = (data) => {
-//TODO: handle only once
   const {G} = data
 
+  const appliedSkills =[]
   getInGameUnits(G, unit => unit.abilities.onMove.length !== 0)
     .forEach(unit => {
       unit.abilities.onMove.forEach(skill => {
-        handleAbility(data, skill.name, {unitId: unit.id})
+        if (appliedSkills.find(as => as === skill.name) === undefined) {
+          handleAbility(data, skill.name, {unitId: unit.id})
+          appliedSkills.push(skill.name)
+        }
       })
     })
 }

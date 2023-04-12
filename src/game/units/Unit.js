@@ -10,10 +10,10 @@ import {UMash} from "./Mash";
 import {UGeysers} from "./Geysers";
 
 export const UnitTypes = Object.freeze({
+  Idol: "Idol",
   Prispeshnick: "Prispeshnick",
   Ispolin: "Ispolin",
-  Vestnick: "Vestnick",
-  Idol: "Idol"
+  Vestnick: "Vestnick"
 })
 
 export const getCreature = (name, type, biom, id, power, heals, initiative, level, unitState, abilities = JSON.parse(JSON.stringify(UnitAbilities)), status = []) => ({
@@ -30,7 +30,7 @@ export const getCreature = (name, type, biom, id, power, heals, initiative, leve
   status: status
 })
 
-export const getIdol = (name, biom, id, power, heals, initiative, unitState, status = [], abilities = []) => ({
+export const getIdol = (name, biom, id, power, heals, initiative, unitState, status = [], abilities = JSON.parse(JSON.stringify(UnitAbilities))) => ({
   id: id,
   name: name,
   type: UnitTypes.Idol,
@@ -43,9 +43,10 @@ export const getIdol = (name, biom, id, power, heals, initiative, unitState, sta
   status: status
 })
 
-export const getUnitState = (unitId, playerId, point = null, isClickable = true, isInGame = false, isInFight = false, skippedTurn = false, isCounterAttacked = false) => ({
+export const getUnitState = (unitId, playerId, createPosition, point = null, isClickable = true, isInGame = false, isInFight = false, skippedTurn = false, isCounterAttacked = false) => ({
   unitId: unitId,
   playerId: playerId,
+  createPosition: createPosition,
   point: point,
   isClickable: isClickable,
   isInGame: isInGame,
@@ -113,7 +114,7 @@ export const createUnitObject = (...data) => {
     }
   }
 
-  return unitsTree[biom][type][pos](id, playerId, level)
+  return unitsTree[biom][type][pos](id, playerId, level, pos)
 }
 
 export const UnitAbilities = {

@@ -33,7 +33,8 @@ export const Overcoming = {
             moves: {
               selectNewUnit: moves.selectNewUnit,
               selectOldUnit: moves.selectOldUnit,
-              complete: { move: moves.complete, noLimit: true }
+              complete: { move: moves.complete, noLimit: true },
+              summonUnit: { move: moves.summonUnit, noLimit: true }
             },
             next: 'placeUnit'
           },
@@ -41,7 +42,8 @@ export const Overcoming = {
             moves: {
               moveUnit: moves.moveUnit,
               removeUnit: moves.removeUnit,
-              complete: { move: moves.complete, noLimit: true }
+              complete: { move: moves.complete, noLimit: true },
+              summonUnit: { move: moves.summonUnit, noLimit: true }
             },
             next: 'pickUnit'
           }
@@ -54,10 +56,10 @@ export const Overcoming = {
     },
 
     Positioning: {
-      onBegin: ({ G }) => { setGridSize(G) },
+      onBegin: ({ G, ctx }) => { setGridSize(G, ctx) },
       next: "Fight",
       endIf: ({ G }) => (getInGameUnits(G, (unit) => unit.unitState.isClickable).length === 0),
-      onEnd: ({ G }) => { setInFightUnits(G) },
+      onEnd: ({ G, ctx }) => { setInFightUnits(G, ctx) },
       turn: {
         onBegin: ({ G, ctx, events }) => { skipTurnIfNotActive(G, ctx, events) },
         activePlayers: {
@@ -94,10 +96,10 @@ export const Overcoming = {
     },
 
     Fight: {
-      onBegin: ({ G, events }) => { setFightOrder(G, events) },
+      onBegin: ({ G, events, ctx }) => { setFightOrder(G, events, ctx) },
       next: "Positioning",
-      endIf: ({ G }) => (endFightPhase(G)),
-      onEnd: ({ G }) => { cleanFightPhase(G) },
+      endIf: ({ G, ctx }) => (endFightPhase(G, ctx)),
+      onEnd: ({ G, ctx }) => { cleanFightPhase(G, ctx) },
       turn: {
         activePlayers: {
           currentPlayer: { stage: 'pickUnitForAttack' }
@@ -108,7 +110,7 @@ export const Overcoming = {
         },
         onMove: (data) => postProcess(data),
         endIf: ({ G, ctx }) => (endFightTurnCondition(G, ctx)),
-        onEnd: ({ G }) => { onEndFightTurn(G) },
+        onEnd: ({ G, ctx }) => { onEndFightTurn(G, ctx) },
         stages: {
           pickUnitForAttack: {
             moves: {
@@ -127,6 +129,6 @@ export const Overcoming = {
       }
     }
   },
-  endIf: ({ G }) => (handleGameOver(G)),
-  onEnd: ({ G }) => { onGameOver(G) }
+  endIf: ({ G, ctx }) => (handleGameOver(G, ctx)),
+  onEnd: ({ G, ctx }) => { onGameOver(G, ctx) }
 };

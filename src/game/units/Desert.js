@@ -2,7 +2,7 @@ import {Biom} from "../helpers/Constants";
 import {getCreature, getIdol, getUnitState, UnitTypes} from "./Unit";
 
 export class UDesert {
-  static getAmfisbena = (id, playerId, level = 1) => {
+  static getAmfisbena = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1)
         return [2, 6, 3]
@@ -12,9 +12,9 @@ export class UDesert {
         return [3, 7, 4]
     }
 
-    return getCreature("Amfisbena", UnitTypes.Prispeshnick, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId))
+    return getCreature("Amfisbena", UnitTypes.Prispeshnick, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId, createPosition))
   }
-  static getObajifo = (id, playerId, level = 1) => {
+  static getObajifo = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1)
         return [2, 3, 5]
@@ -24,10 +24,10 @@ export class UDesert {
         return [3, 4, 6]
     }
 
-    return getCreature("Obajifo", UnitTypes.Ispolin, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId))
+    return getCreature("Obajifo", UnitTypes.Ispolin, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId, createPosition))
   }
 
-  static getAdze = (id, playerId, level = 1) => {
+  static getAdze = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1)
         return [2, 4, 4]
@@ -37,16 +37,16 @@ export class UDesert {
         return [3, 6, 4]
     }
 
-    return getCreature("Adze", UnitTypes.Vestnick, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId))
+    return getCreature("Adze", UnitTypes.Vestnick, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId, createPosition))
   }
 
-  static getSfinks = (id, playerId) => {
+  static getSfinks = (id, playerId, _, createPosition) => {
     const stat = [2, 11, 4]
-    return getIdol("Sfinks", Biom.Desert, id, ...stat, getUnitState(id, playerId))
+    return getIdol("Sfinks", Biom.Desert, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 
-  static getVasilisk = (id, playerId) => {
+  static getVasilisk = (id, playerId, _, createPosition) => {
     const stat = [2, 8, 4]
-    return getIdol("Vasilisk", Biom.Desert, id, ...stat, getUnitState(id, playerId))
+    return getIdol("Vasilisk", Biom.Desert, id, ...stat, getUnitState(id, playerId, createPosition))
   }
 }

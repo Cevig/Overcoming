@@ -9,46 +9,26 @@ import {
 import {UnitUI} from './UnitUI';
 import {motion} from 'framer-motion';
 import {Link} from "react-router-dom";
-import {UnitTypes} from "../units/Unit";
 import {playerColors} from "../helpers/Constants";
 import {startPositions} from "../state/Setup";
+import {BoardUser} from "./BoardUser";
+import {BoardLogs} from "./BoardLogs";
 
 const style = {
   display: 'flex',
-  flexDirection: 'column'
+  margin: 5
+  // backgroundImage: `url(${Background})`
+  // backgroundColor: "#39546a",
 };
 
 const hexStyle = {
   display: 'flex',
   flexGrow: 1,
-  width: 1100,
+  flexBasis: `58%`,
+  maxWidth: 1085,
   backgroundColor: "#39546a"
 }
 
-const styles = {
-  moves: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap'
-  },
-  move: {
-    padding: 5,
-    border: '1px solid black',
-    backgroundColor: 'grey',
-    marginRight: 5,
-    flexBasis: '18%',
-    textAlign: 'center',
-    marginTop: 5
-  },
-  clickableMove: {
-    cursor: 'pointer',
-    backgroundColor: 'white',
-  },
-  biom: {
-    fontSize: 12,
-    marginLeft: 3
-  }
-}
 const getCellColor_old = HexGrid.prototype._getCellColor;
 
 HexGrid.prototype._getCellColor = function(...coords) {
@@ -130,7 +110,6 @@ export function Board (props) {
     }
   }
 
-  const player = props.G.players.find(p => p.id === +props.ctx.currentPlayer);
   let colorMapSecret = {}
   if ((props.ctx.phase === "Setup") && (props.ctx.currentPlayer !== props.playerID)) {
     colorMapSecret = {
@@ -144,6 +123,7 @@ export function Board (props) {
   }
   return (
       <div style={style}>
+        <BoardUser props={props} />
         <HexGrid
           levels={props.G.grid.levels}
           style={hexStyle}
@@ -163,56 +143,7 @@ export function Board (props) {
             })
           }
         </HexGrid>
-        <div>
-          <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24}}>TURN: Player {player ? player.id + 1 : "Unknown"}</div>
-          <div style={{color: playerColors[+props.playerID], fontSize: 20}}>Available creatures: </div>
-          <div style={styles.moves}>
-            {props.playerID ? props.G.players.find(p => p.id === +props.playerID) ? props.G.players.find(p => p.id === +props.playerID).units.map((unit, i) => {
-              return unit.unitState.isInGame ?
-                <div style={styles.move} key={i}>{unit.name}
-                  {(unit.type !== UnitTypes.Idol) ?
-                    [...Array(unit.level).keys()].map(() => "*").join('') : ""
-                  }
-                  {(unit.type !== UnitTypes.Idol) ?
-                    <span style={styles.biom}>[{unit.biom}]</span>: ""
-                  }
-                </div>:
-                <div style={{ ...styles.move, ...styles.clickableMove }} onClick={() => props.moves.selectNewUnit(unit)} key={i}>{unit.name}
-                  {(unit.type !== UnitTypes.Idol) ?
-                    [...Array(unit.level).keys()].map(() => "*").join('') : ""
-                  }
-                  {(unit.type !== UnitTypes.Idol) ?
-                    <span style={styles.biom}>[{unit.biom}]</span>: ""
-                  }
-                </div>;
-            }) : 0 : 0}
-          </div>
-        </div>
-        {/*<div>phase: {props.ctx.phase}</div>*/}
-        <div style={{color: playerColors[+props.playerID]}}>Actions:</div>
-        <div style={styles.move}>
-          <button onClick={() => props.undo()}>Revert move</button>
-        {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
-          <button onClick={() => props.moves.removeUnit()}>Remove</button>
-          : <span></span>
-        }
-        {props.ctx.phase === 'Setup' ?
-          <button onClick={() => props.moves.complete()}>Complete</button>
-          : <span></span>
-        }
-        {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ?
-          <button onClick={() => props.moves.skipTurn()}>Skip</button>
-          : <span></span>
-        }
-          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "doRaid") ?
-            <button onClick={() => props.moves.skipTurn()}>Skip</button>
-            : <span></span>
-          }
-          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage") ?
-            <button onClick={() => props.moves.skipTurn()}>Skip</button>
-            : <span></span>
-          }
-        </div>
+        <BoardLogs props={props}></BoardLogs>
         {
           props.G.winner !== undefined ?
             <motion.div

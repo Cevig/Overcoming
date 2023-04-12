@@ -1,0 +1,10 @@
+.log-container {
+  margin: 5px;
+  font-size: 18px;
+  max-height: 900px;
+  overflow-y: auto;
+}
+
+.log-container > div {
+  margin-top: 5px;
+}

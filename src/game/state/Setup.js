@@ -1,25 +1,11 @@
 import {createPoint, shuffledBioms} from "../helpers/Utils";
 import {playerColors} from "../helpers/Constants";
-import {createUnitObject, UnitTypes} from "../units/Unit";
-
-let unitId = 0;
 
 const createPlayer = (id, name, bioms) => ({
   id,
   name,
-  units: [
-    createUnitObject(unitId++, id, bioms[0]),
-    createUnitObject(unitId++, id, bioms[0], UnitTypes.Idol, 1),
-    createUnitObject(unitId++, id, bioms[0], UnitTypes.Prispeshnick),
-    createUnitObject(unitId++, id, bioms[0], UnitTypes.Ispolin),
-    createUnitObject(unitId++, id, bioms[0], UnitTypes.Vestnick),
-
-    createUnitObject(unitId++, id, bioms[1]),
-    createUnitObject(unitId++, id, bioms[1], UnitTypes.Idol, 1),
-    createUnitObject(unitId++, id, bioms[1], UnitTypes.Prispeshnick),
-    createUnitObject(unitId++, id, bioms[1], UnitTypes.Ispolin),
-    createUnitObject(unitId++, id, bioms[1], UnitTypes.Vestnick)
-  ],
+  units: [],
+  bioms: bioms,
   isInGame: true
 });
 

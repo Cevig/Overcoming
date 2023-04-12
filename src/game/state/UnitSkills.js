@@ -2,14 +2,15 @@ import {
   getInGameUnits,
   getNearestEnemies,
   getRaidEnemies,
+  getStatus,
   getUnitById,
   handleUnitDeath,
-  hasStatus,
   resolveUnitsInteraction
 } from "../helpers/Utils";
 import {UnitTypes} from "../units/Unit";
 import {USteppe} from "../units/Steppe";
 import {DamageType, UnitStatus} from "../helpers/Constants";
+import {gameLog} from "../helpers/Log";
 
 export const handleAbility = (data, skill, eventData) => {
   const abilitiesMap = {
@@ -23,7 +24,7 @@ export const handleAbility = (data, skill, eventData) => {
 
   return abilitiesMap[skill](data, eventData)
 }
-const handlePolydnicaSurroundings = ({G}, {unitId}) => {
+const handlePolydnicaSurroundings = ({G, ctx}, {unitId}) => {
   const units = getInGameUnits(G)
   const thisUnit = getUnitById(G, unitId)
   const alliedUnits = units.filter(unit => (unit.unitState.playerId === thisUnit.unitState.playerId) && (unit.name === USteppe.polydnicaName))
@@ -32,13 +33,50 @@ const handlePolydnicaSurroundings = ({G}, {unitId}) => {
     enemyUnits.forEach(enemy => {
       const enemiesForEnemy = getNearestEnemies(G, enemy.unitState).filter(unit => unit.name === USteppe.polydnicaName)
       if (enemiesForEnemy.length >= 3) {
-        handleUnitDeath({G: G}, enemy)
+        gameLog.addLog({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `Полудніці оточили слугу типу ${enemy.type} гравця ${enemy.unitState.playerId+1}`,
+        })
+        handleUnitDeath({G: G, ctx:ctx}, enemy)
       }
     })
   }
 }
 
-const handleWholeness = ({G}, {unitId, updates}) => {
+const handleMaraAura = ({G, ctx}, {unitId}) => {
+  const thisUnit = getUnitById(G, unitId)
+
+  getInGameUnits(G, unit => unit.unitState.playerId !== thisUnit.unitState.playerId).forEach(enemy => {
+    const nearMaras = getNearestEnemies(G, enemy.unitState).filter(unit => unit.name === USteppe.maraName)
+    const auraKeyword = UnitStatus.InitiativeDown
+    const enemyStatus = getStatus(enemy, auraKeyword)
+
+    let value = 0
+    if (enemyStatus !== undefined) {
+      value = value - enemyStatus.qty
+    }
+    if (nearMaras.length > 0) {
+      value = value + nearMaras.reduce((val, mara) => val + ((mara.level >= 2) ? 2 : 1), 0)
+    }
+    if (value !== 0) {
+      resolveUnitsInteraction({G: G, ctx: ctx}, {
+        currentUnit: thisUnit,
+        enemy: enemy,
+        updates: {
+          initiative: value,
+          status: [{name: auraKeyword, qty: value}]
+        }
+      });
+    }
+  })
+}
+
+/////////////////////////////////////////////////////
+
+const handleWholeness = ({G, ctx}, {unitId, updates}) => {
   const thisUnit = getUnitById(G, unitId)
   const tempUnit = USteppe.getPolydnica(unitId, 10, thisUnit.level)
 
@@ -47,7 +85,14 @@ const handleWholeness = ({G}, {unitId, updates}) => {
     if (updates.status !== undefined && updates.power === 0) {
       const decreasingStatusPower = updates.status.find(status => status.name === UnitStatus.PowerDown)
       if(decreasingStatusPower !== undefined) {
-        decreasingStatusPower.qty = 0
+        decreasingStatusPower.qty = -1
+        gameLog.addLog({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `Цілісність ${thisUnit.name} заблокувала зниження сили`,
+        })
       }
     }
   }
@@ -56,7 +101,14 @@ const handleWholeness = ({G}, {unitId, updates}) => {
     if (updates.status !== undefined && updates.initiative === 0) {
       const decreasingStatusInit = updates.status.find(status => status.name === UnitStatus.InitiativeDown)
       if(decreasingStatusInit !== undefined) {
-        decreasingStatusInit.qty = 0
+        decreasingStatusInit.qty = -1
+        gameLog.addLog({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `Цілісність ${thisUnit.name} заблокувала зниження ініціативи`,
+        })
       }
     }
   }
@@ -67,53 +119,28 @@ const handleFreezeEffectOnAttack = ({G}, {unitId, updates}) => {
   return (updates.damageType === DamageType.Default) ? {status: [{name: UnitStatus.Freeze, qty: 1}]} : {}
 }
 
-const handleMaraAura = ({G}, {unitId}) => {
-  const thisUnit = getUnitById(G, unitId)
-
-  getInGameUnits(G, unit => unit.unitState.playerId !== thisUnit.unitState.playerId).forEach(enemy => {
-    const nearMaras = getNearestEnemies(G, enemy.unitState).filter(unit => unit.name === USteppe.maraName).length
-    const auraKeyword = UnitStatus.InitiativeDown
-    if (hasStatus(enemy, auraKeyword)) {
-      const value = enemy.status.filter(status => status === auraKeyword).length
-      const diffRemove = -(thisUnit.level >= 2 ? (value * 2) : value)
-      resolveUnitsInteraction({G: G}, {
-        currentUnit: thisUnit,
-        enemy: enemy,
-        updates: {
-          initiative: -(thisUnit.level >= 2 ? (value * 2) : value),
-          status: [{name: auraKeyword, qty: diffRemove}]
-        }
-      });
-    }
-    if (nearMaras > 0) {
-      const diff = (thisUnit.level >= 2) ? (nearMaras * 2) : nearMaras
-      resolveUnitsInteraction({G: G}, {
-        currentUnit: thisUnit,
-        enemy: enemy,
-        updates: {
-          initiative: diff,
-          status: [{name: auraKeyword, qty: diff}]
-        }
-      });
-    }
-  })
-}
-
-const handleRaid = ({G, events}, {unitId}) => {
-  const endTurn = (G, events, unit) => {
+const handleRaid = ({G, events, ctx}, {unitId}) => {
+  const endTurn = (G, ctx, events, unit) => {
     G.availablePoints = []
     G.currentUnit = null
     unit.unitState.isClickable = false
     events.endTurn()
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${unit.name} гравця ${+ctx.currentPlayer+1} сьогодні без наліту`,
+    })
   }
 
   const thisUnit = getUnitById(G, unitId)
   if (getNearestEnemies(G, thisUnit.unitState).length > 0) {
-    endTurn(G, events, thisUnit)
+    endTurn(G, ctx, events, thisUnit)
   } else {
     const raidEnemies = getRaidEnemies(G, thisUnit.unitState)
     if (raidEnemies.length === 0) {
-      endTurn(G, events, thisUnit)
+      endTurn(G, ctx, events, thisUnit)
     } else {
       G.availablePoints = raidEnemies.map(u => u.unitState.point)
       events.setActivePlayers({ currentPlayer: 'doRaid' });
@@ -121,7 +148,7 @@ const handleRaid = ({G, events}, {unitId}) => {
   }
 }
 
-const handleLethalGrab = ({G}, {unitId, target}) => {
+const handleLethalGrab = ({G, ctx}, {unitId, target}) => {
   const thisUnit = getUnitById(G, unitId)
   if (target.type === UnitTypes.Idol) {
     thisUnit.power++
@@ -134,4 +161,11 @@ const handleLethalGrab = ({G}, {unitId, target}) => {
   } else if (target.type === UnitTypes.Vestnick) {
     thisUnit.initiative++
   }
+  gameLog.addLog({
+    id: Math.random().toString(10).slice(2),
+    turn: ctx.turn,
+    player: +ctx.currentPlayer,
+    phase: ctx.phase,
+    text: `Характеристики ${thisUnit.name} були збільшені`,
+  })
 }

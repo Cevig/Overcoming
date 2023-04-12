@@ -1,8 +1,3 @@
-#game-body{
-  display: flex;
-  justify-content: center;
-}
-
 body {
   background: #ccccd0;
   margin: 0;

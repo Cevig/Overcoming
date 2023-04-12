@@ -15,8 +15,13 @@ import {startPositions} from "./Setup";
 import {UnitTypes} from "../units/Unit";
 import {DamageType, UnitKeywords, UnitStatus} from "../helpers/Constants";
 import {handleAbility} from "./UnitSkills";
+import {gameLog} from "../helpers/Log";
 
 export const moves = {
+
+  summonUnit: ({G, ctx, events}, currentUnit) => {
+    G.players[ctx.currentPlayer].units.push(currentUnit)
+  },
   selectNewUnit: ({G, ctx, events}, currentUnit) => {
     if (G.players[ctx.currentPlayer].units.filter(unit => unit.unitState.isInGame === false).length > 0) {
       if (currentUnit.type === UnitTypes.Idol)
@@ -91,7 +96,7 @@ export const moves = {
     unit.unitState.point = point
     G.availablePoints = []
     if (G.currentUnit.abilities.actions.find(action => action.name === "raid") !== undefined) {
-      handleAbility({ G, events }, "raid", {unitId: G.currentUnit.id})
+      handleAbility({ G, ctx, events }, "raid", {unitId: G.currentUnit.id})
     } else {
       unit.unitState.isClickable = false
       G.currentUnit = null
@@ -126,7 +131,7 @@ export const moves = {
     }
 
     if(enemy.heals <= 0) {
-      handleUnitDeath({G: G}, enemy, unit)
+      handleUnitDeath({G: G, ctx: ctx}, enemy, unit)
       G.fightQueue.forEach((unitInQ, i, q) => {
         if(unitInQ.unitId === enemy.id) {
           q.splice(i, 1);
@@ -134,7 +139,7 @@ export const moves = {
       })
     }
     if(unit.heals <= 0) {
-      handleUnitDeath({G: G}, unit, enemy)
+      handleUnitDeath({G: G, ctx: ctx}, unit, enemy)
       G.fightQueue.forEach((unitInQ, i, q) => {
         if(unitInQ.unitId === unit.id) {
           q.splice(i, 1);
@@ -148,10 +153,10 @@ export const moves = {
     G.endFightTurn = true
   },
 
-  raidAttack: ({G, events}, point) => {
+  raidAttack: ({G, events, ctx}, point) => {
     const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
     const thisUnit = getUnitById(G, G.currentUnit.id)
-    resolveUnitsInteraction({G: G}, {
+    resolveUnitsInteraction({G: G, ctx: ctx}, {
       currentUnit: thisUnit,
       enemy: enemy,
       updates: {
@@ -160,7 +165,7 @@ export const moves = {
       }
     })
     if(enemy.heals <= 0) {
-      handleUnitDeath({G: G}, enemy, thisUnit)
+      handleUnitDeath({G: G, ctx: ctx}, enemy, thisUnit)
     }
     G.availablePoints = []
     G.currentUnit = null
@@ -168,7 +173,7 @@ export const moves = {
     events.endTurn()
   },
 
-  skipRaidTurn: ({ G, events }) => {
+  skipRaidTurn: ({ G, events, ctx }) => {
     const thisUnit = getUnitById(G, G.currentUnit.id)
     G.currentUnit = null
     G.availablePoints = []
@@ -176,23 +181,30 @@ export const moves = {
     events.endTurn()
   },
 
-  complete: ({G, ctx, events}) => {
+  complete: ({G, ctx, events, playerID}) => {
     // if (getInGameUnits(G, (unit) => (unit.unitState.playerId === +ctx.currentPlayer) && (unit.type === UnitTypes.Idol)).length > 0) {
       G.setupComplete++
       G.availablePoints = []
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `Гравець ${+playerID+1} завершив розташування`,
+      })
       events.endTurn()
     // } else {
     //   console.log("You can't start battle without an Idol on the field")
     // }
   },
 
-  skipTurn: ({ G, events }) => {
+  skipTurn: ({ G, events, ctx }) => {
     const unit = getUnitById(G, G.currentUnit.id)
     removeStatus(unit, UnitStatus.Freeze)
     G.availablePoints = []
 
     if (G.currentUnit.abilities.actions.find(action => action.name === "raid") !== undefined) {
-      handleAbility({ G, events }, "raid", {unitId: G.currentUnit.id})
+      handleAbility({ G, events, ctx }, "raid", {unitId: G.currentUnit.id})
     } else {
       unit.unitState.isClickable = false
       G.currentUnit = null
@@ -200,7 +212,7 @@ export const moves = {
     }
   },
 
-  skipFightTurn: ({ G }) => {
+  skipFightTurn: ({ G, ctx }) => {
     const unit = getUnitById(G, G.currentUnit.id)
     if (unit.unitState.skippedTurn) {
       unit.unitState.isClickable = false
