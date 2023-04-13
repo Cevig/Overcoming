@@ -74,6 +74,9 @@ export class USteppe {
 
   static getViy = (id, playerId, _, createPosition) => {
     const stat = [2, 10, 2]
-    return getIdol("Вій", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition))
+
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.statUpdates.attack.push({name: 'instantKill', unitId: id})
+    return getIdol("Вій", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition), abilities)
   }
 }

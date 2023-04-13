@@ -1,6 +1,7 @@
 import {
   createPoint,
   getInGameUnits,
+  getNearestAllies,
   getNearestEnemies,
   getRaidEnemies,
   getStatus,
@@ -12,6 +13,7 @@ import {
 import {USteppe} from "../units/Steppe";
 import {DamageType, UnitStatus, UnitTypes} from "../helpers/Constants";
 import {gameLog} from "../helpers/Log";
+import {createUnitObject} from "../units/Unit";
 
 export const handleAbility = (data, skill, eventData) => {
   const abilitiesMap = {
@@ -22,6 +24,7 @@ export const handleAbility = (data, skill, eventData) => {
     raid: handleRaid,
     lethalGrab: handleLethalGrab,
     urka: handleUrka,
+    instantKill: handleInstantKill
   }
 
   return abilitiesMap[skill](data, eventData)
@@ -186,4 +189,23 @@ const handleUrka = ({G, events, ctx}, {unitId}) => {
   }
 
   events.setActivePlayers({ currentPlayer: 'showUrkaAction' });
+}
+
+const handleInstantKill = ({G}, {unitId, enemyId, updates}) => {
+  if (updates.damageType === DamageType.Default) {
+    const thisUnit = getUnitById(G, unitId)
+    const enemy = getUnitById(G, enemyId)
+    const isAllyNearToBoth = getNearestEnemies(G, enemy.unitState)
+      .filter(ally => ally.unitState.playerId === thisUnit.unitState.playerId)
+      .find(ally => getNearestAllies(G, ally.unitState).find(u => u.id === unitId))
+    if (isAllyNearToBoth) {
+      if (enemy.type === UnitTypes.Idol) {
+        const defaultEnemy = createUnitObject(1111, 99, enemy.biom, enemy.type, enemy.unitState.createPosition)
+        updates.damage = Math.trunc(defaultEnemy.heals / 2)
+      } else {
+        updates.damage = 99;
+      }
+    }
+    return updates
+  } else return {}
 }

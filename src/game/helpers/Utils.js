@@ -98,6 +98,12 @@ export const getNearestEnemies = (G, unitState) => {
     .filter(unit => surroundings.find(isSame(unit.unitState.point)))
 }
 
+export const getNearestAllies = (G, unitState) => {
+  const surroundings = getNeighbors(unitState.point)
+  return getInGameUnits(G, (unit) => unit.unitState.playerId === unitState.playerId)
+    .filter(unit => surroundings.find(isSame(unit.unitState.point)))
+}
+
 export const getRaidEnemies = (G, unitState) => {
   const surroundings = getRaidPoints(unitState.point)
   const allies = getInGameUnits(G, unit => unit.unitState.playerId === unitState.playerId)
@@ -165,6 +171,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
   const {ctx} = data
   const onAttackMods = handleUnitStatsUpdateInAttack(data, {
     unitId: currentUnit.id,
+    enemyId: enemy.id,
     updates: updates
   })
   const resultMods = handleUnitStatsUpdateInDefence(data, {
