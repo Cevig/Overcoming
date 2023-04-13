@@ -163,6 +163,7 @@ export const onEndFightTurn = (G, ctx) => {
   if(G.fightQueue.length && getUnitById(G, G.fightQueue[0].unitId).unitState.isClickable === false)
     G.fightQueue.shift();
   G.endFightTurn = false
+  G.currentActionUnitId = undefined
   return G
 }
 

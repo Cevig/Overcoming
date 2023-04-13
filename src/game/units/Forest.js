@@ -1,18 +1,18 @@
 import {Biom, UnitTypes} from "../helpers/Constants";
-import {getCreature, getIdol, getUnitState} from "./Unit";
+import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UForest {
   static getLesavka = (id, playerId, level, createPosition) => {
     const stat = () => {
-      if (level === 1)
-        return [2, 5, 3]
-      if (level === 2)
-        return [2, 6, 4]
-      if (level === 3)
-        return [3, 7, 4]
+      if (level === 1) return [2, 5, 3]
+      if (level === 2) return [2, 6, 4]
+      if (level === 3) return [3, 7, 4]
     }
 
-    return getCreature("Лісавка", UnitTypes.Prispeshnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.afterHitActions.push({name: "lesavka", qty: 99})
+
+    return getCreature("Лісавка", UnitTypes.Prispeshnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
   }
   static getBereginya = (id, playerId, level, createPosition) => {
     const stat = () => {

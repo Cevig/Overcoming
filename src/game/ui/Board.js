@@ -123,6 +123,11 @@ export function Board (props) {
       if (found !== undefined) {
         props.moves.attackTarget(found);
       }
+    } else if (stage && stage === 'hookUnitAction') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.hookUnit(found);
+      }
     }
   }
 

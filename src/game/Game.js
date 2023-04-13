@@ -146,6 +146,13 @@ export const Overcoming = {
               skipTurn: moves.skipFightTurn
             },
             next: 'pickUnitForAttack'
+          },
+
+          hookUnitAction: {
+            moves: {
+              hookUnit: moves.hookUnit,
+              skipHook: moves.skipHook
+            }
           }
         }
       }

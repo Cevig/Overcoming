@@ -183,6 +183,23 @@ export const moves = {
     events.endTurn()
   },
 
+  hookUnit: ({G, ctx, events}, point) => {
+    const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
+    unit.unitState.point = point
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та пересуває істоту`,
+    })
+    thisUnit.unitState.isClickable = false
+    G.availablePoints = []
+    G.currentUnit = null
+    G.endFightTurn = true
+  },
+
   moveAgain: ({G, ctx, events}, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     unit.unitState.isClickable = false
@@ -207,7 +224,7 @@ export const moves = {
     events.endTurn();
   },
 
-  attackTarget: ({G, ctx}, point) => {
+  attackTarget: ({G, ctx, events}, point) => {
     const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
     const unit = getUnitById(G, G.currentUnit.id)
 
@@ -250,10 +267,18 @@ export const moves = {
       })
     }
 
-    unit.unitState.isClickable = false
-    G.currentUnit = null
-    G.availablePoints = []
-    G.endFightTurn = true
+    const activeAbilities = unit.abilities.afterHitActions.filter(action => action.qty > 0)
+    if (enemy.unitState.isInGame && unit.unitState.isInGame && activeAbilities.length > 0) {
+      activeAbilities.forEach(action => {
+        G.currentActionUnitId = unit.id
+        handleAbility({ G, ctx, events }, action.name, {unitId: unit.id, enemyId: enemy.id})
+      })
+    } else {
+      unit.unitState.isClickable = false
+      G.currentUnit = null
+      G.availablePoints = []
+      G.endFightTurn = true
+    }
   },
 
   raidAttack: ({G, events, ctx}, point) => {
@@ -335,6 +360,14 @@ export const moves = {
     }
     G.currentUnit = null
     G.availablePoints = []
+    G.endFightTurn = true
+  },
+
+  skipHook: ({ G, ctx }) => {
+    const unit = getUnitById(G, G.currentActionUnitId)
+    unit.unitState.isClickable = false
+    G.availablePoints = []
+    G.currentUnit = null
     G.endFightTurn = true
   },
 

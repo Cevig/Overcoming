@@ -3,10 +3,12 @@ import {
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
+  getNeighbors,
   getRaidEnemies,
   getStatus,
   getUnitById,
   handleUnitDeath,
+  isNotSame,
   isSame,
   resolveUnitsInteraction
 } from "../helpers/Utils";
@@ -24,7 +26,8 @@ export const handleAbility = (data, skill, eventData) => {
     raid: handleRaid,
     lethalGrab: handleLethalGrab,
     urka: handleUrka,
-    instantKill: handleInstantKill
+    instantKill: handleInstantKill,
+    lesavka: handleLesavka
   }
 
   return abilitiesMap[skill](data, eventData)
@@ -208,4 +211,23 @@ const handleInstantKill = ({G}, {unitId, enemyId, updates}) => {
     }
     return updates
   } else return {}
+}
+
+const handleLesavka = ({G, events, ctx}, {unitId, enemyId}) => {
+  const thisUnit = getUnitById(G, unitId)
+  const enemy = getUnitById(G, enemyId)
+
+  const samePoints = getNeighbors(thisUnit.unitState.point).filter(point => getNeighbors(enemy.unitState.point).find(isSame(point)))
+  const inGameUnits = getInGameUnits(G)
+  G.availablePoints = samePoints.filter(point => inGameUnits.every(unit => isNotSame(unit.unitState.point)(point)))
+
+  if (G.availablePoints.length > 0) {
+    G.currentUnit = enemy
+    events.setActivePlayers({ currentPlayer: 'hookUnitAction' });
+  } else {
+    thisUnit.unitState.isClickable = false
+    G.availablePoints = []
+    G.currentUnit = null
+    G.endFightTurn = true
+  }
 }
