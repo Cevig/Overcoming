@@ -23,7 +23,7 @@ export const getCreature = (name, type, biom, id, power, heals, initiative, leve
   status: status
 })
 
-export const getIdol = (name, biom, id, power, heals, initiative, unitState, status = [], abilities = JSON.parse(JSON.stringify(UnitAbilities))) => ({
+export const getIdol = (name, biom, id, power, heals, initiative, unitState, abilities = JSON.parse(JSON.stringify(UnitAbilities)), status = []) => ({
   id: id,
   name: name,
   type: UnitTypes.Idol,

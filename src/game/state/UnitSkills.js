@@ -1,10 +1,12 @@
 import {
+  createPoint,
   getInGameUnits,
   getNearestEnemies,
   getRaidEnemies,
   getStatus,
   getUnitById,
   handleUnitDeath,
+  isSame,
   resolveUnitsInteraction
 } from "../helpers/Utils";
 import {USteppe} from "../units/Steppe";
@@ -19,6 +21,7 @@ export const handleAbility = (data, skill, eventData) => {
     maraAura: handleMaraAura,
     raid: handleRaid,
     lethalGrab: handleLethalGrab,
+    urka: handleUrka,
   }
 
   return abilitiesMap[skill](data, eventData)
@@ -167,4 +170,20 @@ const handleLethalGrab = ({G, ctx}, {unitId, target}) => {
     phase: ctx.phase,
     text: `Характеристики ${thisUnit.name} були збільшені`,
   })
+}
+
+const handleUrka = ({G, events, ctx}, {unitId}) => {
+  const thisUnit = getUnitById(G, unitId)
+  const newPoint = thisUnit.unitState.point
+  const oldPoint = G.currentUnit.unitState.point
+  const vector = {x: newPoint.x - oldPoint.x, y: newPoint.y - oldPoint.y, z: newPoint.z - oldPoint.z}
+  const availablePoint = createPoint(...[newPoint.x + vector.x, newPoint.y + vector.y, newPoint.z + vector.z])
+
+  if (getInGameUnits(G, unit => isSame(unit.unitState.point)(availablePoint)).length === 0) {
+    G.availablePoints = [availablePoint]
+  } else {
+    G.availablePoints = []
+  }
+
+  events.setActivePlayers({ currentPlayer: 'showUrkaAction' });
 }

@@ -38,5 +38,6 @@ export const UnitStatus = Object.freeze({
 
 export const UnitKeywords = Object.freeze({
   Sneaky: "Слизький",
-  Unfocused: "Розгублений"
+  Unfocused: "Розгублений",
+  MainTarget: "Головна Ціль"
 })

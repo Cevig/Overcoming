@@ -33,9 +33,10 @@ export class UnitUI extends React.Component {
           {this.drawUnitSymbol()}
           {/*<text transform="matrix(1.43406 0 0 1.43406 -219.49 -188.989)" stroke="#ffffff" textAnchor="start" fontFamily="'Arimo'" fontSize="70" id="svg_16" y="537.01469" x="400.18046" strokeWidth="0" fill="#000">{unit.id}</text>*/}
           {this.drawFightSigns()}
-          {this.drawFightAwakeSign()}
+          {/*{this.drawFightAwakeSign()}*/}
           {this.drawBiomSymbol()}
           {this.drawStatuses()}
+          {/*{<UnitInfo />}*/}
         </g>
         <defs>
           <radialGradient r="2.38874" cy="0.41486" cx="0.55078" spreadMethod="pad" id="svg_27">
@@ -46,12 +47,13 @@ export class UnitUI extends React.Component {
       </g>
     )
   }
-
   getUnitColor() {
     if (this.props.highlight)
       return "#abffe5"
     else if (this.props.markEnemy)
       return "#e880ff"
+    else if (this.props.fightQueue.length > 0 && this.props.fightQueue[0].unitId === this.props.unit.id)
+      return "#c8ff91"
     else if (this.props.unit.unitState.isClickable)
       return "#ffffff"
     else

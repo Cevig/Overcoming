@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import './UnitList.css';
 import {createUnitObject} from "../units/Unit";
-import {playerColors, UnitTypes} from "../helpers/Constants";
+import {Biom, playerColors, UnitTypes} from "../helpers/Constants";
 
 const UnitList = (data) => {
 
@@ -11,7 +11,7 @@ const UnitList = (data) => {
   const getAssignedUnits = () => {
     if (player !== undefined) {
       return [
-        createUnitObject(newId(), 99, player.bioms[0]),
+        createUnitObject(newId(), 99, Biom.Steppe),
         createUnitObject(newId(), 99, player.bioms[0], UnitTypes.Idol, 1),
         createUnitObject(newId(), 99, player.bioms[0], UnitTypes.Prispeshnick),
         createUnitObject(newId(), 99, player.bioms[0], UnitTypes.Ispolin),

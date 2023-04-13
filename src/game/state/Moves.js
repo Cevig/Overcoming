@@ -2,6 +2,7 @@ import {
   getInGameUnits,
   getNearestEnemies,
   getNeighbors,
+  getNeighbors2,
   getUnitById,
   handleUnitDeath,
   hasKeyword,
@@ -63,8 +64,54 @@ export const moves = {
     events.endStage();
   },
 
+  doActionToEnemy: ({ G, ctx, events }) => {
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    const surroundings = getNeighbors2(thisUnit.unitState.point)
+
+    G.availablePoints = getInGameUnits(G, (unit) => unit.unitState.playerId !== thisUnit.unitState.playerId)
+      .filter(unit => surroundings.find(point => isSame(point)(unit.unitState.point)))
+      .filter(unit => unit.unitState.isClickable)
+      .map(u => u.unitState.point)
+
+    if (G.availablePoints.length === 0) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `Немає доступних цілей для переміщення!`,
+      })
+    }
+    events.endStage();
+  },
+
+  selectEnemy: ({ G, ctx, events }, currentUnit) => {
+    if (hasStatus(currentUnit, UnitStatus.Freeze)) {
+      G.availablePoints = []
+    } else {
+      G.availablePoints = getNeighbors(currentUnit.unitState.point)
+        .filter(point => getInGameUnits(G).every(unit => isNotSame(unit.unitState.point)(point)))
+    }
+    G.currentUnit = currentUnit
+    events.endStage();
+  },
+
   selectUnitForAttack: ({ G, ctx, events }, currentUnit) => {
-    G.availablePoints = getNearestEnemies(G, currentUnit.unitState).map(unit => unit.unitState.point)
+    const enemies = getNearestEnemies(G, currentUnit.unitState)
+    const mainTargetEnemy = enemies.find(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
+    if (mainTargetEnemy !== undefined) {
+      G.availablePoints = [mainTargetEnemy.unitState.point]
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemy.name}!`,
+      })
+    } else {
+      G.availablePoints = enemies.map(unit => unit.unitState.point)
+    }
+
     G.currentUnit = currentUnit
     events.endStage();
   },
@@ -98,14 +145,66 @@ export const moves = {
   moveUnitOnBoard: ({G, ctx, events}, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     unit.unitState.point = point
-    G.availablePoints = []
-    if (G.currentUnit.abilities.actions.find(action => action.name === "raid") !== undefined) {
-      handleAbility({ G, ctx, events }, "raid", {unitId: G.currentUnit.id})
+    const activeAbilities = G.currentUnit.abilities.actions.filter(action => action.qty > 0)
+    if (activeAbilities.length > 0) {
+      activeAbilities.forEach(action => {
+        G.currentActionUnitId = unit.id
+        handleAbility({ G, ctx, events }, action.name, {unitId: G.currentUnit.id})
+      })
     } else {
       unit.unitState.isClickable = false
-      G.currentUnit = null
+      G.availablePoints = []
       events.endTurn()
     }
+  },
+
+  moveEnemy: ({G, ctx, events}, point) => {
+    const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
+    unit.unitState.point = point
+    unit.unitState.isClickable = false
+    let actionQty = 0;
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    thisUnit.abilities.actions.forEach(action => {
+      if (action.name === 'urka') {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+    thisUnit.unitState.isClickable = false
+    G.currentActionUnitId = undefined
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та пересуває істоту. Залишилось ${actionQty} заряди`,
+    })
+    G.availablePoints = []
+    events.endTurn()
+  },
+
+  moveAgain: ({G, ctx, events}, point) => {
+    const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
+    unit.unitState.isClickable = false
+    unit.unitState.point = point
+    G.currentUnit = null
+    G.currentActionUnitId = undefined
+    G.availablePoints = []
+    let actionQty = 0;
+    unit.abilities.actions.forEach(action => {
+      if (action.name === 'urka') {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${unit.name} викорстовує здібність та робить додатковий хід. Залишилось ${actionQty} заряди`,
+    })
+    events.endTurn();
   },
 
   attackTarget: ({G, ctx}, point) => {
@@ -179,7 +278,13 @@ export const moves = {
 
   skipRaidTurn: ({ G, events, ctx }) => {
     const thisUnit = getUnitById(G, G.currentUnit.id)
-    G.currentUnit = null
+    thisUnit.unitState.isClickable = false
+    G.availablePoints = []
+    events.endTurn()
+  },
+
+  skipUrkaAction: ({ G, events, ctx }) => {
+    const thisUnit = getUnitById(G, G.currentUnit.id)
     G.availablePoints = []
     thisUnit.unitState.isClickable = false
     events.endTurn()

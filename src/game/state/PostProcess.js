@@ -55,7 +55,12 @@ export const cleanFightPhase = (G, ctx) => {
   });
   G.moveOrder++;
   G.fightQueue = []
-  G.endTurn = false
+  return G
+}
+
+export const onEndPositioningTurn = (G, ctx) => {
+  G.currentActionUnitId = undefined
+  G.currentUnit = null
   return G
 }
 

@@ -52,7 +52,7 @@ export class USteppe {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {
       abilities.keywords.push(UnitKeywords.Unfocused)
-      abilities.actions.push({name: "raid"})
+      abilities.actions.push({name: "raid", qty: 99})
       if (level > 1) {
         abilities.onDeath.push({name: 'lethalGrab'})
       }
@@ -63,7 +63,13 @@ export class USteppe {
 
   static getUrka = (id, playerId, _, createPosition) => {
     const stat = [3, 7, 4]
-    return getIdol("Урка", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition))
+
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.statUpdates.attack.push({name: 'addFreezeEffect', unitId: id})
+    abilities.keywords.push(UnitKeywords.MainTarget)
+    abilities.actions.push({name: "urka", qty: 2})
+
+    return getIdol("Ырка", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition), abilities)
   }
 
   static getViy = (id, playerId, _, createPosition) => {

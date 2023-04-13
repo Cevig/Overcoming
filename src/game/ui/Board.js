@@ -92,6 +92,22 @@ export function Board (props) {
       if (found !== undefined) {
         props.moves.attackTarget(found);
       }
+    } else if (stage && stage === 'showUrkaAction') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.moveAgain(found);
+      }
+    } else if (stage && stage === 'selectEnemyByUrka') {
+      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
+      const isItAvailablePoint = props.G.availablePoints.find(isSame(point));
+      if (found && isItAvailablePoint) {
+        props.moves.selectEnemy(found);
+      }
+    } else if (stage && stage === 'placeEnemyByUrka') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.moveEnemy(found);
+      }
     }
   }
 

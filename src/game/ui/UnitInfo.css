@@ -1,0 +1,47 @@
+.creature-popup-container {
+  position: relative;
+}
+
+.creature-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  /*transform: translate(-490px, -1508px);*/
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  overflow: auto;
+  font-size: 14px;
+  text-align: left;
+  padding: 10px;
+  z-index: 1000;
+}
+
+.creature-popup .creature-image {
+  float: left;
+  margin-right: 10px;
+}
+
+.creature-popup .creature-info {
+  overflow: hidden;
+}
+
+.creature-popup .creature-name {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.creature-popup .creature-type,
+.creature-popup .creature-origin,
+.creature-popup .creature-level {
+  margin-bottom: 5px;
+}
+
+.creature-popup .creature-stats,
+.creature-popup .creature-applied-statuses {
+  margin-top: 10px;
+}
+
+/*.creature-popup .creature-stats div,*/
+/*.creature-popup .creature-applied-statuses div*/

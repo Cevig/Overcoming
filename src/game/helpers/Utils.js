@@ -29,6 +29,31 @@ export const getNeighbors = ({ x, y, z }) => {
     .map(p => createPoint(...p));
 }
 
+export const getNeighbors2 = ({ x, y, z }) => {
+  return [
+    [0, -1, 1],
+    [1, -1, 0],
+    [1, 0, -1],
+    [0, 1, -1],
+    [-1, 1, 0],
+    [-1, 0, 1],
+    [0, 2, -2],
+    [-1, 2, -1],
+    [-2, 2, 0],
+    [-2, 1, 1],
+    [-2, 0, 2],
+    [-1, -1, 2],
+    [0, -2, 2],
+    [1, -2, 1],
+    [2, -2, 0],
+    [2, -1, -1],
+    [2, 0, -2],
+    [1, 1, -2]
+  ]
+    .map(([dx, dy, dz]) => [x + dx, y + dy, z + dz])
+    .map(p => createPoint(...p));
+}
+
 export const getRaidPoints = ({ x, y, z }) => {
   return [
     {main: [0, 2, -2], obstacles: [[0, 1, -1]]},

@@ -4,6 +4,7 @@ import {
   cleanFightPhase,
   endFightPhase,
   handleGameOver,
+  onEndPositioningTurn,
   onGameOver,
   postProcess,
   setFightOrder,
@@ -71,6 +72,7 @@ export const Overcoming = {
           playOrder: ({ G, ctx }) => G.players.filter(p => p.isInGame).map(p => p.id)
         },
         onMove: (data) => postProcess(data),
+        onEnd: ({ G, ctx }) => { onEndPositioningTurn(G, ctx) },
         stages: {
           pickUnitOnBoard: {
             moves: {
@@ -90,6 +92,26 @@ export const Overcoming = {
               attackTarget: moves.raidAttack,
               skipTurn: moves.skipRaidTurn
             }
+          },
+
+          showUrkaAction: {
+            moves: {
+              doActionToEnemy: moves.doActionToEnemy,
+              skipTurn: moves.skipUrkaAction,
+              moveAgain: moves.moveAgain,
+            },
+            next: 'selectEnemyByUrka'
+          },
+          selectEnemyByUrka: {
+            moves: {
+              selectEnemy: moves.selectEnemy
+            },
+            next: 'placeEnemyByUrka'
+          },
+          placeEnemyByUrka: {
+            moves: {
+              moveEnemy: moves.moveEnemy
+            },
           }
         }
       }
