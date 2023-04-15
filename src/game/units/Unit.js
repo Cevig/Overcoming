@@ -36,9 +36,10 @@ export const getIdol = (name, biom, id, power, heals, initiative, unitState, abi
   status: status
 })
 
-export const getUnitState = (unitId, playerId, createPosition, point = null, isClickable = true, isInGame = false, isInFight = false, skippedTurn = false, isCounterAttacked = false) => ({
+export const getUnitState = (unitId, playerId, power, heals, initiative, createPosition, point = null, isClickable = true, isInGame = false, isInFight = false, skippedTurn = false, isCounterAttacked = false) => ({
   unitId: unitId,
   playerId: playerId,
+  baseStats: {power: power, heals: heals, initiative: initiative},
   createPosition: createPosition,
   point: point,
   isClickable: isClickable,

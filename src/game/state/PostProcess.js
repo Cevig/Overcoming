@@ -33,13 +33,13 @@ const setColorMap = G => {
   G.grid.colorMap['#dd666f'] = G.availablePoints
 };
 
-export const setGridSize = (G, ctx) => {
+export const setGridSize = (G, ctx, events) => {
   if((G.moveOrder >= 2) && (G.moveOrder % 2 === 0)) {
     getInGameUnits(G, (unit) => {
       const point = unit.unitState.point
       const level = G.grid.levels
       return (Math.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z)) === level) || (point.y === level-1) || (point.z === -(level-1))
-    }).forEach(unit => handleUnitDeath({G: G, ctx: ctx}, unit))
+    }).forEach(unit => handleUnitDeath({G: G, ctx: ctx, events: events}, unit))
     G.players.forEach(p => {
       if (p.units.every(unit => unit.unitState.isInGame === false)) p.isInGame = false
     })

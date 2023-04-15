@@ -86,8 +86,16 @@ export class BoardUser extends React.Component {
               <button onClick={() => props.moves.doActionToEnemy()}>Перемістити слугу</button>
               : <span></span>
             }
+            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "curseAbasyActionStage") ?
+              <button onClick={() => props.moves.backFromAction()}>Повернутися до ходу</button>
+              : <span></span>
+            }
             {this.isHealAllyAvailable() ?
               <button onClick={() => props.moves.healAllyAction()}>Зцілити життя</button>
+              : <span></span>
+            }
+            {this.isCurseAbasuAvailable() ?
+              <button onClick={() => props.moves.curseAction()}>Причинити біль</button>
               : <span></span>
             }
           </div>
@@ -99,6 +107,17 @@ export class BoardUser extends React.Component {
   isHealAllyAvailable() {
     const props = this.props.props
     if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === 'healAlly' && skill.qty > 0)) {
+      if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
+        (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
+        return true
+      }
+    }
+    return false
+  }
+
+  isCurseAbasuAvailable() {
+    const props = this.props.props
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === 'abasuCurse' && skill.qty > 0)) {
       if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
         (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
         return true

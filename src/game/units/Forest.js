@@ -12,7 +12,7 @@ export class UForest {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.afterHitActions.push({name: "lesavka", qty: 99})
 
-    return getCreature("Лісавка", UnitTypes.Prispeshnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
+    return getCreature("Лісавка", UnitTypes.Prispeshnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
   static getBereginya = (id, playerId, level, createPosition) => {
     const stat = () => {
@@ -32,7 +32,7 @@ export class UForest {
       }
     }
 
-    return getCreature("Берегиня", UnitTypes.Ispolin, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
+    return getCreature("Берегиня", UnitTypes.Ispolin, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
 
   static getSirin = (id, playerId, level, createPosition) => {
@@ -47,23 +47,27 @@ export class UForest {
       abilities.keywords.push(UnitKeywords.Unfocused)
       abilities.actions.push({name: "raid", qty: 99})
       if (level > 2) {
-        abilities.onDeath.push({name: 'lethalGrab'})
         abilities.keywords.push(UnitKeywords.AbsoluteRaid)
       } else {
         abilities.keywords.push(UnitKeywords.RestrictedRaid)
       }
     }
 
-    return getCreature("Сірін", UnitTypes.Vestnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
+    return getCreature("Сірін", UnitTypes.Vestnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
 
   static getAbasu = (id, playerId, _, createPosition) => {
     const stat = [2, 8, 4]
-    return getIdol("Абасу", Biom.Forest, id, ...stat, getUnitState(id, playerId, createPosition))
+
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.onDeath.push({name: 'utilizeDeath'})
+    abilities.allTimeActions.push({name: "abasuCurse", qty: 0})
+
+    return getIdol("Абаси", Biom.Forest, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
   static getChygayster = (id, playerId, _, createPosition) => {
     const stat = [2, 9, 5]
-    return getIdol("Чугайстер", Biom.Forest, id, ...stat, getUnitState(id, playerId, createPosition))
+    return getIdol("Чугайстер", Biom.Forest, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
   }
 }

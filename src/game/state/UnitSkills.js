@@ -4,6 +4,7 @@ import {
   getNearestAllies,
   getNearestEnemies,
   getNeighbors,
+  getNeighbors2,
   getRaidEnemies,
   getRaidEnemiesAbsolute,
   getStatus,
@@ -22,7 +23,6 @@ import {
   UnitTypes
 } from "../helpers/Constants";
 import {gameLog} from "../helpers/Log";
-import {createUnitObject} from "../units/Unit";
 
 export const handleAbility = (data, skill, eventData) => {
   const abilitiesMap = {
@@ -34,12 +34,13 @@ export const handleAbility = (data, skill, eventData) => {
     lethalGrab: handleLethalGrab,
     urka: handleUrka,
     instantKill: handleInstantKill,
-    lesavka: handleLesavka
+    lesavka: handleLesavka,
+    utilizeDeath: handleUtilizeDeath,
   }
 
   return abilitiesMap[skill](data, eventData)
 }
-const handlePolydnicaSurroundings = ({G, ctx}, {unitId}) => {
+const handlePolydnicaSurroundings = ({G, ctx, events}, {unitId}) => {
   const units = getInGameUnits(G)
   const thisUnit = getUnitById(G, unitId)
   const alliedUnits = units.filter(unit => (unit.unitState.playerId === thisUnit.unitState.playerId) && (unit.name === USteppe.polydnicaName))
@@ -55,7 +56,7 @@ const handlePolydnicaSurroundings = ({G, ctx}, {unitId}) => {
           phase: ctx.phase,
           text: `Полудніці оточили слугу типу ${enemy.type} гравця ${enemy.unitState.playerId+1}`,
         })
-        handleUnitDeath({G: G, ctx:ctx}, enemy)
+        handleUnitDeath({G: G, ctx:ctx, events: events}, enemy)
       }
     })
   }
@@ -93,10 +94,9 @@ const handleMaraAura = ({G, ctx}, {unitId}) => {
 
 const handleWholeness = ({G, ctx}, {unitId, updates}) => {
   const thisUnit = getUnitById(G, unitId)
-  const tempUnit = USteppe.getPolydnica(unitId, 10, thisUnit.level)
 
   if (updates.power !== undefined) {
-    updates.power = ((thisUnit.power - updates.power) < tempUnit.power) ?  (thisUnit.power - tempUnit.power) : updates.power
+    updates.power = ((thisUnit.power - updates.power) < thisUnit.unitState.baseStats.power) ?  (thisUnit.power - thisUnit.unitState.baseStats.power) : updates.power
     if (updates.status !== undefined && updates.power === 0) {
       const decreasingStatusPower = updates.status.find(status => status.name === UnitStatus.PowerDown)
       if(decreasingStatusPower !== undefined) {
@@ -112,7 +112,7 @@ const handleWholeness = ({G, ctx}, {unitId, updates}) => {
     }
   }
   if (updates.initiative !== undefined) {
-    updates.initiative = ((thisUnit.initiative - updates.initiative) < tempUnit.initiative) ? (thisUnit.initiative - tempUnit.initiative) : updates.initiative
+    updates.initiative = ((thisUnit.initiative - updates.initiative) < thisUnit.unitState.baseStats.initiative) ? (thisUnit.initiative - thisUnit.unitState.baseStats.initiative) : updates.initiative
     if (updates.status !== undefined && updates.initiative === 0) {
       const decreasingStatusInit = updates.status.find(status => status.name === UnitStatus.InitiativeDown)
       if(decreasingStatusInit !== undefined) {
@@ -173,6 +173,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
 }
 
 const handleLethalGrab = ({G, ctx}, {unitId, target}) => {
+  if (!unitId) return
   const thisUnit = getUnitById(G, unitId)
   if (target.type === UnitTypes.Idol) {
     thisUnit.power++
@@ -219,8 +220,7 @@ const handleInstantKill = ({G}, {unitId, enemyId, updates}) => {
       .find(ally => getNearestAllies(G, ally.unitState).find(u => u.id === unitId))
     if (isAllyNearToBoth) {
       if (enemy.type === UnitTypes.Idol) {
-        const defaultEnemy = createUnitObject(1111, 99, enemy.biom, enemy.type, enemy.unitState.createPosition)
-        updates.damage = Math.trunc(defaultEnemy.heals / 2)
+        updates.damage = Math.trunc(enemy.unitState.baseStats.heals / 2)
       } else {
         updates.damage = 99;
       }
@@ -245,5 +245,24 @@ const handleLesavka = ({G, events, ctx}, {unitId, enemyId}) => {
     G.availablePoints = []
     G.currentUnit = null
     G.endFightTurn = true
+  }
+}
+
+const handleUtilizeDeath = ({G, ctx, events}, {point}) => {
+  const thisUnit = getInGameUnits(G).find(unit => unit.abilities.onDeath.find(ability => ability.name === 'utilizeDeath'))
+
+  if (getNeighbors2(thisUnit.unitState.point).find(isSame(point))) {
+    const action = thisUnit.abilities.allTimeActions.find(action => action.name === 'abasuCurse')
+    if (action) {
+      action.qty++
+    }
+
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} отримує заряд`,
+    })
   }
 }

@@ -266,26 +266,28 @@ export const removeStatus = (unit, keyword) => {
 export const hasKeyword = (unit, keyword) =>
   unit.abilities.keywords.find(key => key === keyword) !== undefined
 
-export const handleUnitDeath = (data, unit, killer = null) => {
-  const {ctx} = data
-  unit.unitState.isInGame = false
+export const handleUnitDeath = (data, target, killer = null) => {
+  const {G, ctx} = data
+  const point = {...target.unitState.point}
+  target.unitState.isInGame = false
   gameLog.addLog({
     id: Math.random().toString(10).slice(2),
     turn: ctx.turn,
     player: +ctx.currentPlayer,
     phase: ctx.phase,
-    text: `Було вбито ${unit.name} гравця ${unit.unitState.playerId+1}`,
+    text: `Було вбито ${target.name} гравця ${target.unitState.playerId+1}`,
   })
-  unit.unitState.point = createPoint(100, 100, 100)
-  unit.abilities.onMove.forEach(skill => {
-    handleAbility(data, skill.name, {unitId: unit.id})
+  target.unitState.point = createPoint(100, 100, 100)
+  target.abilities.onMove.forEach(skill => {
+    handleAbility(data, skill.name, {unitId: target.id})
   })
-  unit.unitState.point = null
-  if (killer) {
-    killer.abilities.onDeath.forEach(skill => {
-      handleAbility(data, skill.name, {unitId: killer.id, target: unit})
+  target.unitState.point = null
+  const unitsWithOnDeath = getInGameUnits(G, unit => unit.abilities.onDeath.length)
+  unitsWithOnDeath.forEach(unit => {
+    unit.abilities.onDeath.forEach(skill => {
+      handleAbility(data, skill.name, {unitId: killer ? killer.id : null, target: unit, point: point})
     })
-  }
+  })
 }
 
 export const setEnemyMarks = (props, unit) =>

@@ -113,6 +113,12 @@ export function Board (props) {
       if (found !== undefined) {
         props.moves.healAlly(found);
       }
+    } else if (stage && stage === 'curseAbasyActionStage') {
+      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
+      const isItAvailablePoint = props.G.availablePoints.find(isSame(point));
+      if (found && isItAvailablePoint) {
+        props.moves.curseOrRecover(found);
+      }
     }
   }
 
@@ -137,6 +143,12 @@ export function Board (props) {
       const found = props.G.availablePoints.find(isSame(point));
       if (found !== undefined) {
         props.moves.healAlly(found);
+      }
+    } else if (stage && stage === 'curseAbasyActionStage') {
+      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
+      const isItAvailablePoint = props.G.availablePoints.find(isSame(point));
+      if (found && isItAvailablePoint) {
+        props.moves.curseOrRecover(found);
       }
     }
   }

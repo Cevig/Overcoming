@@ -12,7 +12,7 @@ export class UMash {
         return [2, 5, 4]
     }
 
-    return getCreature("Моховік", UnitTypes.Prispeshnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    return getCreature("Моховік", UnitTypes.Prispeshnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
   static getDrekavaz = (id, playerId, level, createPosition) => {
     const stat = () => {
@@ -24,7 +24,7 @@ export class UMash {
         return [4, 4, 6]
     }
 
-    return getCreature("Дрекавац", UnitTypes.Ispolin, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    return getCreature("Дрекавац", UnitTypes.Ispolin, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
 
   static getMavka = (id, playerId, level, createPosition) => {
@@ -37,16 +37,16 @@ export class UMash {
         return [3, 5, 4]
     }
 
-    return getCreature("Мавка", UnitTypes.Vestnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    return getCreature("Мавка", UnitTypes.Vestnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
 
   static getBegemot = (id, playerId, _, createPosition) => {
     const stat = [3, 8, 4]
-    return getIdol("Бегемот", Biom.Mash, id, ...stat, getUnitState(id, playerId, createPosition))
+    return getIdol("Бегемот", Biom.Mash, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
   }
 
   static getFekst = (id, playerId, _, createPosition) => {
     const stat = [2, 7, 4]
-    return getIdol("Фекст", Biom.Mash, id, ...stat, getUnitState(id, playerId, createPosition))
+    return getIdol("Фекст", Biom.Mash, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
   }
 }

@@ -12,7 +12,7 @@ export class UWater {
         return [3, 5, 4]
     }
 
-    return getCreature("Лернійський Рак", UnitTypes.Prispeshnick, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    return getCreature("Лернійський Рак", UnitTypes.Prispeshnick, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
   static getBykavaz = (id, playerId, level, createPosition) => {
     const stat = () => {
@@ -24,7 +24,7 @@ export class UWater {
         return [3, 4, 5]
     }
 
-    return getCreature("Букавац", UnitTypes.Ispolin, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    return getCreature("Букавац", UnitTypes.Ispolin, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
 
   static getAidahar = (id, playerId, level, createPosition) => {
@@ -37,16 +37,16 @@ export class UWater {
         return [3, 5, 5]
     }
 
-    return getCreature("Айдахар", UnitTypes.Vestnick, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    return getCreature("Айдахар", UnitTypes.Vestnick, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
 
   static getBalor = (id, playerId, _, createPosition) => {
     const stat = [3, 7, 1]
-    return getIdol("Балор", Biom.Water, id, ...stat, getUnitState(id, playerId, createPosition))
+    return getIdol("Балор", Biom.Water, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
   }
 
   static getVodyanoi = (id, playerId, _, createPosition) => {
     const stat = [2, 7, 5]
-    return getIdol("Водяний", Biom.Water, id, ...stat, getUnitState(id, playerId, createPosition))
+    return getIdol("Водяний", Biom.Water, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
   }
 }

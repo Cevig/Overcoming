@@ -25,7 +25,7 @@ export class USteppe {
       }
     }
 
-    return getCreature(USteppe.polydnicaName, UnitTypes.Prispeshnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
+    return getCreature(USteppe.polydnicaName, UnitTypes.Prispeshnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
   static getMara = (id, playerId, level, createPosition) => {
     const stat = () => {
@@ -40,7 +40,7 @@ export class USteppe {
       abilities.onMove.push({name: 'maraAura'})
     }
 
-    return getCreature(USteppe.maraName, UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
+    return getCreature(USteppe.maraName, UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
 
   static getLetavica = (id, playerId, level, createPosition) => {
@@ -58,7 +58,7 @@ export class USteppe {
       }
     }
 
-    return getCreature("Летавиця", UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
+    return getCreature("Летавиця", UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
 
   static getUrka = (id, playerId, _, createPosition) => {
@@ -69,7 +69,7 @@ export class USteppe {
     abilities.keywords.push(UnitKeywords.MainTarget)
     abilities.actions.push({name: "urka", qty: 2})
 
-    return getIdol("Ырка", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition), abilities)
+    return getIdol("Ырка", Biom.Steppe, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
   static getViy = (id, playerId, _, createPosition) => {
@@ -77,6 +77,6 @@ export class USteppe {
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.statUpdates.attack.push({name: 'instantKill', unitId: id})
-    return getIdol("Вій", Biom.Steppe, id, ...stat, getUnitState(id, playerId, createPosition), abilities)
+    return getIdol("Вій", Biom.Steppe, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }

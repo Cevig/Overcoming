@@ -37,6 +37,7 @@ export const UnitStatus = Object.freeze({
   PowerDown: "Силу знижено",
   PowerUp: "Силу збільшено",
   PowerUpSupport: "Підтримка",
+  Curse: "Прокляття",
 })
 
 export const UnitKeywords = Object.freeze({

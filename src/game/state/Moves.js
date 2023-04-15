@@ -21,7 +21,6 @@ import {
 } from "../helpers/Constants";
 import {handleAbility} from "./UnitSkills";
 import {gameLog} from "../helpers/Log";
-import {createUnitObject} from "../units/Unit";
 
 export const moves = {
 
@@ -252,7 +251,7 @@ export const moves = {
     }
 
     if(enemy.heals <= 0) {
-      handleUnitDeath({G: G, ctx: ctx}, enemy, unit)
+      handleUnitDeath({G: G, ctx: ctx, events: events}, enemy, unit)
       G.fightQueue.forEach((unitInQ, i, q) => {
         if(unitInQ.unitId === enemy.id) {
           q.splice(i, 1);
@@ -260,7 +259,7 @@ export const moves = {
       })
     }
     if(unit.heals <= 0) {
-      handleUnitDeath({G: G, ctx: ctx}, unit, enemy)
+      handleUnitDeath({G: G, ctx: ctx, events: events}, unit, enemy)
       G.fightQueue.forEach((unitInQ, i, q) => {
         if(unitInQ.unitId === unit.id) {
           q.splice(i, 1);
@@ -294,7 +293,7 @@ export const moves = {
       }
     })
     if(enemy.heals <= 0) {
-      handleUnitDeath({G: G, ctx: ctx}, enemy, thisUnit)
+      handleUnitDeath({G: G, ctx: ctx, events: events}, enemy, thisUnit)
     }
     G.availablePoints = []
     G.currentUnit = null
@@ -393,8 +392,8 @@ export const moves = {
   doHealAlly: ({ G, ctx, events }, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     const ally = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
-    const defaultAlly = createUnitObject(1111, 99, ally.biom, ally.type, ally.unitState.createPosition, ally.level)
-    const healValue = Math.min(defaultAlly.heals, ally.heals + 3) - ally.heals
+
+    const healValue = Math.min(ally.unitState.baseStats.heals, ally.heals + 3) - ally.heals
 
     let actionQty = 0
     unit.abilities.allTimeActions.forEach(action => {
@@ -424,5 +423,86 @@ export const moves = {
     unit.unitState.isClickable = false
     G.availablePoints = []
     ctx.phase === 'Positioning' ? events.endTurn() : G.endFightTurn = true
+  },
+
+  curseActionMove:  ({ G, ctx, events }) => {
+    G.availablePoints = getInGameUnits(G, unit => unit.unitState.playerId !== G.currentUnit.unitState.playerId)
+      .filter(unit => unit.type !== UnitTypes.Idol)
+      .map(unit => unit.unitState.point)
+    G.availablePoints.push(G.currentUnit.unitState.point)
+    G.currentActionUnitId = G.currentUnit.id
+
+    events.setActivePlayers({ currentPlayer: 'curseAbasyActionStage' });
+  },
+
+  curseOrRecover: ({ G, ctx, events }, currentUnit) => {
+    const unit = getInGameUnits(G).find(unit => unit.id === G.currentActionUnitId)
+
+    let actionQty = 0
+    unit.abilities.allTimeActions.forEach(action => {
+      if (action.name === 'abasuCurse') {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+
+    if (currentUnit.id === G.currentActionUnitId) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${unit.name} викорстовує здібність та відновлює життя. Залишилось ${actionQty} заряди`,
+      })
+      const healValue = Math.min(unit.unitState.baseStats.heals, unit.heals + 2) - unit.heals
+      resolveUnitsInteraction({G: G, ctx: ctx}, {
+        currentUnit: unit,
+        enemy: unit,
+        updates: {
+          damage: -healValue,
+          damageType: DamageType.Heal,
+        }
+      })
+    } else {
+      const enemy = getUnitById(G, currentUnit.id)
+      resolveUnitsInteraction({G: G, ctx: ctx}, {
+        currentUnit: unit,
+        enemy: enemy,
+        updates: {
+          initiative: 1,
+          power: 1,
+          status: [{name: UnitStatus.InitiativeDown, qty: 1}, {name: UnitStatus.PowerDown, qty: 1}]
+        }
+      });
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${unit.name} викорстовує здібність та насилає прокляття. Залишилось ${actionQty} заряди`,
+      })
+    }
+
+    if (actionQty <= 0) {
+      G.currentUnit = null
+      G.availablePoints = []
+      G.currentActionUnitId = undefined
+      if (ctx.phase === 'Positioning') {
+        events.setActivePlayers({ currentPlayer: 'pickUnitOnBoard' });
+      } else {
+        events.setActivePlayers({ currentPlayer: 'pickUnitForAttack' });
+      }
+    }
+  },
+
+  backFromAction: ({ G, ctx, events }) => {
+    G.currentUnit = null
+    G.availablePoints = []
+    G.currentActionUnitId = undefined
+    if (ctx.phase === 'Positioning') {
+      events.setActivePlayers({ currentPlayer: 'pickUnitOnBoard' });
+    } else {
+      events.setActivePlayers({ currentPlayer: 'pickUnitForAttack' });
+    }
   }
 };
