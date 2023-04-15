@@ -43,5 +43,7 @@ export const UnitKeywords = Object.freeze({
   Sneaky: "Слизький",
   Unfocused: "Розгублений",
   MainTarget: "Головна Ціль",
-  Support: "Підтримка"
+  Support: "Підтримка",
+  RestrictedRaid: "Обмежений Наліт",
+  AbsoluteRaid: "Наліт Без Обмежень"
 })

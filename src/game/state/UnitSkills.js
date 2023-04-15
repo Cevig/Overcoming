@@ -5,15 +5,22 @@ import {
   getNearestEnemies,
   getNeighbors,
   getRaidEnemies,
+  getRaidEnemiesAbsolute,
   getStatus,
   getUnitById,
   handleUnitDeath,
+  hasKeyword,
   isNotSame,
   isSame,
   resolveUnitsInteraction
 } from "../helpers/Utils";
 import {USteppe} from "../units/Steppe";
-import {DamageType, UnitStatus, UnitTypes} from "../helpers/Constants";
+import {
+  DamageType,
+  UnitKeywords,
+  UnitStatus,
+  UnitTypes
+} from "../helpers/Constants";
 import {gameLog} from "../helpers/Log";
 import {createUnitObject} from "../units/Unit";
 
@@ -143,10 +150,19 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
   }
 
   const thisUnit = getUnitById(G, unitId)
-  if (getNearestEnemies(G, thisUnit.unitState).length > 0) {
+  if (getNearestEnemies(G, thisUnit.unitState).length > 0 && !hasKeyword(thisUnit, UnitKeywords.AbsoluteRaid)) {
     endTurn(G, ctx, events, thisUnit)
   } else {
-    const raidEnemies = getRaidEnemies(G, thisUnit.unitState)
+    let raidEnemies
+
+    if (hasKeyword(thisUnit, UnitKeywords.AbsoluteRaid)) {
+      raidEnemies = getRaidEnemiesAbsolute(G, thisUnit.unitState)
+    } else if (hasKeyword(thisUnit, UnitKeywords.RestrictedRaid)) {
+      raidEnemies = getNearestAllies(G, thisUnit.unitState).length >= 2 ? [] : getRaidEnemies(G, thisUnit.unitState)
+    } else {
+      raidEnemies = getRaidEnemies(G, thisUnit.unitState)
+    }
+
     if (raidEnemies.length === 0) {
       endTurn(G, ctx, events, thisUnit)
     } else {

@@ -37,15 +37,24 @@ export class UForest {
 
   static getSirin = (id, playerId, level, createPosition) => {
     const stat = () => {
-      if (level === 1)
-        return [2, 5, 5]
-      if (level === 2)
-        return [3, 5, 5]
-      if (level === 3)
-        return [3, 6, 5]
+      if (level === 1) return [2, 5, 5]
+      if (level === 2) return [3, 5, 5]
+      if (level === 3) return [3, 6, 5]
     }
 
-    return getCreature("Сірін", UnitTypes.Vestnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    if (level > 0) {
+      abilities.keywords.push(UnitKeywords.Unfocused)
+      abilities.actions.push({name: "raid", qty: 99})
+      if (level > 2) {
+        abilities.onDeath.push({name: 'lethalGrab'})
+        abilities.keywords.push(UnitKeywords.AbsoluteRaid)
+      } else {
+        abilities.keywords.push(UnitKeywords.RestrictedRaid)
+      }
+    }
+
+    return getCreature("Сірін", UnitTypes.Vestnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
   }
 
   static getAbasu = (id, playerId, _, createPosition) => {
