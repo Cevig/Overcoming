@@ -14,7 +14,6 @@ const sentChatMessages = [];
 export class BoardLogs extends React.Component {
   render () {
     const props = this.props.props
-    const player = props.G.players.find(p => p.id === +props.ctx.currentPlayer);
     const messages = gameLog.log.filter(log => sentChatMessages.find(mes => mes === log.id) === undefined)
     messages.forEach(message => {
       props.sendChatMessage(message)

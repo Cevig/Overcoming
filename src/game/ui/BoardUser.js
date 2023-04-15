@@ -1,6 +1,8 @@
 import React from 'react';
 import {playerColors} from "../helpers/Constants";
 import UnitList from "./UnitList";
+import "./BoardUser.css";
+import {getUnitById} from "../helpers/Utils";
 
 const styles = {
   moves: {
@@ -51,37 +53,44 @@ const styles = {
 export class BoardUser extends React.Component {
   render () {
     const props = this.props.props
+    const player = props.G.players.find(p => p.id === +props.ctx.currentPlayer);
     return (
       <div style={styles.mainStyles}>
         <UnitList data={props} />
         {/*<div>phase: {props.ctx.phase}</div>*/}
-        <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20}}>Дії</div>
-        <div style={styles.actions}>
-          <button onClick={() => props.undo()}>Назад</button>
-          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
-            <button onClick={() => props.moves.removeUnit()}>Видалити</button>
-            : <span></span>
-          }
-          {props.ctx.phase === 'Setup' ?
-            <button onClick={() => props.moves.complete()}>Завершити</button>
-            : <span></span>
-          }
-          {this.isDefaultSkipTurnAvailable() ?
-            <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
-            : <span></span>
-          }
-          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "hookUnitAction") ?
-            <button onClick={() => props.moves.skipHook()}>Пропустити</button>
-            : <span></span>
-          }
-          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction") ?
-            <button onClick={() => props.moves.doActionToEnemy()}>Перемістити слугу</button>
-            : <span></span>
-          }
-          {this.isHealAllyAvailable() ?
-            <button onClick={() => props.moves.healAllyAction()}>Зцілити життя</button>
-            : <span></span>
-          }
+        <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24, marginTop: 15}}>
+          <span style={{color: "#444444"}}>Хід:</span> Гравець {player ? player.id + 1 : "Невідомий"}
+        </div>
+        {this.showFightQueue()}
+        <div style={{marginTop: "auto", marginBottom: 30}}>
+          <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20, fontSize: 22}}>Дії</div>
+          <div style={styles.actions}>
+            <button onClick={() => props.undo()}>Назад</button>
+            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
+              <button onClick={() => props.moves.removeUnit()}>Видалити</button>
+              : <span></span>
+            }
+            {props.ctx.phase === 'Setup' ?
+              <button onClick={() => props.moves.complete()}>Завершити</button>
+              : <span></span>
+            }
+            {this.isDefaultSkipTurnAvailable() ?
+              <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
+              : <span></span>
+            }
+            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "hookUnitAction") ?
+              <button onClick={() => props.moves.skipHook()}>Пропустити</button>
+              : <span></span>
+            }
+            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction") ?
+              <button onClick={() => props.moves.doActionToEnemy()}>Перемістити слугу</button>
+              : <span></span>
+            }
+            {this.isHealAllyAvailable() ?
+              <button onClick={() => props.moves.healAllyAction()}>Зцілити життя</button>
+              : <span></span>
+            }
+          </div>
         </div>
       </div>
     )
@@ -103,5 +112,29 @@ export class BoardUser extends React.Component {
     const playerStage = props.ctx.activePlayers[+props.ctx.currentPlayer]
     return props.ctx.activePlayers && ((playerStage === "placeUnitOnBoard") || (playerStage === "makeDamage") ||
       (playerStage === "doRaid") || (playerStage === "showUrkaAction") || (playerStage === "healAllyAction"));
+  }
+
+  showFightQueue() {
+    const props = this.props.props
+    if (props.ctx.phase !== 'Fight' || props.G.fightQueue.length <= 0) {
+      return (<></>)
+    }
+    const units = props.G.fightQueue.map(order => getUnitById(props.G, order.unitId))
+
+    return (
+      <div className="fight-queue-container">
+        <div className="fight-queue-head">Порядок Ходів у Битві</div>
+        <div className="fight-order" dangerouslySetInnerHTML={
+          { __html: units
+              .map((unit, i) =>
+                `<div>
+                    <span>${i+1}. </span>
+                    <span style="color: ${playerColors[unit.unitState.playerId]}">${unit.name}</span>
+                    <span>[${unit.power}/${unit.heals}/${unit.initiative}]</span>
+                  </div>`
+              ).join('')}
+        } />
+      </div>
+    )
   }
 }

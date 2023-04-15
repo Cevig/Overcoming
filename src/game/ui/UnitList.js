@@ -6,6 +6,7 @@ import {playerColors, UnitTypes} from "../helpers/Constants";
 const UnitList = (data) => {
 
   const player = data.data.G.players.find(p => p.id === +data.data.playerID)
+  const ctx = data.data.ctx
   const newId = () => Math.random().toString(10).slice(2)
 
   const getAssignedUnits = () => {
@@ -159,10 +160,13 @@ const UnitList = (data) => {
 
   return (
     <div className="unit-list">
-      <div className="unit-types">
-        <h2>Доступні істоти</h2>
-        {renderUnitTypes()}
-      </div>
+      {ctx.phase === 'Setup' ?
+        <div className="unit-types">
+          <h2>Доступні істоти</h2>
+          {renderUnitTypes()}
+        </div> :
+        <></>
+      }
       {renderCreatedUnits()}
     </div>
   );

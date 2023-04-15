@@ -2,7 +2,7 @@ export const playerColors = [
   '#e72828',
   '#3867f9',
   '#2ecb00',
-  '#f9df00'
+  '#ffc107'
 ];
 
 export const UnitTypes = Object.freeze({
