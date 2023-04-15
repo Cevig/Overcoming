@@ -66,15 +66,7 @@ export class BoardUser extends React.Component {
             <button onClick={() => props.moves.complete()}>Завершити</button>
             : <span></span>
           }
-          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ?
-            <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
-            : <span></span>
-          }
-          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "doRaid") ?
-            <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
-            : <span></span>
-          }
-          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction") ?
+          {this.isDefaultSkipTurnAvailable() ?
             <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
             : <span></span>
           }
@@ -86,12 +78,30 @@ export class BoardUser extends React.Component {
             <button onClick={() => props.moves.doActionToEnemy()}>Перемістити слугу</button>
             : <span></span>
           }
-          {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage") ?
-            <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
+          {this.isHealAllyAvailable() ?
+            <button onClick={() => props.moves.healAllyAction()}>Зцілити життя</button>
             : <span></span>
           }
         </div>
       </div>
     )
+  }
+
+  isHealAllyAvailable() {
+    const props = this.props.props
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === 'healAlly' && skill.qty > 0)) {
+      if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
+        (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
+        return true
+      }
+    }
+    return false
+  }
+
+  isDefaultSkipTurnAvailable() {
+    const props = this.props.props
+    const playerStage = props.ctx.activePlayers[+props.ctx.currentPlayer]
+    return props.ctx.activePlayers && ((playerStage === "placeUnitOnBoard") || (playerStage === "makeDamage") ||
+      (playerStage === "doRaid") || (playerStage === "showUrkaAction") || (playerStage === "healAllyAction"));
   }
 }

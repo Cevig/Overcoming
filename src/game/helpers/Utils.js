@@ -129,7 +129,7 @@ const getPlayersBioms = () => {
   const shuffledList = shuffleArray(Object.values(Biom));
   return [...Array(getPlayersNumber()).keys()].map(() => [shuffledList.pop(), shuffledList.pop()])
 }
-const shuffleArray = (array) => {
+export const shuffleArray = (array) => {
   let currentIndex = array.length, randomIndex;
 
   // While there remain elements to shuffle.
@@ -187,7 +187,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${enemy.name} отримав ${-resultMods.damage} до життя від ${currentUnit.name}`,
+      text: `${enemy.name} отримує ${Math.abs(resultMods.damage)} ${resultMods.damage >= 0 ? `урону` : `до життя`} від ${currentUnit.name}`,
     })
   }
   if(resultMods.power !== undefined) {
@@ -197,7 +197,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `Силу ${enemy.name} знижено на ${resultMods.power}`,
+      text: `Силу ${enemy.name} ${resultMods.power >= 0 ? 'знижено' : 'підвищено'} на ${Math.abs(resultMods.power)}`,
     })
   }
   if(resultMods.initiative !== undefined) {
@@ -207,7 +207,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `Ініціативу ${enemy.name} знижено на ${resultMods.initiative}`,
+      text: `Ініціативу ${enemy.name} ${resultMods.initiative >= 0 ? 'знижено' : 'підвищено'} на ${Math.abs(resultMods.initiative)}`,
     })
   }
   if (resultMods.status !== undefined) {

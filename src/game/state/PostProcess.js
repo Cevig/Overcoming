@@ -1,13 +1,24 @@
 import {
   getInGameUnits,
+  getNearestAllies,
   getNearestEnemies,
   handleUnitDeath,
-  isNotSame
+  hasKeyword,
+  hasStatus,
+  isNotSame,
+  resolveUnitsInteraction,
+  shuffleArray
 } from '../helpers/Utils';
-import {playerColors} from '../helpers/Constants';
+import {
+  playerColors,
+  UnitKeywords,
+  UnitStatus,
+  UnitTypes
+} from '../helpers/Constants';
 import {startPositions} from "./Setup";
 import {biomComparison} from "../helpers/UnitPriority";
 import {handleOnMoveActions} from "./GameActions";
+import {gameLog} from "../helpers/Log";
 
 const setColorMap = G => {
   G.grid.colorMap = {
@@ -52,6 +63,16 @@ export const cleanFightPhase = (G, ctx) => {
     unit.unitState.isInFight = false
     unit.unitState.skippedTurn = false
     unit.unitState.isCounterAttacked = false
+    if (hasStatus(unit, UnitStatus.PowerUpSupport)) {
+      resolveUnitsInteraction({G: G, ctx: ctx}, {
+        currentUnit: unit,
+        enemy: unit,
+        updates: {
+          power: 1,
+          status: [{name: UnitStatus.PowerUpSupport, qty: -99}]
+        }
+      });
+    }
   });
   G.moveOrder++;
   G.fightQueue = []
@@ -81,6 +102,32 @@ export const setInFightUnits = (G, ctx) => {
 }
 
 export const setFightOrder = (G, events, ctx) => {
+  getInGameUnits(G)
+    .filter(unit => hasKeyword(unit, UnitKeywords.Support))
+    .forEach(unit => {
+      const availableAllies = getNearestAllies(G, unit.unitState).filter(ally => ally.type !== UnitTypes.Idol)
+        .filter(ally => ally.unitState.isInFight)
+      if (availableAllies.length > 0) {
+        const randomAlly = shuffleArray(availableAllies).pop()
+        resolveUnitsInteraction({G: G, ctx: ctx}, {
+          currentUnit: unit,
+          enemy: randomAlly,
+          updates: {
+            power: -1,
+            status: [{name: UnitStatus.PowerUpSupport, qty: 1}]
+          }
+        });
+      } else {
+        gameLog.addLog({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `${unit.name} не має доступних цілей для підтримки`,
+        })
+      }
+    })
+
   G.fightQueue = getInGameUnits(G, (unit) => unit.unitState.isInFight)
     .sort((u1, u2) =>
       (u1.initiative > u2.initiative) ? 1 : (u1.initiative < u2.initiative) ? -1 : biomComparison(u1.biom, u2.biom)

@@ -1,4 +1,4 @@
-import {Biom, UnitTypes} from "../helpers/Constants";
+import {Biom, UnitKeywords, UnitTypes} from "../helpers/Constants";
 import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UForest {
@@ -16,15 +16,23 @@ export class UForest {
   }
   static getBereginya = (id, playerId, level, createPosition) => {
     const stat = () => {
-      if (level === 1)
-        return [1, 3, 5]
-      if (level === 2)
-        return [1, 4, 6]
-      if (level === 3)
-        return [3, 4, 6]
+      if (level === 1) return [1, 3, 5]
+      if (level === 2) return [1, 4, 6]
+      if (level === 3) return [3, 4, 6]
     }
 
-    return getCreature("Берегиня", UnitTypes.Ispolin, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, createPosition))
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    if (level > 0) {
+      abilities.keywords.push(UnitKeywords.Sneaky)
+      if (level > 1) {
+        abilities.allTimeActions.push({name: "healAlly", qty: 3})
+        abilities.keywords.push(UnitKeywords.Support)
+      } else {
+        abilities.allTimeActions.push({name: "healAlly", qty: 2})
+      }
+    }
+
+    return getCreature("Берегиня", UnitTypes.Ispolin, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, createPosition), abilities)
   }
 
   static getSirin = (id, playerId, level, createPosition) => {

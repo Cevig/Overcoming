@@ -108,6 +108,11 @@ export function Board (props) {
       if (found !== undefined) {
         props.moves.moveEnemy(found);
       }
+    } else if (stage && stage === 'healAllyActionStage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.healAlly(found);
+      }
     }
   }
 
@@ -127,6 +132,11 @@ export function Board (props) {
       const found = props.G.availablePoints.find(isSame(point));
       if (found !== undefined) {
         props.moves.hookUnit(found);
+      }
+    } else if (stage && stage === 'healAllyActionStage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.healAlly(found);
       }
     }
   }

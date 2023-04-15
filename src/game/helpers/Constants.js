@@ -27,17 +27,21 @@ export const Biom = Object.freeze({
 export const DamageType = Object.freeze({
   Default: "Звичайний",
   Counter: "Відповідь",
-  Raid: "Наліт"
+  Raid: "Наліт",
+  Heal: "Лікування",
 })
 
 export const UnitStatus = Object.freeze({
   Freeze: "Нерухомість",
   InitiativeDown: "Зниження ініціативи",
-  PowerDown: "Зниження сили"
+  PowerDown: "Силу знижено",
+  PowerUp: "Силу збільшено",
+  PowerUpSupport: "Підтримка",
 })
 
 export const UnitKeywords = Object.freeze({
   Sneaky: "Слизький",
   Unfocused: "Розгублений",
-  MainTarget: "Головна Ціль"
+  MainTarget: "Головна Ціль",
+  Support: "Підтримка"
 })

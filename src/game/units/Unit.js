@@ -119,6 +119,7 @@ export const UnitAbilities = {
   keywords: [],
   actions: [],
   afterHitActions: [],
+  allTimeActions: [],
   onDeath: []
 }
 

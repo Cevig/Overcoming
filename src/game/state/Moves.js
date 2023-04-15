@@ -21,6 +21,7 @@ import {
 } from "../helpers/Constants";
 import {handleAbility} from "./UnitSkills";
 import {gameLog} from "../helpers/Log";
+import {createUnitObject} from "../units/Unit";
 
 export const moves = {
 
@@ -244,7 +245,7 @@ export const moves = {
         currentUnit: enemy,
         enemy: unit,
         updates: {
-          damage: Math.trunc(enemy.power / 2),
+          damage: enemy.power > 1 ? Math.trunc(enemy.power / 2) : enemy.power,
           damageType: DamageType.Counter,
         }
       })
@@ -371,4 +372,57 @@ export const moves = {
     G.endFightTurn = true
   },
 
+  healAllyActionMove: ({ G, ctx, events }) => {
+    G.availablePoints = getInGameUnits(G, unit => unit.unitState.playerId === G.currentUnit.unitState.playerId)
+      .filter(unit => unit.type !== UnitTypes.Idol)
+      .filter(unit => unit.id !== G.currentUnit.id)
+      .map(unit => unit.unitState.point)
+    if (G.availablePoints.length === 0) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `Не має доступних цілей для вибору`,
+      })
+    }
+
+    events.setActivePlayers({ currentPlayer: 'healAllyActionStage' });
+  },
+
+  doHealAlly: ({ G, ctx, events }, point) => {
+    const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
+    const ally = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
+    const defaultAlly = createUnitObject(1111, 99, ally.biom, ally.type, ally.unitState.createPosition, ally.level)
+    const healValue = Math.min(defaultAlly.heals, ally.heals + 3) - ally.heals
+
+    let actionQty = 0
+    unit.abilities.allTimeActions.forEach(action => {
+      if (action.name === 'healAlly') {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${unit.name} викорстовує здібність та зцілює істоту. Залишилось ${actionQty} заряди`,
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx}, {
+      currentUnit: unit,
+      enemy: ally,
+      updates: {
+        damage: -healValue,
+        damageType: DamageType.Heal,
+      }
+    })
+
+    G.currentUnit = null
+    unit.unitState.isClickable = false
+    G.availablePoints = []
+    ctx.phase === 'Positioning' ? events.endTurn() : G.endFightTurn = true
+  }
 };
