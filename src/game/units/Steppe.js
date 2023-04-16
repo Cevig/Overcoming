@@ -20,7 +20,7 @@ export class USteppe {
       if (level > 1) {
         abilities.statUpdates.defence.push({name: 'wholeness', unitId: id})
         if (level > 2) {
-          abilities.statUpdates.attack.push({name: 'addFreezeEffect', unitId: id})
+          abilities.statUpdates.attack.push('addFreezeEffect')
         }
       }
     }
@@ -65,7 +65,7 @@ export class USteppe {
     const stat = [3, 7, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.statUpdates.attack.push({name: 'addFreezeEffect', unitId: id})
+    abilities.statUpdates.attack.push('addFreezeEffect')
     abilities.keywords.push(UnitKeywords.MainTarget)
     abilities.actions.push({name: "urka", qty: 2})
 
@@ -76,7 +76,7 @@ export class USteppe {
     const stat = [2, 10, 2]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.statUpdates.attack.push({name: 'instantKill', unitId: id})
+    abilities.statUpdates.attack.push('instantKill')
     return getIdol("Вій", Biom.Steppe, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }

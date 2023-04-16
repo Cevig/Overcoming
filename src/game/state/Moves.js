@@ -48,17 +48,34 @@ export const moves = {
 
   selectUnitOnBoard: ({ G, ctx, events }, currentUnit) => {
     const enemies = getNearestEnemies(G, currentUnit.unitState)
+    const gameUnits = getInGameUnits(G)
     if (hasStatus(currentUnit, UnitStatus.Freeze)) {
       G.availablePoints = []
     } else {
-      G.availablePoints = getNeighbors(currentUnit.unitState.point)
-        .filter(point => getInGameUnits(G).every(unit => isNotSame(unit.unitState.point)(point)))
+      let availablePoints = getNeighbors(currentUnit.unitState.point)
+        .filter(point => gameUnits.every(unit => isNotSame(unit.unitState.point)(point)))
         .filter(point => {
           if (enemies.length > 0) {
             const surroundings = getNeighbors(point)
             return enemies.every(enemy => surroundings.find(isSame(enemy.unitState.point)) !== undefined)
           } else return true
         })
+      if (hasKeyword(currentUnit, UnitKeywords.ExtendedMove)) {
+        availablePoints = availablePoints.flatMap(mainPoint => {
+          const newEnemies = getNearestEnemies(G, {point: mainPoint, playerId: currentUnit.unitState.playerId})
+          const extendedPoints = getNeighbors(mainPoint)
+            .filter(point => gameUnits.every(unit => isNotSame(unit.unitState.point)(point)))
+            .filter(point => {
+              if (newEnemies.length > 0) {
+                const surroundings = getNeighbors(point)
+                return newEnemies.every(enemy => surroundings.find(isSame(enemy.unitState.point)) !== undefined)
+              } else return true
+            })
+          extendedPoints.push(mainPoint)
+          return extendedPoints
+        })
+      }
+      G.availablePoints = availablePoints
     }
     G.currentUnit = currentUnit
     events.endStage();
@@ -97,10 +114,11 @@ export const moves = {
   },
 
   selectUnitForAttack: ({ G, ctx, events }, currentUnit) => {
-    const enemies = getNearestEnemies(G, currentUnit.unitState)
+    let enemies = getNearestEnemies(G, currentUnit.unitState)
+
     const mainTargetEnemy = enemies.find(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
     if (mainTargetEnemy !== undefined) {
-      G.availablePoints = [mainTargetEnemy.unitState.point]
+      enemies = [mainTargetEnemy]
       gameLog.addLog({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
@@ -108,10 +126,34 @@ export const moves = {
         phase: ctx.phase,
         text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemy.name}!`,
       })
-    } else {
-      G.availablePoints = enemies.map(unit => unit.unitState.point)
     }
 
+    if (hasStatus(currentUnit, UnitStatus.Vengeance)) {
+      const vengeanceTarget = getInGameUnits(G).find(unit => hasKeyword(unit, UnitKeywords.VengeanceTarget))
+      if (vengeanceTarget) {
+        if (enemies.find(enemy => enemy.id === vengeanceTarget.id)) {
+          enemies = [vengeanceTarget]
+          gameLog.addLog({
+            id: Math.random().toString(10).slice(2),
+            turn: ctx.turn,
+            player: +ctx.currentPlayer,
+            phase: ctx.phase,
+            text: `Мстивість дозволяє атакувати тільки ${vengeanceTarget.name}`,
+          })
+        } else {
+          enemies = []
+          gameLog.addLog({
+            id: Math.random().toString(10).slice(2),
+            turn: ctx.turn,
+            player: +ctx.currentPlayer,
+            phase: ctx.phase,
+            text: `Об'єкт для помсти ${vengeanceTarget.name} не є в зоні ураження`,
+          })
+        }
+      }
+    }
+
+    G.availablePoints = enemies.map(unit => unit.unitState.point)
     G.currentUnit = currentUnit
     events.endStage();
   },
@@ -237,7 +279,7 @@ export const moves = {
       }
     })
 
-    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && !hasKeyword(enemy, UnitKeywords.Unfocused) && enemy.unitState.isCounterAttacked === false) {
+    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && (!hasKeyword(enemy, UnitKeywords.Unfocused) || hasStatus(enemy, UnitKeywords.Unfocused)) && enemy.unitState.isCounterAttacked === false) {
       enemy.unitState.isCounterAttacked = true
 
       resolveUnitsInteraction({G: G, ctx: ctx}, {

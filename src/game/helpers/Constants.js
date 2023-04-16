@@ -29,6 +29,7 @@ export const DamageType = Object.freeze({
   Counter: "Відповідь",
   Raid: "Наліт",
   Heal: "Лікування",
+  Poison: "Отруєння",
 })
 
 export const UnitStatus = Object.freeze({
@@ -38,6 +39,9 @@ export const UnitStatus = Object.freeze({
   PowerUp: "Силу збільшено",
   PowerUpSupport: "Підтримка",
   Curse: "Прокляття",
+  Poison: "Отруєння",
+  Unfocused: "Розгубленість",
+  Vengeance: "Помста"
 })
 
 export const UnitKeywords = Object.freeze({
@@ -46,5 +50,7 @@ export const UnitKeywords = Object.freeze({
   MainTarget: "Головна Ціль",
   Support: "Підтримка",
   RestrictedRaid: "Обмежений Наліт",
-  AbsoluteRaid: "Наліт Без Обмежень"
+  AbsoluteRaid: "Наліт Без Обмежень",
+  ExtendedMove: "Збільшений хід",
+  VengeanceTarget: "Ціль для мстивих"
 })

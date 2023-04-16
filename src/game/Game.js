@@ -6,9 +6,9 @@ import {
   handleGameOver,
   onEndPositioningTurn,
   onGameOver,
+  onPositioningStart,
   postProcess,
   setFightOrder,
-  setGridSize,
   setInFightUnits
 } from './state/PostProcess';
 import {
@@ -57,7 +57,7 @@ export const Overcoming = {
     },
 
     Positioning: {
-      onBegin: ({ G, ctx }) => { setGridSize(G, ctx) },
+      onBegin: ({ G, ctx }) => { onPositioningStart(G, ctx) },
       next: "Fight",
       endIf: ({ G }) => (getInGameUnits(G, (unit) => unit.unitState.isClickable).length === 0),
       onEnd: ({ G, ctx }) => { setInFightUnits(G, ctx) },

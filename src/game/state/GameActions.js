@@ -41,7 +41,7 @@ export const handleUnitStatsUpdateInAttack = (data, eventData) => {
   const unit = getUnitById(G, unitId)
   if (unit.abilities.statUpdates.attack.length !== 0) {
     unit.abilities.statUpdates.attack.forEach(skill => {
-      return result.push(handleAbility(data, skill.name, eventData))
+      return result.push(handleAbility(data, skill, eventData))
     })
   }
 

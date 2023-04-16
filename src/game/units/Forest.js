@@ -67,7 +67,13 @@ export class UForest {
   }
 
   static getChygayster = (id, playerId, _, createPosition) => {
-    const stat = [2, 9, 5]
-    return getIdol("Чугайстер", Biom.Forest, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
+    const stat = [2, 7, 5]
+
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.keywords.push(UnitKeywords.ExtendedMove)
+    abilities.keywords.push(UnitKeywords.VengeanceTarget)
+    abilities.statUpdates.attack.push('addUnfocusedEffect', 'addPoisonEffect', 'addVengeanceEffect')
+
+    return getIdol("Чугайстер", Biom.Forest, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }

@@ -10,6 +10,7 @@ import {
   shuffleArray
 } from '../helpers/Utils';
 import {
+  DamageType,
   playerColors,
   UnitKeywords,
   UnitStatus,
@@ -33,9 +34,10 @@ const setColorMap = G => {
   G.grid.colorMap['#dd666f'] = G.availablePoints
 };
 
-export const setGridSize = (G, ctx, events) => {
+export const onPositioningStart = (G, ctx, events) => {
+  const units = getInGameUnits(G)
   if((G.moveOrder >= 2) && (G.moveOrder % 2 === 0)) {
-    getInGameUnits(G, (unit) => {
+    units.filter(unit => {
       const point = unit.unitState.point
       const level = G.grid.levels
       return (Math.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z)) === level) || (point.y === level-1) || (point.z === -(level-1))
@@ -45,6 +47,29 @@ export const setGridSize = (G, ctx, events) => {
     })
     G.grid.levels--;
   }
+
+  units.forEach(unit => {
+    if (hasStatus(unit, UnitStatus.Poison)) {
+      resolveUnitsInteraction({G: G, ctx: ctx}, {
+        currentUnit: unit,
+        enemy: unit,
+        updates: {
+          damage: 1,
+          damageType: DamageType.Poison,
+        }
+      })
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${unit.name} страждає від отруєння`,
+      })
+      if (unit.heals <= 0) {
+        handleUnitDeath({G: G, ctx: ctx, events: events}, unit)
+      }
+    }
+  })
   return G
 }
 

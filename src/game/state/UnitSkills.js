@@ -11,6 +11,7 @@ import {
   getUnitById,
   handleUnitDeath,
   hasKeyword,
+  hasStatus,
   isNotSame,
   isSame,
   resolveUnitsInteraction
@@ -29,6 +30,9 @@ export const handleAbility = (data, skill, eventData) => {
     surround3: handlePolydnicaSurroundings,
     wholeness: handleWholeness,
     addFreezeEffect: handleFreezeEffectOnAttack,
+    addUnfocusedEffect: handleUnfocusedEffectOnAttack,
+    addPoisonEffect: handlePoisonEffectOnAttack,
+    addVengeanceEffect: handleVengeanceEffectOnAttack,
     maraAura: handleMaraAura,
     raid: handleRaid,
     lethalGrab: handleLethalGrab,
@@ -131,7 +135,35 @@ const handleWholeness = ({G, ctx}, {unitId, updates}) => {
 }
 
 const handleFreezeEffectOnAttack = ({G}, {unitId, updates}) => {
-  return (updates.damageType === DamageType.Default) ? {status: [{name: UnitStatus.Freeze, qty: 1}]} : {}
+   if (updates.damageType === DamageType.Default) {
+     if (updates.status) updates.status.push({name: UnitStatus.Freeze, qty: 1})
+     else updates.status = [{name: UnitStatus.Freeze, qty: 1}]
+   }
+   return updates
+}
+
+const handleUnfocusedEffectOnAttack = ({G}, {unitId, updates}) => {
+  if (updates.damageType === DamageType.Default) {
+    if (updates.status) updates.status.push({name: UnitStatus.Unfocused, qty: 1})
+    else updates.status = [{name: UnitStatus.Unfocused, qty: 1}]
+  }
+  return updates
+}
+
+const handlePoisonEffectOnAttack = ({G}, {unitId, updates}) => {
+  if (updates.damageType === DamageType.Default) {
+    if (updates.status) updates.status.push({name: UnitStatus.Poison, qty: 1})
+    else updates.status = [{name: UnitStatus.Poison, qty: 1}]
+  }
+  return updates
+}
+
+const handleVengeanceEffectOnAttack = ({G}, {unitId, updates}) => {
+  if (updates.damageType === DamageType.Default) {
+    if (updates.status) updates.status.push({name: UnitStatus.Vengeance, qty: 1})
+    else updates.status = [{name: UnitStatus.Vengeance, qty: 1}]
+  }
+  return updates
 }
 
 const handleRaid = ({G, events, ctx}, {unitId}) => {
@@ -161,6 +193,36 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
       raidEnemies = getNearestAllies(G, thisUnit.unitState).length >= 2 ? [] : getRaidEnemies(G, thisUnit.unitState)
     } else {
       raidEnemies = getRaidEnemies(G, thisUnit.unitState)
+    }
+
+    const mainTargetEnemy = raidEnemies.find(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
+    if (mainTargetEnemy !== undefined) {
+      raidEnemies = [mainTargetEnemy]
+    }
+
+    if (hasStatus(thisUnit, UnitStatus.Vengeance)) {
+      const vengeanceTarget = getInGameUnits(G).find(unit => hasKeyword(unit, UnitKeywords.VengeanceTarget))
+      if (vengeanceTarget) {
+        if (raidEnemies.find(enemy => enemy.id === vengeanceTarget.id)) {
+          raidEnemies = [vengeanceTarget]
+          gameLog.addLog({
+            id: Math.random().toString(10).slice(2),
+            turn: ctx.turn,
+            player: +ctx.currentPlayer,
+            phase: ctx.phase,
+            text: `Мстивість дозволяє атакувати тільки ${vengeanceTarget.name}`,
+          })
+        } else {
+          raidEnemies = []
+          gameLog.addLog({
+            id: Math.random().toString(10).slice(2),
+            turn: ctx.turn,
+            player: +ctx.currentPlayer,
+            phase: ctx.phase,
+            text: `Об'єкт для помсти ${vengeanceTarget.name} не є в зоні ураження`,
+          })
+        }
+      }
     }
 
     if (raidEnemies.length === 0) {
