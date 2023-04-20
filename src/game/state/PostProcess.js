@@ -69,6 +69,15 @@ export const onPositioningStart = (G, ctx, events) => {
         handleUnitDeath({G: G, ctx: ctx, events: events}, unit)
       }
     }
+    if (hasStatus(unit, UnitStatus.Unarmed)) {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: unit,
+        enemy: unit,
+        updates: {
+          status: [{name: UnitStatus.Unarmed, qty: -1}]
+        }
+      })
+    }
     unit.unitState.isMovedLastPhase = false
     unit.unitState.initiatorFor = []
   })

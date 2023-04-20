@@ -118,7 +118,7 @@ export const getRaidEnemies = (G, unitState) => {
         !dataPoint.obstacles.every(obs => allies.find(ally => isSame(ally.unitState.point)(obs)) !== undefined)))
 }
 
-export const getRaidEnemiesAbsolute = (G, unitState) => {
+export const getNearestEnemies2 = (G, unitState) => {
   const surroundings = getNeighbors2(unitState.point)
   return getInGameUnits(G, (unit) => unit.unitState.playerId !== unitState.playerId)
     .filter(unit => surroundings.find(point => isSame(point)(unit.unitState.point)))

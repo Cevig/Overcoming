@@ -1,4 +1,4 @@
-import {Biom, UnitSkills, UnitTypes} from "../helpers/Constants";
+import {Biom, UnitKeywords, UnitSkills, UnitTypes} from "../helpers/Constants";
 import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UMountains {
@@ -22,15 +22,21 @@ export class UMountains {
   }
   static getGarzyk = (id, playerId, level, createPosition) => {
     const stat = () => {
-      if (level === 1)
-        return [2, 3, 5]
-      if (level === 2)
-        return [2, 4, 6]
-      if (level === 3)
-        return [4, 4, 6]
+      if (level === 1) return [2, 3, 5]
+      if (level === 2) return [2, 4, 6]
+      if (level === 3) return [4, 4, 6]
     }
 
-    return getCreature(UMountains.garzykName, UnitTypes.Ispolin, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    if (level > 0) {
+      abilities.keywords.push(UnitKeywords.Sneaky)
+      abilities.statUpdates.defence.push({name: UnitSkills.Wholeness, unitId: id})
+      if (level > 1) {
+        abilities.allTimeActions.push({name: UnitSkills.throwWeapon, qty: 1})
+      }
+    }
+
+    return getCreature(UMountains.garzykName, UnitTypes.Ispolin, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
 
   static getVeshizaSoroka = (id, playerId, level, createPosition) => {

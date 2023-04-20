@@ -42,7 +42,8 @@ export const UnitStatus = Object.freeze({
   Curse: "Прокляття",
   Poison: "Отруєння",
   Unfocused: "Розгубленість",
-  Vengeance: "Помста"
+  Vengeance: "Помста",
+  Unarmed: "Від'ємно озброєний",
 })
 
 export const UnitKeywords = Object.freeze({
@@ -72,5 +73,6 @@ export const UnitSkills = Object.freeze({
   UtilizeDeath: "Каталізатор смерті",
   healAlly: "Відновити життя",
   abasuCurse: "Прокляття Абаси",
-  chainDamage: "Урон по ланцюжку"
+  chainDamage: "Урон по ланцюжку",
+  throwWeapon: "Шпурнути ікла"
 })

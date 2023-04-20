@@ -1,6 +1,7 @@
 import {
   getInGameUnits,
   getNearestEnemies,
+  getNearestEnemies2,
   getNeighbors,
   getNeighbors2,
   getUnitById,
@@ -426,7 +427,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `Не має доступних цілей для вибору`,
+        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
       })
     }
 
@@ -441,7 +442,7 @@ export const moves = {
 
     let actionQty = 0
     unit.abilities.allTimeActions.forEach(action => {
-      if (action.name === 'healAlly') {
+      if (action.name === UnitSkills.throwWeapon) {
         action.qty--;
         actionQty = action.qty
       }
@@ -528,14 +529,7 @@ export const moves = {
     }
 
     if (actionQty <= 0) {
-      G.currentUnit = null
-      G.availablePoints = []
-      G.currentActionUnitId = undefined
-      if (ctx.phase === 'Positioning') {
-        events.setActivePlayers({ currentPlayer: 'pickUnitOnBoard' });
-      } else {
-        events.setActivePlayers({ currentPlayer: 'pickUnitForAttack' });
-      }
+      moves.backFromAction({ G, ctx, events })
     }
   },
 
@@ -548,5 +542,63 @@ export const moves = {
     } else {
       events.setActivePlayers({ currentPlayer: 'pickUnitForAttack' });
     }
-  }
+  },
+
+  throwWeaponActionMove: ({ G, ctx, events }) => {
+    G.availablePoints = getNearestEnemies2(G, G.currentUnit.unitState).map(u => u.unitState.point)
+    if (G.availablePoints.length === 0) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
+      })
+    }
+    G.currentActionUnitId = G.currentUnit.id
+    events.setActivePlayers({ currentPlayer: 'throwWeaponActionStage' });
+  },
+
+  doThrowWeapon: ({ G, ctx, events }, point) => {
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    const enemy = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
+
+    let actionQty = 0
+    thisUnit.abilities.allTimeActions.forEach(action => {
+      if (action.name === UnitSkills.throwWeapon) {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та завдає пошкоджень. Залишилось ${actionQty} заряди`,
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: enemy,
+      updates: {
+        damage: thisUnit.power,
+        damageType: DamageType.Default,
+      }
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: thisUnit,
+      updates: {
+        status: [{name: UnitStatus.Unarmed, qty: 2}]
+      }
+    })
+
+    if (enemy.heals <= 0) {
+      handleUnitDeath({G: G, ctx: ctx, events: events}, enemy, thisUnit)
+    }
+
+    moves.backFromAction({ G, ctx, events })
+  },
 };

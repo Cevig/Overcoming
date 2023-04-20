@@ -3,11 +3,11 @@ import {
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
+  getNearestEnemies2,
   getNearestUnits,
   getNeighbors,
   getNeighbors2,
   getRaidEnemies,
-  getRaidEnemiesAbsolute,
   getStatus,
   getUnitById,
   handleUnitDeath,
@@ -243,7 +243,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
     let raidEnemies
 
     if (hasKeyword(thisUnit, UnitKeywords.AbsoluteRaid)) {
-      raidEnemies = getRaidEnemiesAbsolute(G, thisUnit.unitState)
+      raidEnemies = getNearestEnemies2(G, thisUnit.unitState)
     } else if (hasKeyword(thisUnit, UnitKeywords.RestrictedRaid)) {
       raidEnemies = getNearestAllies(G, thisUnit.unitState).length >= 2 ? [] : getRaidEnemies(G, thisUnit.unitState)
     } else {

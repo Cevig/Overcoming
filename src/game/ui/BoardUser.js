@@ -98,6 +98,10 @@ export class BoardUser extends React.Component {
               <button onClick={() => props.moves.curseAction()}>Причинити біль</button>
               : <span></span>
             }
+            {this.isWeaponThrowAvailable() ?
+              <button onClick={() => props.moves.throwWeaponAction()}>Шпурнути ікла</button>
+              : <span></span>
+            }
           </div>
         </div>
       </div>
@@ -109,6 +113,16 @@ export class BoardUser extends React.Component {
     if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.healAlly && skill.qty > 0)) {
       if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
         (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
+        return true
+      }
+    }
+    return false
+  }
+
+  isWeaponThrowAvailable() {
+    const props = this.props.props
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.throwWeapon && skill.qty > 0)) {
+      if (props.ctx.activePlayers && props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") {
         return true
       }
     }
@@ -130,7 +144,8 @@ export class BoardUser extends React.Component {
     const props = this.props.props
     const playerStage = props.ctx.activePlayers[+props.ctx.currentPlayer]
     return props.ctx.activePlayers && ((playerStage === "placeUnitOnBoard") || (playerStage === "makeDamage") ||
-      (playerStage === "doRaid") || (playerStage === "showUrkaAction") || (playerStage === "healAllyAction"));
+      (playerStage === "doRaid") || (playerStage === "showUrkaAction") || (playerStage === "healAllyAction") ||
+      (playerStage === "throwWeaponAction"));
   }
 
   showFightQueue() {

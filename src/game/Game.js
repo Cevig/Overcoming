@@ -85,7 +85,8 @@ export const Overcoming = {
               moveUnitOnBoard: moves.moveUnitOnBoard,
               skipTurn: moves.skipTurn,
               healAllyAction: moves.healAllyActionMove,
-              curseAction: moves.curseActionMove
+              curseAction: moves.curseActionMove,
+              throwWeaponAction: moves.throwWeaponActionMove
             },
             next: 'pickUnitOnBoard'
           },
@@ -126,6 +127,12 @@ export const Overcoming = {
             moves: {
               curseOrRecover: moves.curseOrRecover,
               backFromAction: moves.backFromAction
+            }
+          },
+
+          throwWeaponActionStage: {
+            moves: {
+              throwWeapon: moves.doThrowWeapon
             }
           }
         }

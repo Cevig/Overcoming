@@ -120,6 +120,11 @@ export function Board (props) {
       if (found && isItAvailablePoint) {
         props.moves.curseOrRecover(found);
       }
+    } else if (stage && stage === 'throwWeaponActionStage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.throwWeapon(found);
+      }
     }
   }
 
