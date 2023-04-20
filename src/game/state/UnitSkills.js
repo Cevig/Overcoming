@@ -3,6 +3,7 @@ import {
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
+  getNearestUnits,
   getNeighbors,
   getNeighbors2,
   getRaidEnemies,
@@ -41,6 +42,7 @@ export const handleAbility = (data, skill, eventData) => {
     [UnitSkills.InstantKill]: handleInstantKill,
     [UnitSkills.Lesavka]: handleLesavka,
     [UnitSkills.UtilizeDeath]: handleUtilizeDeath,
+    [UnitSkills.chainDamage]: handleChainDamage,
   }
 
   return abilitiesMap[skill](data, eventData)
@@ -62,12 +64,17 @@ const handlePolydnicaSurroundings = ({G, ctx, events}, {unitId}) => {
           text: `Полудніці оточили слугу типу ${enemy.type} гравця ${enemy.unitState.playerId+1}`,
         })
         handleUnitDeath({G: G, ctx:ctx, events: events}, enemy)
+        G.fightQueue.forEach((unitInQ, i, q) => {
+          if(unitInQ.unitId === enemy.id) {
+            q.splice(i, 1);
+          }
+        })
       }
     })
   }
 }
 
-const handleMaraAura = ({G, ctx}, {unitId}) => {
+const handleMaraAura = ({G, ctx, events}, {unitId}) => {
   const thisUnit = getUnitById(G, unitId)
 
   getInGameUnits(G, unit => unit.unitState.playerId !== thisUnit.unitState.playerId).forEach(enemy => {
@@ -83,7 +90,7 @@ const handleMaraAura = ({G, ctx}, {unitId}) => {
       value = value + nearMaras.reduce((val, mara) => val + ((mara.level >= 2) ? 2 : 1), 0)
     }
     if (value !== 0) {
-      resolveUnitsInteraction({G: G, ctx: ctx}, {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: thisUnit,
         enemy: enemy,
         updates: {
@@ -163,6 +170,53 @@ const handleVengeanceEffectOnAttack = ({G}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Default) {
     if (updates.status) updates.status.push({name: UnitStatus.Vengeance, qty: 1})
     else updates.status = [{name: UnitStatus.Vengeance, qty: 1}]
+  }
+  return updates
+}
+
+const handleChainDamage = ({G, ctx, events}, {unitId, enemyId, updates}) => {
+  const impactedUnits = []
+  const processChainedEnemies = (enemy, excludePlayerId, excludedEnemyId) => {
+    const newEnemies = getNearestUnits(G, enemy.unitState).filter(unit => unit.unitState.playerId !== excludePlayerId)
+    newEnemies.forEach(newEnemy => {
+      if (impactedUnits.find(id => id === newEnemy.id) === undefined && newEnemy.id !== excludedEnemyId) {
+        impactedUnits.push(newEnemy.id)
+        processChainedEnemies(newEnemy, excludePlayerId, excludedEnemyId)
+      }
+    })
+  }
+  if (updates.damageType === DamageType.Default) {
+    const thisUnit = getUnitById(G, unitId)
+    if (!thisUnit.unitState.isMovedLastPhase) {
+      const enemy = getUnitById(G, enemyId)
+      processChainedEnemies(enemy, thisUnit.unitState.playerId, enemyId)
+      impactedUnits.forEach(id => {
+        const currentEnemy = getUnitById(G, id)
+        gameLog.addLog({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `Удар ланцюжковою реакцією по ${currentEnemy.name}`,
+        })
+        resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+          currentUnit: thisUnit,
+          enemy: currentEnemy,
+          updates: {
+            damage: 1,
+            damageType: DamageType.Chained,
+          }
+        })
+        if(currentEnemy.heals <= 0) {
+          handleUnitDeath({G: G, ctx: ctx, events: events}, currentEnemy, thisUnit)
+          G.fightQueue.forEach((unitInQ, i, q) => {
+            if(unitInQ.unitId === currentEnemy.id) {
+              q.splice(i, 1);
+            }
+          })
+        }
+      })
+    }
   }
   return updates
 }

@@ -92,6 +92,11 @@ export const skipTurnIfNotActive = (G, ctx, events) => {
   return G
 }
 
+export const getNearestUnits = (G, unitState) => {
+  const surroundings = getNeighbors(unitState.point)
+  return getInGameUnits(G)
+    .filter(unit => surroundings.find(isSame(unit.unitState.point)))
+}
 export const getNearestEnemies = (G, unitState) => {
   const surroundings = getNeighbors(unitState.point)
   return getInGameUnits(G, (unit) => unit.unitState.playerId !== unitState.playerId)
@@ -292,3 +297,16 @@ export const handleUnitDeath = (data, target, killer = null) => {
 
 export const setEnemyMarks = (props, unit) =>
   ((props.G.availablePoints.length > 0) && (props.G.availablePoints.find(isSame(unit.unitState.point)) !== undefined))
+
+export const handleUnitMove = (G, ctx, unitId, point) => {
+  const thisUnit = getUnitById(G, unitId)
+  const oldEnemies = getNearestEnemies(G, thisUnit.unitState)
+  thisUnit.unitState.point = point
+  const newEnemies = getNearestEnemies(G, thisUnit.unitState)
+
+  const initiatorFor = newEnemies.filter(enemy => oldEnemies.find(oldEnemy => oldEnemy.id === enemy.id) === undefined)
+    .map(enemy => enemy.id)
+
+  if (ctx.phase === 'Positioning') thisUnit.unitState.isMovedLastPhase = true
+  thisUnit.unitState.initiatorFor = initiatorFor
+}

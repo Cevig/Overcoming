@@ -1,5 +1,5 @@
-import {Biom, UnitTypes} from "../helpers/Constants";
-import {getCreature, getIdol, getUnitState} from "./Unit";
+import {Biom, UnitSkills, UnitTypes} from "../helpers/Constants";
+import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UMountains {
 
@@ -10,15 +10,15 @@ export class UMountains {
   static halaName = "Хала"
   static getBeytir = (id, playerId, level, createPosition) => {
     const stat = () => {
-      if (level === 1)
-        return [2, 5, 3]
-      if (level === 2)
-        return [2, 6, 4]
-      if (level === 3)
-        return [3, 7, 4]
+      if (level === 1) return [2, 5, 3]
+      if (level === 2) return [2, 6, 4]
+      if (level === 3) return [3, 7, 4]
     }
 
-    return getCreature(UMountains.beytirName, UnitTypes.Prispeshnick, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.statUpdates.attack.push(UnitSkills.chainDamage)
+
+    return getCreature(UMountains.beytirName, UnitTypes.Prispeshnick, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
   static getGarzyk = (id, playerId, level, createPosition) => {
     const stat = () => {

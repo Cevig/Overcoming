@@ -30,6 +30,7 @@ export const DamageType = Object.freeze({
   Raid: "Рейд",
   Heal: "Лікування",
   Poison: "Отруєння",
+  Chained: "Ланцюжок",
 })
 
 export const UnitStatus = Object.freeze({
@@ -70,5 +71,6 @@ export const UnitSkills = Object.freeze({
   Lesavka: "Атака притягує",
   UtilizeDeath: "Каталізатор смерті",
   healAlly: "Відновити життя",
-  abasuCurse: "Прокляття Абаси"
+  abasuCurse: "Прокляття Абаси",
+  chainDamage: "Урон по ланцюжку"
 })

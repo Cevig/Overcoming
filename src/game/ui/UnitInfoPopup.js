@@ -84,7 +84,7 @@ const UnitInfoPopup = (props) => {
               <div className="creature-stats">
                 <div style={{display: "flex"}}><span style={{flexBasis: "50%"}}>Сила:</span> <span className="stat-power">{infoUnit.power} ({infoUnit.unitState.baseStats.power})</span></div>
                 <div style={{display: "flex"}}><span style={{flexBasis: "50%"}}>Життя:</span> <span className="stat-heals">{infoUnit.heals}/{infoUnit.unitState.baseStats.heals}</span></div>
-                <div style={{display: "flex"}}><span style={{flexBasis: "50%"}}>Ініциатива:</span> <span className="stat-initiative">{infoUnit.initiative} ({infoUnit.unitState.baseStats.initiative})</span></div>
+                <div style={{display: "flex"}}><span style={{flexBasis: "50%"}}>Ініціатива:</span> <span className="stat-initiative">{infoUnit.initiative} ({infoUnit.unitState.baseStats.initiative})</span></div>
               </div>
               {infoUnit.abilities.keywords.length > 0 ?
                 <div>

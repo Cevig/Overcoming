@@ -5,6 +5,7 @@ import {
   getNeighbors2,
   getUnitById,
   handleUnitDeath,
+  handleUnitMove,
   hasKeyword,
   hasStatus,
   isNotSame,
@@ -187,7 +188,7 @@ export const moves = {
 
   moveUnitOnBoard: ({G, ctx, events}, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
-    unit.unitState.point = point
+    handleUnitMove(G, ctx, unit.id, point)
     const activeAbilities = G.currentUnit.abilities.actions.filter(action => action.qty > 0)
     if (activeAbilities.length > 0) {
       activeAbilities.forEach(action => {
@@ -203,7 +204,7 @@ export const moves = {
 
   moveEnemy: ({G, ctx, events}, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
-    unit.unitState.point = point
+    handleUnitMove(G, ctx, unit.id, point)
     unit.unitState.isClickable = false
     let actionQty = 0;
     const thisUnit = getUnitById(G, G.currentActionUnitId)
@@ -228,7 +229,7 @@ export const moves = {
 
   hookUnit: ({G, ctx, events}, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
-    unit.unitState.point = point
+    handleUnitMove(G, ctx, unit.id, point)
     const thisUnit = getUnitById(G, G.currentActionUnitId)
     gameLog.addLog({
       id: Math.random().toString(10).slice(2),
@@ -246,7 +247,7 @@ export const moves = {
   moveAgain: ({G, ctx, events}, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     unit.unitState.isClickable = false
-    unit.unitState.point = point
+    handleUnitMove(G, ctx, unit.id, point)
     G.currentUnit = null
     G.currentActionUnitId = undefined
     G.availablePoints = []
@@ -271,7 +272,7 @@ export const moves = {
     const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
     const unit = getUnitById(G, G.currentUnit.id)
 
-    resolveUnitsInteraction({G: G, ctx: ctx}, {
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
       currentUnit: unit,
       enemy: enemy,
       updates: {
@@ -283,7 +284,7 @@ export const moves = {
     if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && (!hasKeyword(enemy, UnitKeywords.Unfocused) || hasStatus(enemy, UnitKeywords.Unfocused)) && enemy.unitState.isCounterAttacked === false) {
       enemy.unitState.isCounterAttacked = true
 
-      resolveUnitsInteraction({G: G, ctx: ctx}, {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: enemy,
         enemy: unit,
         updates: {
@@ -327,7 +328,7 @@ export const moves = {
   raidAttack: ({G, events, ctx}, point) => {
     const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
     const thisUnit = getUnitById(G, G.currentUnit.id)
-    resolveUnitsInteraction({G: G, ctx: ctx}, {
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
       currentUnit: thisUnit,
       enemy: enemy,
       updates: {
@@ -381,7 +382,7 @@ export const moves = {
     G.availablePoints = []
 
     if (G.currentUnit.abilities.actions.find(action => action.name === UnitSkills.Raid) !== undefined) {
-      handleAbility({ G, events, ctx }, UnitSkills.Raid, {unitId: G.currentUnit.id})
+      handleAbility({ G, ctx, events }, UnitSkills.Raid, {unitId: G.currentUnit.id})
     } else {
       unit.unitState.isClickable = false
       G.currentUnit = null
@@ -453,7 +454,7 @@ export const moves = {
       text: `${unit.name} викорстовує здібність та зцілює істоту. Залишилось ${actionQty} заряди`,
     })
 
-    resolveUnitsInteraction({G: G, ctx: ctx}, {
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
       currentUnit: unit,
       enemy: ally,
       updates: {
@@ -498,7 +499,7 @@ export const moves = {
         text: `${unit.name} викорстовує здібність та відновлює життя. Залишилось ${actionQty} заряди`,
       })
       const healValue = Math.min(unit.unitState.baseStats.heals, unit.heals + 2) - unit.heals
-      resolveUnitsInteraction({G: G, ctx: ctx}, {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: unit,
         enemy: unit,
         updates: {
@@ -508,7 +509,7 @@ export const moves = {
       })
     } else {
       const enemy = getUnitById(G, currentUnit.id)
-      resolveUnitsInteraction({G: G, ctx: ctx}, {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: unit,
         enemy: enemy,
         updates: {

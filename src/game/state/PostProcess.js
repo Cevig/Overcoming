@@ -50,7 +50,7 @@ export const onPositioningStart = (G, ctx, events) => {
 
   units.forEach(unit => {
     if (hasStatus(unit, UnitStatus.Poison)) {
-      resolveUnitsInteraction({G: G, ctx: ctx}, {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: unit,
         enemy: unit,
         updates: {
@@ -69,6 +69,8 @@ export const onPositioningStart = (G, ctx, events) => {
         handleUnitDeath({G: G, ctx: ctx, events: events}, unit)
       }
     }
+    unit.unitState.isMovedLastPhase = false
+    unit.unitState.initiatorFor = []
   })
   return G
 }
@@ -82,14 +84,14 @@ export const onGameOver = (G, ctx) => {
   return G
 }
 
-export const cleanFightPhase = (G, ctx) => {
+export const cleanFightPhase = (G, ctx, events) => {
   getInGameUnits(G).forEach(unit => {
     unit.unitState.isClickable = true
     unit.unitState.isInFight = false
     unit.unitState.skippedTurn = false
     unit.unitState.isCounterAttacked = false
     if (hasStatus(unit, UnitStatus.PowerUpSupport)) {
-      resolveUnitsInteraction({G: G, ctx: ctx}, {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: unit,
         enemy: unit,
         updates: {
@@ -134,7 +136,7 @@ export const setFightOrder = (G, events, ctx) => {
         .filter(ally => ally.unitState.isInFight)
       if (availableAllies.length > 0) {
         const randomAlly = shuffleArray(availableAllies).pop()
-        resolveUnitsInteraction({G: G, ctx: ctx}, {
+        resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
           currentUnit: unit,
           enemy: randomAlly,
           updates: {

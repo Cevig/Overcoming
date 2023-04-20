@@ -136,7 +136,7 @@ export const Overcoming = {
       onBegin: ({ G, events, ctx }) => { setFightOrder(G, events, ctx) },
       next: "Positioning",
       endIf: ({ G, ctx }) => (endFightPhase(G, ctx)),
-      onEnd: ({ G, ctx }) => { cleanFightPhase(G, ctx) },
+      onEnd: ({ G, ctx, events }) => { cleanFightPhase(G, ctx, events) },
       turn: {
         activePlayers: {
           currentPlayer: { stage: 'pickUnitForAttack' }
