@@ -2,6 +2,12 @@ import {Biom, UnitTypes} from "../helpers/Constants";
 import {getCreature, getIdol, getUnitState} from "./Unit";
 
 export class UJungle {
+
+  static blemmiiName = "Блемміі"
+  static petsyhosName = "Петсухос"
+  static kaieryName = "Кайєрі"
+  static elokoName = "Елоко"
+  static adjatarName = "Аджатар"
   static getBlemmii = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1)
@@ -12,7 +18,7 @@ export class UJungle {
         return [3, 7, 4]
     }
 
-    return getCreature("Блемміі", UnitTypes.Prispeshnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    return getCreature(UJungle.blemmiiName, UnitTypes.Prispeshnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
   static getPetsyhos = (id, playerId, level, createPosition) => {
     const stat = () => {
@@ -24,7 +30,7 @@ export class UJungle {
         return [4, 5, 5]
     }
 
-    return getCreature("Петсухос", UnitTypes.Ispolin, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    return getCreature(UJungle.petsyhosName, UnitTypes.Ispolin, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
 
   static getKaiery = (id, playerId, level, createPosition) => {
@@ -37,16 +43,16 @@ export class UJungle {
         return [2, 5, 5]
     }
 
-    return getCreature("Кайєрі", UnitTypes.Vestnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    return getCreature(UJungle.kaieryName, UnitTypes.Vestnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
 
-  static getEpoko = (id, playerId, _, createPosition) => {
+  static getEloko = (id, playerId, _, createPosition) => {
     const stat = [2, 7, 4]
-    return getIdol("Епоко", Biom.Jungle, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
+    return getIdol(UJungle.elokoName, Biom.Jungle, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
   }
 
   static getAdjatar = (id, playerId, _, createPosition) => {
     const stat = [2, 9, 6]
-    return getIdol("Аджатар", Biom.Jungle, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
+    return getIdol(UJungle.adjatarName, Biom.Jungle, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
   }
 }

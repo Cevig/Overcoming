@@ -1,5 +1,5 @@
 import React from 'react';
-import {playerColors} from "../helpers/Constants";
+import {playerColors, UnitSkills} from "../helpers/Constants";
 import UnitList from "./UnitList";
 import "./BoardUser.css";
 import {getUnitById} from "../helpers/Utils";
@@ -56,7 +56,7 @@ export class BoardUser extends React.Component {
     const player = props.G.players.find(p => p.id === +props.ctx.currentPlayer);
     return (
       <div style={styles.mainStyles}>
-        <UnitList data={props} />
+        <UnitList data={props} info={this.props.info}/>
         {/*<div>phase: {props.ctx.phase}</div>*/}
         <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24, marginTop: 15}}>
           <span style={{color: "#444444"}}>Хід:</span> Гравець {player ? player.id + 1 : "Невідомий"}
@@ -106,7 +106,7 @@ export class BoardUser extends React.Component {
 
   isHealAllyAvailable() {
     const props = this.props.props
-    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === 'healAlly' && skill.qty > 0)) {
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.healAlly && skill.qty > 0)) {
       if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
         (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
         return true
@@ -117,7 +117,7 @@ export class BoardUser extends React.Component {
 
   isCurseAbasuAvailable() {
     const props = this.props.props
-    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === 'abasuCurse' && skill.qty > 0)) {
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.abasuCurse && skill.qty > 0)) {
       if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
         (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
         return true

@@ -1,4 +1,4 @@
-import {Biom, UnitKeywords, UnitTypes} from "../helpers/Constants";
+import {Biom, UnitKeywords, UnitSkills, UnitTypes} from "../helpers/Constants";
 import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 // import "scope-extensions-js"
@@ -7,6 +7,9 @@ export class USteppe {
 
   static polydnicaName = "Полудниця"
   static maraName = "Мара"
+  static letavicaName = "Летавиця"
+  static urkaName = "Ырка"
+  static viyName = "Вій"
   static getPolydnica = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1) return [2, 5, 4]
@@ -16,11 +19,11 @@ export class USteppe {
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {
-      abilities.onMove.push({name: 'surround3'})
+      abilities.onMove.push({name: UnitSkills.Surround3})
       if (level > 1) {
-        abilities.statUpdates.defence.push({name: 'wholeness', unitId: id})
+        abilities.statUpdates.defence.push({name: UnitSkills.Wholeness, unitId: id})
         if (level > 2) {
-          abilities.statUpdates.attack.push('addFreezeEffect')
+          abilities.statUpdates.attack.push(UnitSkills.AddFreezeEffect)
         }
       }
     }
@@ -37,7 +40,7 @@ export class USteppe {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {
       abilities.keywords.push(UnitKeywords.Sneaky)
-      abilities.onMove.push({name: 'maraAura'})
+      abilities.onMove.push({name: UnitSkills.MaraAura})
     }
 
     return getCreature(USteppe.maraName, UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
@@ -52,31 +55,31 @@ export class USteppe {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {
       abilities.keywords.push(UnitKeywords.Unfocused)
-      abilities.actions.push({name: "raid", qty: 99})
+      abilities.actions.push({name: UnitSkills.Raid, qty: 99})
       if (level > 1) {
-        abilities.onDeath.push({name: 'lethalGrab'})
+        abilities.onDeath.push({name: UnitSkills.LethalGrab})
       }
     }
 
-    return getCreature("Летавиця", UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(USteppe.letavicaName, UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
 
   static getUrka = (id, playerId, _, createPosition) => {
     const stat = [3, 7, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.statUpdates.attack.push('addFreezeEffect')
+    abilities.statUpdates.attack.push(UnitSkills.AddFreezeEffect)
     abilities.keywords.push(UnitKeywords.MainTarget)
-    abilities.actions.push({name: "urka", qty: 2})
+    abilities.actions.push({name: UnitSkills.Urka, qty: 2})
 
-    return getIdol("Ырка", Biom.Steppe, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
+    return getIdol(USteppe.urkaName, Biom.Steppe, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
   static getViy = (id, playerId, _, createPosition) => {
     const stat = [2, 10, 2]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.statUpdates.attack.push('instantKill')
-    return getIdol("Вій", Biom.Steppe, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
+    abilities.statUpdates.attack.push(UnitSkills.InstantKill)
+    return getIdol(USteppe.viyName, Biom.Steppe, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }

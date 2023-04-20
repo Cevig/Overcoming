@@ -27,7 +27,7 @@ export const Biom = Object.freeze({
 export const DamageType = Object.freeze({
   Default: "Звичайний",
   Counter: "Відповідь",
-  Raid: "Наліт",
+  Raid: "Рейд",
   Heal: "Лікування",
   Poison: "Отруєння",
 })
@@ -45,12 +45,30 @@ export const UnitStatus = Object.freeze({
 })
 
 export const UnitKeywords = Object.freeze({
-  Sneaky: "Слизький",
-  Unfocused: "Розгублений",
+  Sneaky: "Спритність",
+  Unfocused: "Розгубленість",
   MainTarget: "Головна Ціль",
   Support: "Підтримка",
-  RestrictedRaid: "Обмежений Наліт",
-  AbsoluteRaid: "Наліт Без Обмежень",
-  ExtendedMove: "Збільшений хід",
+  RestrictedRaid: "Обмежений Рейд",
+  AbsoluteRaid: "Рейд Без Обмежень",
+  ExtendedMove: "Швидкість",
   VengeanceTarget: "Ціль для мстивих"
+})
+
+export const UnitSkills = Object.freeze({
+  Surround3: "Оточити до смерті",
+  Wholeness: "Цілісність",
+  AddFreezeEffect: "Атака зупиняє",
+  AddUnfocusedEffect: "Атака розгублює",
+  AddPoisonEffect: "Атака отруює",
+  AddVengeanceEffect: "Атака примушує помститися",
+  MaraAura: "Аура зниження ініціативи",
+  Raid: "Рейд",
+  LethalGrab: "Вбирання останків",
+  Urka: "Ырка можливості",
+  InstantKill: "Миттєва смерть",
+  Lesavka: "Атака притягує",
+  UtilizeDeath: "Каталізатор смерті",
+  healAlly: "Відновити життя",
+  abasuCurse: "Прокляття Абаси"
 })

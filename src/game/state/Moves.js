@@ -16,6 +16,7 @@ import {startPositions} from "./Setup";
 import {
   DamageType,
   UnitKeywords,
+  UnitSkills,
   UnitStatus,
   UnitTypes
 } from "../helpers/Constants";
@@ -207,7 +208,7 @@ export const moves = {
     let actionQty = 0;
     const thisUnit = getUnitById(G, G.currentActionUnitId)
     thisUnit.abilities.actions.forEach(action => {
-      if (action.name === 'urka') {
+      if (action.name === UnitSkills.Urka) {
         action.qty--;
         actionQty = action.qty
       }
@@ -251,7 +252,7 @@ export const moves = {
     G.availablePoints = []
     let actionQty = 0;
     unit.abilities.actions.forEach(action => {
-      if (action.name === 'urka') {
+      if (action.name === UnitSkills.Urka) {
         action.qty--;
         actionQty = action.qty
       }
@@ -379,8 +380,8 @@ export const moves = {
     removeStatus(unit, UnitStatus.Freeze)
     G.availablePoints = []
 
-    if (G.currentUnit.abilities.actions.find(action => action.name === "raid") !== undefined) {
-      handleAbility({ G, events, ctx }, "raid", {unitId: G.currentUnit.id})
+    if (G.currentUnit.abilities.actions.find(action => action.name === UnitSkills.Raid) !== undefined) {
+      handleAbility({ G, events, ctx }, UnitSkills.Raid, {unitId: G.currentUnit.id})
     } else {
       unit.unitState.isClickable = false
       G.currentUnit = null
@@ -482,7 +483,7 @@ export const moves = {
 
     let actionQty = 0
     unit.abilities.allTimeActions.forEach(action => {
-      if (action.name === 'abasuCurse') {
+      if (action.name === UnitSkills.abasuCurse) {
         action.qty--;
         actionQty = action.qty
       }

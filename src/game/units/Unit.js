@@ -86,7 +86,7 @@ export const createUnitObject = (...data) => {
       [UnitTypes.Prispeshnick]: [UJungle.getBlemmii],
       [UnitTypes.Ispolin]: [UJungle.getPetsyhos],
       [UnitTypes.Vestnick]: [UJungle.getKaiery],
-      [UnitTypes.Idol]: [UJungle.getEpoko, UJungle.getAdjatar]
+      [UnitTypes.Idol]: [UJungle.getEloko, UJungle.getAdjatar]
     },
     [Biom.Water]: {
       [UnitTypes.Prispeshnick]: [UWater.getLerneyskiyRak],

@@ -1,12 +1,7 @@
-.creature-popup-container {
-  position: relative;
-}
-
 .creature-popup {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  /*transform: translate(-490px, -1508px);*/
+  top: calc(50% - 225px);
+  left: calc(50% - 215px);
   background-color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
@@ -14,22 +9,56 @@
   font-size: 14px;
   text-align: left;
   padding: 10px;
-  z-index: 1000;
+  width: 450px;
+  height: 430px;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.creature-popup .close-button {
+  width: 30px;
+  height: 20px;
+  position: absolute;
+  right: 0;
+}
+
+.creature-popup .popup-content {
+  display: flex;
+  flex-direction: column;
+  font-size: 22px;
+}
+
+.creature-popup .popup-main-info {
+  display: flex;
 }
 
 .creature-popup .creature-image {
-  float: left;
   margin-right: 10px;
 }
 
 .creature-popup .creature-info {
   overflow: hidden;
+  width: 100%;
 }
 
 .creature-popup .creature-name {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: bold;
   margin-bottom: 5px;
+  text-align: center;
+}
+
+.creature-popup .stat-power {
+  color: blue;
+}
+
+.creature-popup .stat-heals {
+  color: red;
+}
+
+.creature-popup .stat-initiative {
+  color: green;
 }
 
 .creature-popup .creature-type,
@@ -45,3 +74,42 @@
 
 /*.creature-popup .creature-stats div,*/
 /*.creature-popup .creature-applied-statuses div*/
+
+.unit-stars-info {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.unit-stars-info .star {
+  color: #666;
+  font-size: 1.5em;
+  margin-right: 5px;
+}
+
+.unit-stars-info .star {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 0 2px;
+  clip-path: polygon(
+    50% 0%,
+    63% 38%,
+    100% 38%,
+    69% 59%,
+    82% 100%,
+    50% 75%,
+    18% 100%,
+    31% 59%,
+    0% 38%,
+    37% 38%
+  )
+}
+
+.star.star-active {
+  background-color: #ffc107;
+}
+
+.star.star-sad {
+  background-color: gray;
+}

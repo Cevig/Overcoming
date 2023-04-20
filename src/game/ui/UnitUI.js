@@ -7,6 +7,7 @@ import {
   UnitTypes
 } from "../helpers/Constants";
 import {hasKeyword, hasStatus} from "../helpers/Utils";
+import UnitInfoIcon from "./UnitInfoIcon";
 
 export class UnitUI extends React.Component {
   constructor(props) {
@@ -42,7 +43,7 @@ export class UnitUI extends React.Component {
           {/*{this.drawFightAwakeSign()}*/}
           {this.drawBiomSymbol()}
           {this.drawStatuses()}
-          {/*{<UnitInfo />}*/}
+          {<UnitInfoIcon info={this.props.info} currentUnit={unit} />}
         </g>
         <defs>
           <radialGradient r="2.38874" cy="0.41486" cx="0.55078" spreadMethod="pad" id="svg_27">

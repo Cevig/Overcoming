@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {HexGrid, Token} from './HexGrid';
 import {
   createPoint,
@@ -13,6 +13,7 @@ import {playerColors} from "../helpers/Constants";
 import {startPositions} from "../state/Setup";
 import {BoardUser} from "./BoardUser";
 import {BoardLogs} from "./BoardLogs";
+import UnitInfoPopup from "./UnitInfoPopup";
 
 const style = {
   display: 'flex',
@@ -164,9 +165,12 @@ export function Board (props) {
   } else {
     colorMapSecret = props.G.grid.colorMap;
   }
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [infoUnit, setInfoUnit] = useState(false);
   return (
       <div style={style}>
-        <BoardUser props={props} />
+        <BoardUser props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
         <HexGrid
           levels={props.G.grid.levels}
           style={hexStyle}
@@ -181,12 +185,13 @@ export function Board (props) {
                   highlight={(props.G.currentUnit && props.G.currentUnit.unitState.point && isSame(props.G.currentUnit.unitState.point)(unit.unitState.point))}
                   markEnemy={setEnemyMarks(props, unit)}
                   fightQueue={props.G.fightQueue}
+                  info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]}
                 />
               </Token>
             })
           }
         </HexGrid>
-        <BoardLogs props={props}></BoardLogs>
+        <BoardLogs props={props} info={isPopupOpen}></BoardLogs>
         {
           props.G.winner !== undefined ?
             <motion.div
@@ -206,6 +211,7 @@ export function Board (props) {
             </motion.div> :
             <div></div>
         }
+        <UnitInfoPopup props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
 
       </div>
 

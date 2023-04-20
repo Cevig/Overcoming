@@ -20,6 +20,7 @@ import {USteppe} from "../units/Steppe";
 import {
   DamageType,
   UnitKeywords,
+  UnitSkills,
   UnitStatus,
   UnitTypes
 } from "../helpers/Constants";
@@ -27,19 +28,19 @@ import {gameLog} from "../helpers/Log";
 
 export const handleAbility = (data, skill, eventData) => {
   const abilitiesMap = {
-    surround3: handlePolydnicaSurroundings,
-    wholeness: handleWholeness,
-    addFreezeEffect: handleFreezeEffectOnAttack,
-    addUnfocusedEffect: handleUnfocusedEffectOnAttack,
-    addPoisonEffect: handlePoisonEffectOnAttack,
-    addVengeanceEffect: handleVengeanceEffectOnAttack,
-    maraAura: handleMaraAura,
-    raid: handleRaid,
-    lethalGrab: handleLethalGrab,
-    urka: handleUrka,
-    instantKill: handleInstantKill,
-    lesavka: handleLesavka,
-    utilizeDeath: handleUtilizeDeath,
+    [UnitSkills.Surround3]: handlePolydnicaSurroundings,
+    [UnitSkills.Wholeness]: handleWholeness,
+    [UnitSkills.AddFreezeEffect]: handleFreezeEffectOnAttack,
+    [UnitSkills.AddUnfocusedEffect]: handleUnfocusedEffectOnAttack,
+    [UnitSkills.AddPoisonEffect]: handlePoisonEffectOnAttack,
+    [UnitSkills.AddVengeanceEffect]: handleVengeanceEffectOnAttack,
+    [UnitSkills.MaraAura]: handleMaraAura,
+    [UnitSkills.Raid]: handleRaid,
+    [UnitSkills.LethalGrab]: handleLethalGrab,
+    [UnitSkills.Urka]: handleUrka,
+    [UnitSkills.InstantKill]: handleInstantKill,
+    [UnitSkills.Lesavka]: handleLesavka,
+    [UnitSkills.UtilizeDeath]: handleUtilizeDeath,
   }
 
   return abilitiesMap[skill](data, eventData)
@@ -177,7 +178,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${unit.name} гравця ${+ctx.currentPlayer+1} сьогодні без наліту`,
+      text: `${unit.name} гравця ${+ctx.currentPlayer+1} сьогодні без рейду`,
     })
   }
 
@@ -311,10 +312,10 @@ const handleLesavka = ({G, events, ctx}, {unitId, enemyId}) => {
 }
 
 const handleUtilizeDeath = ({G, ctx, events}, {point}) => {
-  const thisUnit = getInGameUnits(G).find(unit => unit.abilities.onDeath.find(ability => ability.name === 'utilizeDeath'))
+  const thisUnit = getInGameUnits(G).find(unit => unit.abilities.onDeath.find(ability => ability.name === UnitSkills.UtilizeDeath))
 
   if (getNeighbors2(thisUnit.unitState.point).find(isSame(point))) {
-    const action = thisUnit.abilities.allTimeActions.find(action => action.name === 'abasuCurse')
+    const action = thisUnit.abilities.allTimeActions.find(action => action.name === UnitSkills.abasuCurse)
     if (action) {
       action.qty++
     }

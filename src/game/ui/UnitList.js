@@ -8,6 +8,7 @@ const UnitList = (data) => {
   const player = data.data.G.players.find(p => p.id === +data.data.playerID)
   const ctx = data.data.ctx
   const newId = () => Math.random().toString(10).slice(2)
+  const [isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit] = data.info
 
   const getAssignedUnits = () => {
     if (player !== undefined) {
@@ -69,7 +70,7 @@ const UnitList = (data) => {
       .map((unit, i) => {
       return (
         <div key={unit.id} className="unit-row">
-          <h3 style={{color: playerColors[+player.id]}}>{unit.name}</h3>
+          <h3 style={{color: playerColors[+player.id]}}>{unit.name} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", cursor: "pointer", fontSize: 20}}>&#9432;</span></h3>
           <span>[{unit.biom}]</span>
           <div className="unit-stars">
             {unit.level !== undefined ? renderStars(unit.level, unit) : ""}
@@ -137,6 +138,12 @@ const UnitList = (data) => {
     return stars;
   };
 
+  const togglePopup = (unit, e) => {
+    if(e && e.stopPropagation) e.stopPropagation();
+    setInfoUnit(unit)
+    setIsPopupOpen(true);
+  };
+
   // Render the list of created unit instances
   const renderCreatedUnits = () => {
     return (
@@ -146,7 +153,7 @@ const UnitList = (data) => {
           {createdUnits.filter(unit => unit.unitState.playerId === player.id).map((unit) => {
             return (
               <li className="unit-instance" key={unit.id} onClick={() => data.data.moves.selectNewUnit(unit)}>
-                <h3 style={{color: playerColors[+player.id]}} >{unit.name}</h3>
+                <h3 style={{color: playerColors[+player.id]}} >{unit.name} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", fontSize: 20}}>&#9432;</span></h3>
                 <div className="unit-stars">
                   {unit.level !== undefined ? renderStarsCreated(unit.level) : ""}
                 </div>

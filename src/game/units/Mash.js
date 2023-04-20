@@ -2,6 +2,12 @@ import {Biom, UnitTypes} from "../helpers/Constants";
 import {getCreature, getIdol, getUnitState} from "./Unit";
 
 export class UMash {
+
+  static mohovikName = "Моховік"
+  static drekavazName = "Дрекавац"
+  static mavkaName = "Мавка"
+  static begemotName = "Бегемот"
+  static fekstName = "Фекст"
   static getMohovik = (id, playerId, level, createPosition) => {
     const stat = () => {
       if (level === 1)
@@ -12,7 +18,7 @@ export class UMash {
         return [2, 5, 4]
     }
 
-    return getCreature("Моховік", UnitTypes.Prispeshnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    return getCreature(UMash.mohovikName, UnitTypes.Prispeshnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
   static getDrekavaz = (id, playerId, level, createPosition) => {
     const stat = () => {
@@ -24,7 +30,7 @@ export class UMash {
         return [4, 4, 6]
     }
 
-    return getCreature("Дрекавац", UnitTypes.Ispolin, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    return getCreature(UMash.drekavazName, UnitTypes.Ispolin, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
 
   static getMavka = (id, playerId, level, createPosition) => {
@@ -37,16 +43,16 @@ export class UMash {
         return [3, 5, 4]
     }
 
-    return getCreature("Мавка", UnitTypes.Vestnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    return getCreature(UMash.mavkaName, UnitTypes.Vestnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
   }
 
   static getBegemot = (id, playerId, _, createPosition) => {
     const stat = [3, 8, 4]
-    return getIdol("Бегемот", Biom.Mash, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
+    return getIdol(UMash.begemotName, Biom.Mash, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
   }
 
   static getFekst = (id, playerId, _, createPosition) => {
     const stat = [2, 7, 4]
-    return getIdol("Фекст", Biom.Mash, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
+    return getIdol(UMash.fekstName, Biom.Mash, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
   }
 }
