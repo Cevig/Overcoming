@@ -53,6 +53,7 @@ export const UnitKeywords = Object.freeze({
   Support: "Підтримка",
   RestrictedRaid: "Обмежений Рейд",
   AbsoluteRaid: "Рейд Без Обмежень",
+  NoObstaclesRaid: "Рейд скрізь союзників",
   ExtendedMove: "Швидкість",
   VengeanceTarget: "Ціль для мстивих"
 })
@@ -74,5 +75,6 @@ export const UnitSkills = Object.freeze({
   healAlly: "Відновити життя",
   abasuCurse: "Прокляття Абаси",
   chainDamage: "Урон по ланцюжку",
-  throwWeapon: "Шпурнути ікла"
+  throwWeapon: "Шпурнути ікла",
+  replaceUnits: "Поміняти місцями"
 })

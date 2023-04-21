@@ -34,5 +34,6 @@ export const setup = ({ ctx }) => ({
   fightQueue: [],
   endFightTurn: false,
   winner: undefined,
-  currentActionUnitId: undefined
+  currentActionUnitId: undefined,
+  currentEnemySelectedId: undefined
 });

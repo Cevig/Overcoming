@@ -117,6 +117,7 @@ export const cleanFightPhase = (G, ctx, events) => {
 
 export const onEndPositioningTurn = (G, ctx) => {
   G.currentActionUnitId = undefined
+  G.currentEnemySelectedId = undefined
   G.currentUnit = null
   return G
 }

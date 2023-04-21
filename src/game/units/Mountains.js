@@ -24,7 +24,7 @@ export class UMountains {
     const stat = () => {
       if (level === 1) return [2, 3, 5]
       if (level === 2) return [2, 4, 6]
-      if (level === 3) return [4, 4, 6]
+      if (level === 3) return [3, 4, 6]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -41,15 +41,22 @@ export class UMountains {
 
   static getVeshizaSoroka = (id, playerId, level, createPosition) => {
     const stat = () => {
-      if (level === 1)
-        return [2, 4, 3]
-      if (level === 2)
-        return [3, 5, 3]
-      if (level === 3)
-        return [3, 5, 5]
+      if (level === 1) return [2, 4, 3]
+      if (level === 2) return [3, 5, 3]
+      if (level === 3) return [3, 5, 5]
     }
 
-    return getCreature(UMountains.veshizaSorokaName, UnitTypes.Vestnick, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    if (level > 0) {
+      abilities.keywords.push(UnitKeywords.Unfocused)
+      abilities.keywords.push(UnitKeywords.NoObstaclesRaid)
+      abilities.actions.push({name: UnitSkills.Raid, qty: 99})
+      if (level > 2) {
+        abilities.allTimeActions.push({name: UnitSkills.replaceUnits, qty: 1})
+      }
+    }
+
+    return getCreature(UMountains.veshizaSorokaName, UnitTypes.Vestnick, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
   }
 
   static getPsoglav = (id, playerId, _, createPosition) => {

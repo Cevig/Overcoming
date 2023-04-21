@@ -86,7 +86,8 @@ export const Overcoming = {
               skipTurn: moves.skipTurn,
               healAllyAction: moves.healAllyActionMove,
               curseAction: moves.curseActionMove,
-              throwWeaponAction: moves.throwWeaponActionMove
+              throwWeaponAction: moves.throwWeaponActionMove,
+              replaceUnitsAction: moves.replaceUnitsActionMove
             },
             next: 'pickUnitOnBoard'
           },
@@ -134,7 +135,14 @@ export const Overcoming = {
             moves: {
               throwWeapon: moves.doThrowWeapon
             }
-          }
+          },
+
+          replaceUnitsActionStage: {
+            moves: {
+              replaceUnitsFirst: moves.doReplaceUnitsActionFirst,
+              replaceUnits: moves.doReplaceUnitsAction
+            }
+          },
         }
       }
     },
@@ -167,7 +175,8 @@ export const Overcoming = {
               attackTarget: moves.attackTarget,
               skipTurn: moves.skipFightTurn,
               healAllyAction: moves.healAllyActionMove,
-              curseAction: moves.curseActionMove
+              curseAction: moves.curseActionMove,
+              replaceUnitsAction: moves.replaceUnitsActionMove
             },
             next: 'pickUnitForAttack'
           },
@@ -189,6 +198,13 @@ export const Overcoming = {
             moves: {
               curseOrRecover: moves.curseOrRecover,
               backFromAction: moves.backFromAction
+            }
+          },
+
+          replaceUnitsActionStage: {
+            moves: {
+              replaceUnitsFirst: moves.doReplaceUnitsActionFirst,
+              replaceUnits: moves.doReplaceUnitsAction
             }
           }
         }

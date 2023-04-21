@@ -246,6 +246,8 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
       raidEnemies = getNearestEnemies2(G, thisUnit.unitState)
     } else if (hasKeyword(thisUnit, UnitKeywords.RestrictedRaid)) {
       raidEnemies = getNearestAllies(G, thisUnit.unitState).length >= 2 ? [] : getRaidEnemies(G, thisUnit.unitState)
+    } else if (hasKeyword(thisUnit, UnitKeywords.NoObstaclesRaid)) {
+      raidEnemies = getNearestEnemies(G, thisUnit.unitState).length > 0 ? [] : getNearestEnemies2(G, thisUnit.unitState)
     } else {
       raidEnemies = getRaidEnemies(G, thisUnit.unitState)
     }
@@ -292,6 +294,8 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
 const handleLethalGrab = ({G, ctx}, {unitId, target}) => {
   if (!unitId) return
   const thisUnit = getUnitById(G, unitId)
+  if (thisUnit.abilities.onDeath.find(a => a.name === UnitSkills.LethalGrab) === undefined) return;
+
   if (target.type === UnitTypes.Idol) {
     thisUnit.power++
     thisUnit.heals++

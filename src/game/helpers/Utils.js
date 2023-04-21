@@ -175,6 +175,7 @@ export const onEndFightTurn = (G, ctx) => {
     G.fightQueue.shift();
   G.endFightTurn = false
   G.currentActionUnitId = undefined
+  G.currentEnemySelectedId = undefined
   return G
 }
 

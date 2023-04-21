@@ -118,40 +118,50 @@ export const moves = {
 
   selectUnitForAttack: ({ G, ctx, events }, currentUnit) => {
     let enemies = getNearestEnemies(G, currentUnit.unitState)
-
-    const mainTargetEnemy = enemies.find(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
-    if (mainTargetEnemy !== undefined) {
-      enemies = [mainTargetEnemy]
+    if (hasStatus(currentUnit, UnitStatus.Unarmed)) {
+      enemies = []
       gameLog.addLog({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemy.name}!`,
+        text: `${currentUnit.name} щось не може атакувати через статус "${UnitStatus.Unarmed}"`,
       })
-    }
+    } else {
+      const mainTargetEnemy = enemies.find(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
+      if (mainTargetEnemy !== undefined) {
+        enemies = [mainTargetEnemy]
+        gameLog.addLog({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemy.name}!`,
+        })
+      }
 
-    if (hasStatus(currentUnit, UnitStatus.Vengeance)) {
-      const vengeanceTarget = getInGameUnits(G).find(unit => hasKeyword(unit, UnitKeywords.VengeanceTarget))
-      if (vengeanceTarget) {
-        if (enemies.find(enemy => enemy.id === vengeanceTarget.id)) {
-          enemies = [vengeanceTarget]
-          gameLog.addLog({
-            id: Math.random().toString(10).slice(2),
-            turn: ctx.turn,
-            player: +ctx.currentPlayer,
-            phase: ctx.phase,
-            text: `Мстивість дозволяє атакувати тільки ${vengeanceTarget.name}`,
-          })
-        } else {
-          enemies = []
-          gameLog.addLog({
-            id: Math.random().toString(10).slice(2),
-            turn: ctx.turn,
-            player: +ctx.currentPlayer,
-            phase: ctx.phase,
-            text: `Об'єкт для помсти ${vengeanceTarget.name} не є в зоні ураження`,
-          })
+      if (hasStatus(currentUnit, UnitStatus.Vengeance)) {
+        const vengeanceTarget = getInGameUnits(G).find(unit => hasKeyword(unit, UnitKeywords.VengeanceTarget))
+        if (vengeanceTarget) {
+          if (enemies.find(enemy => enemy.id === vengeanceTarget.id)) {
+            enemies = [vengeanceTarget]
+            gameLog.addLog({
+              id: Math.random().toString(10).slice(2),
+              turn: ctx.turn,
+              player: +ctx.currentPlayer,
+              phase: ctx.phase,
+              text: `Мстивість дозволяє атакувати тільки ${vengeanceTarget.name}`,
+            })
+          } else {
+            enemies = []
+            gameLog.addLog({
+              id: Math.random().toString(10).slice(2),
+              turn: ctx.turn,
+              player: +ctx.currentPlayer,
+              phase: ctx.phase,
+              text: `Об'єкт для помсти ${vengeanceTarget.name} не є в зоні ураження`,
+            })
+          }
         }
       }
     }
@@ -282,7 +292,8 @@ export const moves = {
       }
     })
 
-    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && (!hasKeyword(enemy, UnitKeywords.Unfocused) || hasStatus(enemy, UnitKeywords.Unfocused)) && enemy.unitState.isCounterAttacked === false) {
+    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && (!hasKeyword(enemy, UnitKeywords.Unfocused) ||
+      hasStatus(enemy, UnitKeywords.Unfocused)) && !hasStatus(enemy, UnitStatus.Unarmed) && enemy.unitState.isCounterAttacked === false) {
       enemy.unitState.isCounterAttacked = true
 
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -442,7 +453,7 @@ export const moves = {
 
     let actionQty = 0
     unit.abilities.allTimeActions.forEach(action => {
-      if (action.name === UnitSkills.throwWeapon) {
+      if (action.name === UnitSkills.healAlly) {
         action.qty--;
         actionQty = action.qty
       }
@@ -600,5 +611,62 @@ export const moves = {
     }
 
     moves.backFromAction({ G, ctx, events })
+  },
+
+  replaceUnitsActionMove: ({ G, ctx, events }) => {
+    G.availablePoints = getInGameUnits(G, unit => G.currentUnit.unitState.playerId !== unit.unitState.playerId)
+      .filter(unit => unit.type !== UnitTypes.Idol)
+      .map(unit => unit.unitState.point)
+
+    if (G.availablePoints.length === 0) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
+      })
+    }
+    G.currentActionUnitId = G.currentUnit.id
+    events.setActivePlayers({ currentPlayer: 'replaceUnitsActionStage' });
+  },
+
+  doReplaceUnitsActionFirst: ({ G, ctx, events }, point) => {
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    const enemy = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
+    G.availablePoints = getNearestEnemies(G, enemy.unitState)
+      .filter(unit => unit.unitState.playerId === thisUnit.unitState.playerId)
+      .filter(unit => unit.type !== UnitTypes.Idol)
+      .map(unit => unit.unitState.point)
+    G.currentEnemySelectedId = enemy.id
+  },
+
+  doReplaceUnitsAction: ({ G, ctx, events }, point) => {
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    const enemy = getUnitById(G, G.currentEnemySelectedId)
+    const ally = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
+
+    let actionQty = 0
+    thisUnit.abilities.allTimeActions.forEach(action => {
+      if (action.name === UnitSkills.replaceUnits) {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та міняє місцями істот. Залишилось ${actionQty} заряди`,
+    })
+
+    handleUnitMove(G, ctx, ally.id, enemy.unitState.point)
+    handleUnitMove(G, ctx, enemy.id, point)
+
+    G.currentUnit = null
+    thisUnit.unitState.isClickable = false
+    G.availablePoints = []
+    ctx.phase === 'Positioning' ? events.endTurn() : G.endFightTurn = true
   },
 };

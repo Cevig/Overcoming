@@ -125,6 +125,12 @@ export function Board (props) {
       if (found !== undefined) {
         props.moves.throwWeapon(found);
       }
+    } else if (stage && stage === 'replaceUnitsActionStage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        if (props.G.currentEnemySelectedId) props.moves.replaceUnits(found);
+        else props.moves.replaceUnitsFirst(found);
+      }
     }
   }
 
@@ -155,6 +161,12 @@ export function Board (props) {
       const isItAvailablePoint = props.G.availablePoints.find(isSame(point));
       if (found && isItAvailablePoint) {
         props.moves.curseOrRecover(found);
+      }
+    } else if (stage && stage === 'replaceUnitsActionStage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        if (props.G.currentEnemySelectedId) props.moves.replaceUnits(found);
+        else props.moves.replaceUnitsFirst(found);
       }
     }
   }
