@@ -87,7 +87,8 @@ export const Overcoming = {
               healAllyAction: moves.healAllyActionMove,
               curseAction: moves.curseActionMove,
               throwWeaponAction: moves.throwWeaponActionMove,
-              replaceUnitsAction: moves.replaceUnitsActionMove
+              replaceUnitsAction: moves.replaceUnitsActionMove,
+              pauseToRecoverAction: moves.pauseToRecoverActionMove
             },
             next: 'pickUnitOnBoard'
           },
@@ -176,7 +177,8 @@ export const Overcoming = {
               skipTurn: moves.skipFightTurn,
               healAllyAction: moves.healAllyActionMove,
               curseAction: moves.curseActionMove,
-              replaceUnitsAction: moves.replaceUnitsActionMove
+              replaceUnitsAction: moves.replaceUnitsActionMove,
+              pauseToRecoverAction: moves.pauseToRecoverActionMove
             },
             next: 'pickUnitForAttack'
           },

@@ -43,6 +43,8 @@ export const handleAbility = (data, skill, eventData) => {
     [UnitSkills.Lesavka]: handleLesavka,
     [UnitSkills.UtilizeDeath]: handleUtilizeDeath,
     [UnitSkills.chainDamage]: handleChainDamage,
+    [UnitSkills.HalaAura]: handleHalaAura,
+    [UnitSkills.RaidBlock]: handleRaidBlock
   }
 
   return abilitiesMap[skill](data, eventData)
@@ -61,7 +63,7 @@ const handlePolydnicaSurroundings = ({G, ctx, events}, {unitId}) => {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `Полудніці оточили слугу типу ${enemy.type} гравця ${enemy.unitState.playerId+1}`,
+          text: `Полудніці оточили ${enemy.name}!`,
         })
         handleUnitDeath({G: G, ctx:ctx, events: events}, enemy)
         G.fightQueue.forEach((unitInQ, i, q) => {
@@ -98,6 +100,38 @@ const handleMaraAura = ({G, ctx, events}, {unitId}) => {
           status: [{name: auraKeyword, qty: value}]
         }
       });
+    }
+  })
+}
+
+const handleHalaAura = ({G, ctx, events}, {unitId}) => {
+  const thisUnit = getUnitById(G, unitId)
+
+  getInGameUnits(G, unit => unit.unitState.playerId === thisUnit.unitState.playerId).forEach(ally => {
+    const nearHalas = getNearestAllies(G, ally.unitState).filter(unit => unit.abilities.onMove.find(skill => skill.name === UnitSkills.HalaAura))
+    const allyAbility = ally.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.RaidBlock)
+
+    if (nearHalas.length > 0 && allyAbility === undefined) {
+      ally.abilities.statUpdates.defence.push({name: UnitSkills.RaidBlock, origin: false})
+
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${ally.name} отримує здібність ${UnitSkills.RaidBlock}`,
+      })
+    }
+    if (nearHalas.length === 0 && allyAbility && allyAbility.origin === false) {
+      ally.abilities.statUpdates.defence = ally.abilities.statUpdates.defence.filter(skill => skill.name !== UnitSkills.RaidBlock)
+
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${ally.name} втрачає здібність ${UnitSkills.RaidBlock}`,
+      })
     }
   })
 }
@@ -142,6 +176,23 @@ const handleWholeness = ({G, ctx}, {unitId, updates}) => {
   return updates
 }
 
+const handleRaidBlock = ({G, ctx}, {unitId, updates}) => {
+  if (updates.damageType === DamageType.Raid) {
+    const thisUnit = getUnitById(G, unitId)
+    updates.damage = 0
+    if (updates.status) updates.status = []
+
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} заблокував урон за допомогою здібності ${UnitSkills.RaidBlock}`,
+    })
+  }
+  return updates
+}
+
 const handleFreezeEffectOnAttack = ({G}, {unitId, updates}) => {
    if (updates.damageType === DamageType.Default) {
      if (updates.status) updates.status.push({name: UnitStatus.Freeze, qty: 1})
@@ -152,24 +203,24 @@ const handleFreezeEffectOnAttack = ({G}, {unitId, updates}) => {
 
 const handleUnfocusedEffectOnAttack = ({G}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Default) {
-    if (updates.status) updates.status.push({name: UnitStatus.Unfocused, qty: 1})
-    else updates.status = [{name: UnitStatus.Unfocused, qty: 1}]
+    if (updates.status) updates.status.push({name: UnitStatus.Unfocused, qty: 99})
+    else updates.status = [{name: UnitStatus.Unfocused, qty: 99}]
   }
   return updates
 }
 
 const handlePoisonEffectOnAttack = ({G}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Default) {
-    if (updates.status) updates.status.push({name: UnitStatus.Poison, qty: 1})
-    else updates.status = [{name: UnitStatus.Poison, qty: 1}]
+    if (updates.status) updates.status.push({name: UnitStatus.Poison, qty: 99})
+    else updates.status = [{name: UnitStatus.Poison, qty: 99}]
   }
   return updates
 }
 
 const handleVengeanceEffectOnAttack = ({G}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Default) {
-    if (updates.status) updates.status.push({name: UnitStatus.Vengeance, qty: 1})
-    else updates.status = [{name: UnitStatus.Vengeance, qty: 1}]
+    if (updates.status) updates.status.push({name: UnitStatus.Vengeance, qty: 99})
+    else updates.status = [{name: UnitStatus.Vengeance, qty: 99}]
   }
   return updates
 }
@@ -232,7 +283,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${unit.name} гравця ${+ctx.currentPlayer+1} сьогодні без рейду`,
+      text: `${unit.name} сьогодні без рейду`,
     })
   }
 

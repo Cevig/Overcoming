@@ -42,11 +42,11 @@ export const onPositioningStart = (G, ctx, events) => {
       const level = G.grid.levels
       return (Math.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z)) === level) || (point.y === level-1) || (point.z === -(level-1))
     }).forEach(unit => handleUnitDeath({G: G, ctx: ctx, events: events}, unit))
-    G.players.forEach(p => {
-      if (p.units.every(unit => unit.unitState.isInGame === false)) p.isInGame = false
-    })
     G.grid.levels--;
   }
+  G.players.forEach(p => {
+    if (p.units.every(unit => unit.unitState.isInGame === false)) p.isInGame = false
+  })
 
   units.forEach(unit => {
     if (hasStatus(unit, UnitStatus.Poison)) {
@@ -56,6 +56,7 @@ export const onPositioningStart = (G, ctx, events) => {
         updates: {
           damage: 1,
           damageType: DamageType.Poison,
+          status: [{name: UnitStatus.Poison, qty: -1}]
         }
       })
       gameLog.addLog({
@@ -75,6 +76,15 @@ export const onPositioningStart = (G, ctx, events) => {
         enemy: unit,
         updates: {
           status: [{name: UnitStatus.Unarmed, qty: -1}]
+        }
+      })
+    }
+    if (hasStatus(unit, UnitStatus.Unfocused)) {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: unit,
+        enemy: unit,
+        updates: {
+          status: [{name: UnitStatus.Unfocused, qty: -1}]
         }
       })
     }

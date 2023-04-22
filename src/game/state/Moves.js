@@ -292,8 +292,8 @@ export const moves = {
       }
     })
 
-    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && (!hasKeyword(enemy, UnitKeywords.Unfocused) ||
-      hasStatus(enemy, UnitKeywords.Unfocused)) && !hasStatus(enemy, UnitStatus.Unarmed) && enemy.unitState.isCounterAttacked === false) {
+    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && !hasKeyword(enemy, UnitKeywords.Unfocused) &&
+      !hasStatus(enemy, UnitKeywords.Unfocused) && !hasStatus(enemy, UnitStatus.Unarmed) && enemy.unitState.isCounterAttacked === false) {
       enemy.unitState.isCounterAttacked = true
 
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -668,5 +668,36 @@ export const moves = {
     thisUnit.unitState.isClickable = false
     G.availablePoints = []
     ctx.phase === 'Positioning' ? events.endTurn() : G.endFightTurn = true
+  },
+
+  pauseToRecoverActionMove: ({ G, ctx, events }) => {
+    const thisUnit = getUnitById(G, G.currentUnit.id)
+
+    let actionQty = 0
+    thisUnit.abilities.allTimeActions.forEach(action => {
+      if (action.name === UnitSkills.pauseToRecover) {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та відновлює життя. Залишилось ${actionQty} заряди`,
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: thisUnit,
+      updates: {
+        damage: -(Math.max((thisUnit.unitState.baseStats.heals - thisUnit.heals), 0)),
+        damageType: DamageType.Heal,
+        status: [{name: UnitStatus.Unfocused, qty: ctx.phase === 'Positioning' ? 1 : 2}]
+      }
+    })
+
+    moves.backFromAction({ G, ctx, events })
   },
 };

@@ -66,6 +66,7 @@ export const UnitSkills = Object.freeze({
   AddPoisonEffect: "Атака отруює",
   AddVengeanceEffect: "Атака примушує помститися",
   MaraAura: "Аура зниження ініціативи",
+  HalaAura: "Аура нівелювання рейду",
   Raid: "Рейд",
   LethalGrab: "Вбирання останків",
   Urka: "Ырка можливості",
@@ -76,5 +77,7 @@ export const UnitSkills = Object.freeze({
   abasuCurse: "Прокляття Абаси",
   chainDamage: "Урон по ланцюжку",
   throwWeapon: "Шпурнути ікла",
-  replaceUnits: "Поміняти місцями"
+  replaceUnits: "Поміняти місцями",
+  pauseToRecover: "Час відновитись",
+  RaidBlock: "Рейд вже не той"
 })

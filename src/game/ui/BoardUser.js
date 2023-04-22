@@ -106,6 +106,10 @@ export class BoardUser extends React.Component {
               <button onClick={() => props.moves.replaceUnitsAction()}>Поміняти місцями</button>
               : <span></span>
             }
+            {this.isPauseToRecoverAvailable() ?
+              <button onClick={() => props.moves.pauseToRecoverAction()}>Час відновитись</button>
+              : <span></span>
+            }
           </div>
         </div>
       </div>
@@ -155,12 +159,22 @@ export class BoardUser extends React.Component {
     return false
   }
 
+  isPauseToRecoverAvailable() {
+    const props = this.props.props
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.pauseToRecover && skill.qty > 0)) {
+      if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard" ||
+        (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
+        return true
+      }
+    }
+    return false
+  }
+
   isDefaultSkipTurnAvailable() {
     const props = this.props.props
     const playerStage = props.ctx.activePlayers[+props.ctx.currentPlayer]
     return props.ctx.activePlayers && ((playerStage === "placeUnitOnBoard") || (playerStage === "makeDamage") ||
-      (playerStage === "doRaid") || (playerStage === "showUrkaAction") || (playerStage === "healAllyAction") ||
-      (playerStage === "throwWeaponAction") || (playerStage === "replaceUnitsAction"));
+      (playerStage === "doRaid") || (playerStage === "showUrkaAction"));
   }
 
   showFightQueue() {

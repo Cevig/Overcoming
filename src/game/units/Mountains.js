@@ -61,11 +61,18 @@ export class UMountains {
 
   static getPsoglav = (id, playerId, _, createPosition) => {
     const stat = [4, 6, 4]
-    return getIdol(UMountains.psoglavName, Biom.Mountains, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
+
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.allTimeActions.push({name: UnitSkills.pauseToRecover, qty: 2})
+    return getIdol(UMountains.psoglavName, Biom.Mountains, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
   static getHala = (id, playerId, _, createPosition) => {
     const stat = [3, 7, 5]
-    return getIdol(UMountains.halaName, Biom.Mountains, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
+
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.onMove.push({name: UnitSkills.HalaAura})
+    abilities.statUpdates.defence.push({name: UnitSkills.RaidBlock, origin: true})
+    return getIdol(UMountains.halaName, Biom.Mountains, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }
