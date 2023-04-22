@@ -189,6 +189,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
   })
   const resultMods = handleUnitStatsUpdateInDefence(data, {
     unitId: enemy.id,
+    enemyId: currentUnit.id,
     updates: onAttackMods
   })
 

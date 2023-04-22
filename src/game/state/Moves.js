@@ -1,5 +1,6 @@
 import {
   getInGameUnits,
+  getNearestAllies,
   getNearestEnemies,
   getNearestEnemies2,
   getNeighbors,
@@ -292,15 +293,16 @@ export const moves = {
       }
     })
 
-    if (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && !hasKeyword(enemy, UnitKeywords.Unfocused) &&
-      !hasStatus(enemy, UnitKeywords.Unfocused) && !hasStatus(enemy, UnitStatus.Unarmed) && enemy.unitState.isCounterAttacked === false) {
+    if (hasKeyword(enemy, UnitKeywords.AlwaysCounterDamage) || (enemy.heals > 0 && !hasKeyword(unit, UnitKeywords.Sneaky) && !hasKeyword(enemy, UnitKeywords.Unfocused) &&
+      !hasStatus(enemy, UnitKeywords.Unfocused) && !hasStatus(enemy, UnitStatus.Unarmed) && enemy.unitState.isCounterAttacked === false)) {
       enemy.unitState.isCounterAttacked = true
-
+      let dmgPower = enemy.power === 1 ? 1 : Math.trunc(enemy.power / 2)
+      dmgPower = hasKeyword(enemy, UnitKeywords.FullDeathDamage) ? enemy.power : dmgPower
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: enemy,
         enemy: unit,
         updates: {
-          damage: enemy.power > 1 ? Math.trunc(enemy.power / 2) : enemy.power,
+          damage: Math.max(dmgPower, 0),
           damageType: DamageType.Counter,
         }
       })
@@ -340,19 +342,82 @@ export const moves = {
   raidAttack: ({G, events, ctx}, point) => {
     const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
     const thisUnit = getUnitById(G, G.currentUnit.id)
+    let raidDmg = Math.trunc(G.currentUnit.power / 2)
+    if (hasKeyword(thisUnit, UnitKeywords.AdditionalSacrificeRaid)) raidDmg = raidDmg + 1;
+
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
       currentUnit: thisUnit,
       enemy: enemy,
       updates: {
-        damage: Math.trunc(G.currentUnit.power / 2),
+        damage: raidDmg,
         damageType: DamageType.Raid,
       }
     })
     if(enemy.heals <= 0) {
       handleUnitDeath({G: G, ctx: ctx, events: events}, enemy, thisUnit)
     }
+
+    if (hasKeyword(thisUnit, UnitKeywords.AdditionalSacrificeRaid)) {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: thisUnit,
+        enemy: thisUnit,
+        updates: {
+          damage: 1,
+          damageType: DamageType.ReplaceHeals,
+        }
+      })
+      if(thisUnit.heals <= 0) {
+        handleUnitDeath({G: G, ctx: ctx, events: events}, thisUnit)
+      }
+    }
+
+    const nearAllies = getNearestAllies(G, enemy.unitState)
+    if (enemy.heals > 0 && thisUnit.heals > 0 && nearAllies.length > 0 && hasKeyword(thisUnit, UnitKeywords.ReplaceHealsRaid)) {
+      G.availablePoints = nearAllies.map(u => u.unitState.point)
+      G.currentActionUnitId = thisUnit.id
+      G.currentEnemySelectedId = enemy.id
+    } else {
+      G.availablePoints = []
+      G.currentUnit = null
+      thisUnit.unitState.isClickable = false
+      events.endTurn()
+    }
+  },
+
+  replaceHeals: ({G, events, ctx}, point) => {
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    const enemy = getUnitById(G, G.currentEnemySelectedId)
+    const newEnemy = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
+
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує особливість та преливає життя`,
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: enemy,
+      updates: {
+        damage: 1,
+        damageType: DamageType.ReplaceHeals,
+      }
+    })
+    if (enemy.heals <= 0) {
+      handleUnitDeath({G: G, ctx: ctx, events: events}, enemy, thisUnit)
+    }
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: newEnemy,
+      updates: {
+        damage: -1,
+        damageType: DamageType.ReplaceHeals,
+      }
+    })
+
     G.availablePoints = []
-    G.currentUnit = null
     thisUnit.unitState.isClickable = false
     events.endTurn()
   },
@@ -361,6 +426,7 @@ export const moves = {
     const thisUnit = getUnitById(G, G.currentUnit.id)
     thisUnit.unitState.isClickable = false
     G.availablePoints = []
+    G.currentUnit = null
     events.endTurn()
   },
 

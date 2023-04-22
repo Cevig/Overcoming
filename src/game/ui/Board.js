@@ -91,7 +91,7 @@ export function Board (props) {
     } else if (stage && stage === 'doRaid') {
       const found = props.G.availablePoints.find(isSame(point));
       if (found !== undefined) {
-        props.moves.attackTarget(found);
+        props.G.currentEnemySelectedId ? props.moves.replaceHeals(found) : props.moves.attackTarget(found);
       }
     } else if (stage && stage === 'showUrkaAction') {
       const found = props.G.availablePoints.find(isSame(point));

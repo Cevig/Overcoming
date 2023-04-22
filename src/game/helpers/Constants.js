@@ -28,6 +28,7 @@ export const DamageType = Object.freeze({
   Default: "Звичайний",
   Counter: "Відповідь",
   Raid: "Рейд",
+  ReplaceHeals: "Перелив життя",
   Heal: "Лікування",
   Poison: "Отруєння",
   Chained: "Ланцюжок",
@@ -36,6 +37,8 @@ export const DamageType = Object.freeze({
 export const UnitStatus = Object.freeze({
   Freeze: "Нерухомість",
   InitiativeDown: "Зниження ініціативи",
+  InitiativeDownAura: "Аура зниження ініціативи",
+  InitiativeUpAura: "Аура збільшення ініціативи",
   PowerDown: "Силу знижено",
   PowerUp: "Силу збільшено",
   PowerUpSupport: "Підтримка",
@@ -54,8 +57,12 @@ export const UnitKeywords = Object.freeze({
   RestrictedRaid: "Обмежений Рейд",
   AbsoluteRaid: "Рейд Без Обмежень",
   NoObstaclesRaid: "Рейд скрізь союзників",
+  ReplaceHealsRaid: "Рейд з переливом життя",
+  AdditionalSacrificeRaid: "Посилений Жертовний Рейд",
   ExtendedMove: "Швидкість",
-  VengeanceTarget: "Ціль для мстивих"
+  VengeanceTarget: "Ціль для мстивих",
+  AlwaysCounterDamage: "Нескінченна відповідь",
+  FullDeathDamage: "Повна відповідь"
 })
 
 export const UnitSkills = Object.freeze({
@@ -67,6 +74,7 @@ export const UnitSkills = Object.freeze({
   AddVengeanceEffect: "Атака примушує помститися",
   MaraAura: "Аура зниження ініціативи",
   HalaAura: "Аура нівелювання рейду",
+  ObajifoAura: "Аура підвищення ініціативи",
   Raid: "Рейд",
   LethalGrab: "Вбирання останків",
   Urka: "Ырка можливості",
@@ -79,5 +87,8 @@ export const UnitSkills = Object.freeze({
   throwWeapon: "Шпурнути ікла",
   replaceUnits: "Поміняти місцями",
   pauseToRecover: "Час відновитись",
-  RaidBlock: "Рейд вже не той"
+  RaidBlock: "Рейд вже не той",
+  AntiVestnick: `Опір до ${UnitTypes.Vestnick}`,
+  HealOnAttack: `Відновлення при атаці`,
+  DeadlyDamage: "Смертельний урон",
 })

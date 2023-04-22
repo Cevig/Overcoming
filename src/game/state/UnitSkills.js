@@ -44,7 +44,11 @@ export const handleAbility = (data, skill, eventData) => {
     [UnitSkills.UtilizeDeath]: handleUtilizeDeath,
     [UnitSkills.chainDamage]: handleChainDamage,
     [UnitSkills.HalaAura]: handleHalaAura,
-    [UnitSkills.RaidBlock]: handleRaidBlock
+    [UnitSkills.RaidBlock]: handleRaidBlock,
+    [UnitSkills.AntiVestnick]: handleAntiVestnick,
+    [UnitSkills.ObajifoAura]: handleObajifoAura,
+    [UnitSkills.HealOnAttack]: handleHealOnAttack,
+    [UnitSkills.DeadlyDamage]: handleDeadlyDamage,
   }
 
   return abilitiesMap[skill](data, eventData)
@@ -81,7 +85,7 @@ const handleMaraAura = ({G, ctx, events}, {unitId}) => {
 
   getInGameUnits(G, unit => unit.unitState.playerId !== thisUnit.unitState.playerId).forEach(enemy => {
     const nearMaras = getNearestEnemies(G, enemy.unitState).filter(unit => unit.name === USteppe.maraName)
-    const auraKeyword = UnitStatus.InitiativeDown
+    const auraKeyword = UnitStatus.InitiativeDownAura
     const enemyStatus = getStatus(enemy, auraKeyword)
 
     let value = 0
@@ -97,6 +101,34 @@ const handleMaraAura = ({G, ctx, events}, {unitId}) => {
         enemy: enemy,
         updates: {
           initiative: value,
+          status: [{name: auraKeyword, qty: value}]
+        }
+      });
+    }
+  })
+}
+
+const handleObajifoAura = ({G, ctx, events}, {unitId}) => {
+  const thisUnit = getUnitById(G, unitId)
+
+  getInGameUnits(G, unit => unit.unitState.playerId === thisUnit.unitState.playerId).forEach(ally => {
+    const nearObajifos = getNearestAllies(G, ally.unitState).filter(unit => unit.abilities.onMove.find(skill => skill.name === UnitSkills.ObajifoAura))
+    const auraKeyword = UnitStatus.InitiativeUpAura
+    const allyStatus = getStatus(ally, auraKeyword)
+
+    let value = 0
+    if (allyStatus !== undefined) {
+      value = value - allyStatus.qty
+    }
+    if (nearObajifos.length > 0) {
+      value = value + nearObajifos.reduce((val, _) => val + 1, 0)
+    }
+    if (value !== 0) {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: thisUnit,
+        enemy: ally,
+        updates: {
+          initiative: -value,
           status: [{name: auraKeyword, qty: value}]
         }
       });
@@ -193,6 +225,42 @@ const handleRaidBlock = ({G, ctx}, {unitId, updates}) => {
   return updates
 }
 
+const handleAntiVestnick = ({G, ctx}, {unitId, enemyId, updates}) => {
+  const enemy = getUnitById(G, enemyId)
+  if (enemy.type === UnitTypes.Vestnick) {
+    const thisUnit = getUnitById(G, unitId)
+    updates.damage = Math.max(updates.damage - 1, 0)
+
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} зменшив урон за допомогою здібності ${UnitSkills.AntiVestnick}`,
+    })
+  }
+  return updates
+}
+
+const handleDeadlyDamage = ({G, ctx}, {unitId, enemyId, updates}) => {
+  if (updates.damageType === DamageType.Default) {
+    const thisUnit = getUnitById(G, unitId)
+    if (thisUnit.unitState.baseStats.heals > thisUnit.heals) {
+      updates.damage = 99
+
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${thisUnit.name} отримує смертельний урон через здібність ${UnitSkills.DeadlyDamage}`,
+      })
+    }
+  }
+
+  return updates
+}
+
 const handleFreezeEffectOnAttack = ({G}, {unitId, updates}) => {
    if (updates.damageType === DamageType.Default) {
      if (updates.status) updates.status.push({name: UnitStatus.Freeze, qty: 1})
@@ -221,6 +289,22 @@ const handleVengeanceEffectOnAttack = ({G}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Default) {
     if (updates.status) updates.status.push({name: UnitStatus.Vengeance, qty: 99})
     else updates.status = [{name: UnitStatus.Vengeance, qty: 99}]
+  }
+  return updates
+}
+
+const handleHealOnAttack = ({G, ctx, events}, {unitId, updates}) => {
+  if (updates.damageType === DamageType.Default) {
+    const thisUnit = getUnitById(G, unitId)
+    const healValue = Math.max(thisUnit.unitState.baseStats.heals - thisUnit.heals, 0)
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: thisUnit,
+      updates: {
+        damage: -(healValue > 1 ? 1 : healValue),
+        damageType: DamageType.Heal,
+      }
+    })
   }
   return updates
 }

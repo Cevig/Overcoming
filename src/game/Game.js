@@ -95,7 +95,8 @@ export const Overcoming = {
           doRaid: {
             moves: {
               attackTarget: moves.raidAttack,
-              skipTurn: moves.skipRaidTurn
+              skipTurn: moves.skipRaidTurn,
+              replaceHeals: moves.replaceHeals,
             }
           },
 
