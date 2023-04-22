@@ -14,6 +14,7 @@ import {startPositions} from "../state/Setup";
 import {BoardUser} from "./BoardUser";
 import {BoardLogs} from "./BoardLogs";
 import UnitInfoPopup from "./UnitInfoPopup";
+import {UnstablePointsUI} from "./UnstablePointsUI";
 
 const style = {
   display: 'flex',
@@ -204,6 +205,13 @@ export function Board (props) {
                   fightQueue={props.G.fightQueue}
                   info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]}
                 />
+              </Token>
+            })
+          }
+          {
+            props.G.grid.unstablePoints.map((point, i) => {
+              return <Token x={point.x} y={point.y} z={point.z} key={i+10000}>
+                <UnstablePointsUI />
               </Token>
             })
           }

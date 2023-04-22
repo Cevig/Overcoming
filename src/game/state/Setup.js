@@ -27,6 +27,7 @@ export const setup = ({ ctx }) => ({
       [playerColors[2]]: startPositions[2],//green
       [playerColors[3]]: startPositions[3]//yellow
     },
+    unstablePoints: []
   },
   availablePoints: [],
   setupComplete: 0,

@@ -1,4 +1,5 @@
 import {
+  createPoint,
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
@@ -35,8 +36,16 @@ const setColorMap = G => {
 };
 
 export const onPositioningStart = (G, ctx, events) => {
+  G.grid.unstablePoints = []
   const units = getInGameUnits(G)
   if((G.moveOrder >= 2) && (G.moveOrder % 2 === 0)) {
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `Руйнування простору - поле зменшилося!!!`,
+    })
     units.filter(unit => {
       const point = unit.unitState.point
       const level = G.grid.levels
@@ -44,6 +53,46 @@ export const onPositioningStart = (G, ctx, events) => {
     }).forEach(unit => handleUnitDeath({G: G, ctx: ctx, events: events}, unit))
     G.grid.levels--;
   }
+  if ((G.moveOrder >= 1) && (G.moveOrder % 2 === 1)) {
+    const result = []
+    for (let i = 0; i <= G.grid.levels; i++) {
+      const a = -i+0
+      const b = -(G.grid.levels-i)+0
+      result.push([G.grid.levels, a, b])
+      result.push([G.grid.levels, b, a])
+      result.push([a, G.grid.levels, b])
+      result.push([b, G.grid.levels, a])
+      result.push([a, b, G.grid.levels])
+      result.push([b, a, G.grid.levels])
+    }
+    for (let i = -1; i > -G.grid.levels; i--) {
+      const a = -i
+      const b = G.grid.levels+i
+      result.push([-G.grid.levels, a, b])
+      result.push([-G.grid.levels, b, a])
+      result.push([a, -G.grid.levels, b])
+      result.push([b, -G.grid.levels, a])
+      result.push([a, b, -G.grid.levels])
+      result.push([b, a, -G.grid.levels])
+    }
+    for (let i = 0; i <= G.grid.levels-1; i++) {
+      const a = -i+0
+      const b = -(G.grid.levels-1-i)+0
+      result.push([a, G.grid.levels-1, b])
+      result.push([b, G.grid.levels-1, a])
+    }
+    for (let i = -1; i > -G.grid.levels+1; i--) {
+      const a = -i
+      const b = G.grid.levels+i
+      result.push([a, b, -G.grid.levels+1])
+      result.push([b, a, -G.grid.levels+1])
+    }
+
+    G.grid.unstablePoints = result.filter(arr => arr[1] !== G.grid.levels)
+      .filter(arr => arr[2] !== -G.grid.levels)
+      .map(arr => createPoint(...arr))
+  }
+
   G.players.forEach(p => {
     if (p.units.every(unit => unit.unitState.isInGame === false)) p.isInGame = false
   })

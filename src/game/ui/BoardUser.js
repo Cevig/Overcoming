@@ -172,7 +172,7 @@ export class BoardUser extends React.Component {
 
   isDefaultSkipTurnAvailable() {
     const props = this.props.props
-    const playerStage = props.ctx.activePlayers[+props.ctx.currentPlayer]
+    const playerStage = props.ctx.activePlayers ? props.ctx.activePlayers[+props.ctx.currentPlayer] : null
     return props.ctx.activePlayers && ((playerStage === "placeUnitOnBoard") || (playerStage === "makeDamage") ||
       (playerStage === "doRaid") || (playerStage === "showUrkaAction"));
   }
