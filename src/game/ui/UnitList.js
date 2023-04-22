@@ -12,18 +12,15 @@ const UnitList = (data) => {
 
   const getAssignedUnits = () => {
     if (player !== undefined) {
-      return [
-        createUnitObject(newId(), 99, player.bioms[0]),
-        createUnitObject(newId(), 99, player.bioms[0], UnitTypes.Idol, 1),
-        createUnitObject(newId(), 99, player.bioms[0], UnitTypes.Prispeshnick),
-        createUnitObject(newId(), 99, player.bioms[0], UnitTypes.Ispolin),
-        createUnitObject(newId(), 99, player.bioms[0], UnitTypes.Vestnick),
-        createUnitObject(newId(), 99, player.bioms[1]),
-        createUnitObject(newId(), 99, player.bioms[1], UnitTypes.Idol, 1),
-        createUnitObject(newId(), 99, player.bioms[1], UnitTypes.Prispeshnick),
-        createUnitObject(newId(), 99, player.bioms[1], UnitTypes.Ispolin),
-        createUnitObject(newId(), 99, player.bioms[1], UnitTypes.Vestnick)
-      ]
+      return player.bioms.flatMap(biom => {
+          return [
+            createUnitObject(newId(), 99, biom),
+            createUnitObject(newId(), 99, biom, UnitTypes.Idol, 1),
+            createUnitObject(newId(), 99, biom, UnitTypes.Prispeshnick),
+            createUnitObject(newId(), 99, biom, UnitTypes.Ispolin),
+            createUnitObject(newId(), 99, biom, UnitTypes.Vestnick),
+          ]
+        })
     } else return []
   }
 
@@ -35,6 +32,62 @@ const UnitList = (data) => {
     useState(1),
     useState(1),
     useState(1),
+
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1),
+    useState(1)
   ]
   // const [selectedStars, setSelectedStars] = useState(1);
   // Define the state for the list of created unit instances

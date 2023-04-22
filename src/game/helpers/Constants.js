@@ -24,6 +24,7 @@ export const Biom = Object.freeze({
   Geysers: "Гейзери"
 })
 
+
 export const DamageType = Object.freeze({
   Default: "Звичайний",
   Counter: "Відповідь",
@@ -34,6 +35,7 @@ export const DamageType = Object.freeze({
   Chained: "Ланцюжок",
 })
 
+export const DamageTypes = [DamageType.Default, DamageType.Counter, DamageType.Raid, DamageType.Chained]
 export const UnitStatus = Object.freeze({
   Freeze: "Нерухомість",
   InitiativeDown: "Зниження ініціативи",
@@ -91,4 +93,6 @@ export const UnitSkills = Object.freeze({
   AntiVestnick: `Опір до ${UnitTypes.Vestnick}`,
   HealOnAttack: `Відновлення при атаці`,
   DeadlyDamage: "Смертельний урон",
+  DoubleDamage: "Подвійний урон",
+  RoundDamage: "Конусна атака",
 })

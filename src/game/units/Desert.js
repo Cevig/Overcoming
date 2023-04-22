@@ -73,11 +73,18 @@ export class UDesert {
 
   static getSfinks = (id, playerId, _, createPosition) => {
     const stat = [2, 11, 4]
-    return getIdol(UDesert.sfinksName, Biom.Desert, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
+
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.keywords.push(UnitKeywords.Sneaky)
+    abilities.statUpdates.defence.push({name: UnitSkills.DoubleDamage})
+    return getIdol(UDesert.sfinksName, Biom.Desert, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
   static getVasilisk = (id, playerId, _, createPosition) => {
     const stat = [2, 8, 4]
-    return getIdol(UDesert.vasiliskName, Biom.Desert, id, ...stat, getUnitState(id, playerId, ...stat, createPosition))
+
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.statUpdates.attack.push(UnitSkills.RoundDamage, UnitSkills.AddPoisonEffect)
+    return getIdol(UDesert.vasiliskName, Biom.Desert, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }
