@@ -110,6 +110,14 @@ export class BoardUser extends React.Component {
               <button onClick={() => props.moves.pauseToRecoverAction()}>Час відновитись</button>
               : <span></span>
             }
+            {this.isSetBlockSideAvailable() ?
+              <button onClick={() => props.moves.chooseBlockSideAction()}>Вибрати захищену сторону</button>
+              : <span></span>
+            }
+            {this.isChargeAttackAvailable() ?
+              <button onClick={() => props.moves.chargeAttackAction()}>Зарядити атаку</button>
+              : <span></span>
+            }
           </div>
         </div>
       </div>
@@ -164,6 +172,26 @@ export class BoardUser extends React.Component {
     if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.pauseToRecover && skill.qty > 0)) {
       if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard" ||
         (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
+        return true
+      }
+    }
+    return false
+  }
+
+  isSetBlockSideAvailable() {
+    const props = this.props.props
+    if (props.G.currentUnit && props.G.currentUnit.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage && skill.point === null)) {
+      if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnit")) {
+        return true
+      }
+    }
+    return false
+  }
+
+  isChargeAttackAvailable() {
+    const props = this.props.props
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.ChargeAttack && skill.qty > 0)) {
+      if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard")) {
         return true
       }
     }

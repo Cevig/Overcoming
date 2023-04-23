@@ -74,6 +74,11 @@ export function Board (props) {
       if (found !== undefined) {
         props.moves.moveUnit(found);
       }
+    } else if (stage && stage === 'chooseBlockSideActionStage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.setBlockSide(found);
+      }
     }
   }
 

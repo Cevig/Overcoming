@@ -8,7 +8,7 @@ export class USteppe {
   static polydnicaName = "Полудниця"
   static maraName = "Мара"
   static letavicaName = "Летавиця"
-  static urkaName = "Ырка"
+  static urkaName = "Ирка"
   static viyName = "Вій"
   static getPolydnica = (id, playerId, level, createPosition) => {
     const stat = () => {

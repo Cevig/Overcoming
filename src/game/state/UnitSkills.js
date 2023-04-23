@@ -31,7 +31,7 @@ import {gameLog} from "../helpers/Log";
 export const handleAbility = (data, skill, eventData) => {
   const abilitiesMap = {
     [UnitSkills.Surround3]: handlePolydnicaSurroundings,
-    [UnitSkills.Wholeness]: handleWholeness,
+    [UnitSkills.Wholeness]: handleWholenessOnDefence,
     [UnitSkills.AddFreezeEffect]: handleFreezeEffectOnAttack,
     [UnitSkills.AddUnfocusedEffect]: handleUnfocusedEffectOnAttack,
     [UnitSkills.AddPoisonEffect]: handlePoisonEffectOnAttack,
@@ -45,13 +45,18 @@ export const handleAbility = (data, skill, eventData) => {
     [UnitSkills.UtilizeDeath]: handleUtilizeDeath,
     [UnitSkills.chainDamage]: handleChainDamageOnAttack,
     [UnitSkills.HalaAura]: handleHalaAura,
-    [UnitSkills.RaidBlock]: handleRaidBlock,
-    [UnitSkills.AntiVestnick]: handleAntiVestnick,
+    [UnitSkills.RaidBlock]: handleRaidBlockOnDefence,
+    [UnitSkills.AntiVestnick]: handleAntiVestnickOnDefence,
+    [UnitSkills.ReduceDamage]: handleReduceDamageOnDefence,
     [UnitSkills.ObajifoAura]: handleObajifoAura,
     [UnitSkills.HealOnAttack]: handleHealOnAttack,
-    [UnitSkills.DeadlyDamage]: handleDeadlyDamage,
-    [UnitSkills.DoubleDamage]: handleDoubleDamage,
+    [UnitSkills.DeadlyDamage]: handleDeadlyDamageOnDefence,
+    [UnitSkills.DoubleDamage]: handleDoubleDamageOnDefence,
     [UnitSkills.RoundDamage]: handleRoundDamageOnAttack,
+    [UnitSkills.BlockDamage]: handleBlockDamageOnDefence,
+    [UnitSkills.InjuredDamage]: handleInjuredDamageOnDefence,
+    [UnitSkills.DecreaseInitiative]: handleDecreaseInitiativeOnAttack,
+    [UnitSkills.RemoveChargeAttack]: handleRemoveChargeAttackOnAttack,
   }
 
   return abilitiesMap[skill](data, eventData)
@@ -173,7 +178,7 @@ const handleHalaAura = ({G, ctx, events}, {unitId}) => {
 
 /////////////////////////////////////////////////////
 
-const handleWholeness = ({G, ctx}, {unitId, updates}) => {
+const handleWholenessOnDefence = ({G, ctx}, {unitId, updates}) => {
   const thisUnit = getUnitById(G, unitId)
 
   if (updates.power !== undefined) {
@@ -211,7 +216,7 @@ const handleWholeness = ({G, ctx}, {unitId, updates}) => {
   return updates
 }
 
-const handleRaidBlock = ({G, ctx}, {unitId, updates}) => {
+const handleRaidBlockOnDefence = ({G, ctx}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Raid) {
     const thisUnit = getUnitById(G, unitId)
     updates.damage = 0
@@ -228,9 +233,9 @@ const handleRaidBlock = ({G, ctx}, {unitId, updates}) => {
   return updates
 }
 
-const handleAntiVestnick = ({G, ctx}, {unitId, enemyId, updates}) => {
+const handleAntiVestnickOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
   const enemy = getUnitById(G, enemyId)
-  if (enemy.type === UnitTypes.Vestnick) {
+  if (enemy.type === UnitTypes.Vestnick && DamageTypes.find(type => type === updates.damageType)) {
     const thisUnit = getUnitById(G, unitId)
     updates.damage = Math.max(updates.damage - 1, 0)
 
@@ -245,7 +250,23 @@ const handleAntiVestnick = ({G, ctx}, {unitId, enemyId, updates}) => {
   return updates
 }
 
-const handleDeadlyDamage = ({G, ctx}, {unitId, enemyId, updates}) => {
+const handleReduceDamageOnDefence = ({G, ctx}, {unitId, updates}) => {
+  if (updates.damage > 1) {
+    const thisUnit = getUnitById(G, unitId)
+    updates.damage = updates.damage - 1
+
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} зменшив урон за допомогою здібності ${UnitSkills.ReduceDamage}`,
+    })
+  }
+  return updates
+}
+
+const handleDeadlyDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
   if (updates.damageType !== DamageType.Raid && DamageTypes.find(type => type === updates.damageType)) {
     const thisUnit = getUnitById(G, unitId)
     if (thisUnit.unitState.baseStats.heals > thisUnit.heals) {
@@ -264,7 +285,7 @@ const handleDeadlyDamage = ({G, ctx}, {unitId, enemyId, updates}) => {
   return updates
 }
 
-const handleDoubleDamage = ({G, ctx}, {unitId, enemyId, updates}) => {
+const handleDoubleDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
   if (DamageTypes.find(type => type === updates.damageType)) {
     const thisUnit = getUnitById(G, unitId)
     const enemy = getUnitById(G, enemyId)
@@ -279,6 +300,54 @@ const handleDoubleDamage = ({G, ctx}, {unitId, enemyId, updates}) => {
         text: `${thisUnit.name} отримує подвійний урон адже ${enemy.name} має більше життя`,
       })
     }
+  }
+
+  return updates
+}
+
+const handleBlockDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
+  if (updates.damageType !== DamageType.Chained && DamageTypes.find(type => type === updates.damageType)) {
+    const thisUnit = getUnitById(G, unitId)
+    const enemy = getUnitById(G, enemyId)
+    const skill = thisUnit.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage)
+    if (skill.point) {
+      const newPoint = createPoint(thisUnit.unitState.point.x + skill.point.x, thisUnit.unitState.point.y + skill.point.y, thisUnit.unitState.point.z + skill.point.z)
+      const newPoint2 = createPoint(newPoint.x + skill.point.x, newPoint.y + skill.point.y, newPoint.z + skill.point.z)
+      if (isSame(enemy.unitState.point)(newPoint) || isSame(enemy.unitState.point)(newPoint2)) {
+        updates.damage = 0
+
+        gameLog.addLog({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `${thisUnit.name} блокує урон з цього боку від ${enemy.name}`,
+        })
+      }
+    }
+  }
+
+  return updates
+}
+
+const handleInjuredDamageOnDefence = ({G, ctx, events}, {unitId, updates}) => {
+  const thisUnit = getUnitById(G, unitId)
+  if (updates.damage && (thisUnit.heals - updates.damage) < thisUnit.unitState.baseStats.heals) {
+    thisUnit.abilities.statUpdates.defence = thisUnit.abilities.statUpdates.defence.filter(skill => skill.name !== UnitSkills.InjuredDamage)
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: thisUnit,
+      updates: {
+        power: -1
+      }
+    })
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} підвищує силу через ${UnitSkills.InjuredDamage}`,
+    })
   }
 
   return updates
@@ -312,6 +381,35 @@ const handleVengeanceEffectOnAttack = ({G}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Chained) {
     if (updates.status) updates.status.push({name: UnitStatus.Vengeance, qty: 99})
     else updates.status = [{name: UnitStatus.Vengeance, qty: 99}]
+  }
+  return updates
+}
+
+const handleDecreaseInitiativeOnAttack = ({G, ctx}, {unitId, updates}) => {
+  if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Chained || updates.damageType === DamageType.Raid) {
+    updates.initiative = 1
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `Додатковий ефект удару - зниження ініціативи!`,
+    })
+  }
+  return updates
+}
+const handleRemoveChargeAttackOnAttack = ({G, ctx, events}, {unitId, updates}) => {
+  const thisUnit = getUnitById(G, unitId)
+  if (DamageTypes.find(type => type === updates.damageType) && hasStatus(thisUnit, UnitStatus.PowerUpCharge)) {
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: thisUnit,
+      updates: {
+        power: 2,
+        status: [{name: UnitStatus.PowerUpCharge, qty: -1}]
+      }
+    })
+    thisUnit.abilities.statUpdates.attack = thisUnit.abilities.statUpdates.attack.filter(skill => skill.name !== UnitSkills.RemoveChargeAttack)
   }
   return updates
 }

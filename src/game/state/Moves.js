@@ -1,4 +1,5 @@
 import {
+  createPoint,
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
@@ -48,6 +49,22 @@ export const moves = {
       G.availablePoints = startPositions[ctx.currentPlayer].slice(1, startPositions[ctx.currentPlayer].length)
     G.currentUnit = currentUnit
     events.endStage();
+  },
+
+  chooseBlockSideActionMove: ({ G, ctx, events }) => {
+    G.availablePoints = getNeighbors(G.currentUnit.unitState.point)
+    events.setActivePlayers({ currentPlayer: 'chooseBlockSideActionStage' });
+  },
+
+  doSetBlockSide: ({ G, ctx, events }, point) => {
+    const thisUnit = getUnitById(G, G.currentUnit.id)
+    const skill = thisUnit.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage)
+    const currentPoint = thisUnit.unitState.point
+    skill.point = createPoint(point.x - currentPoint.x, point.y - currentPoint.y, point.z - currentPoint.z)
+
+    G.currentUnit = null
+    G.availablePoints = []
+    events.setActivePlayers({ currentPlayer: 'pickUnit' });
   },
 
   selectUnitOnBoard: ({ G, ctx, events }, currentUnit) => {
@@ -765,5 +782,39 @@ export const moves = {
     })
 
     moves.backFromAction({ G, ctx, events })
+  },
+
+  chargeAttackActionMove: ({ G, ctx, events }) => {
+    const thisUnit = getUnitById(G, G.currentUnit.id)
+
+    let actionQty = 0
+    thisUnit.abilities.allTimeActions.forEach(action => {
+      if (action.name === UnitSkills.ChargeAttack) {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та заряджає наступну атаку. Залишилось ${actionQty} заряди`,
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: thisUnit,
+      updates: {
+        power: -2,
+        status: [{name: UnitStatus.PowerUpCharge, qty: 1}]
+      }
+    })
+    thisUnit.abilities.statUpdates.attack.push(UnitSkills.RemoveChargeAttack)
+
+    G.currentUnit = null
+    thisUnit.unitState.isClickable = false
+    G.availablePoints = []
+    events.endTurn()
   },
 };

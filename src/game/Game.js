@@ -44,9 +44,16 @@ export const Overcoming = {
               moveUnit: moves.moveUnit,
               removeUnit: moves.removeUnit,
               complete: { move: moves.complete, noLimit: true },
-              summonUnit: { move: moves.summonUnit, noLimit: true }
+              summonUnit: { move: moves.summonUnit, noLimit: true },
+              chooseBlockSideAction: { move: moves.chooseBlockSideActionMove, noLimit: true }
             },
             next: 'pickUnit'
+          },
+
+          chooseBlockSideActionStage: {
+            moves: {
+              setBlockSide: moves.doSetBlockSide
+            }
           }
         },
         onMove: (data) => postProcess(data)
@@ -88,7 +95,8 @@ export const Overcoming = {
               curseAction: moves.curseActionMove,
               throwWeaponAction: moves.throwWeaponActionMove,
               replaceUnitsAction: moves.replaceUnitsActionMove,
-              pauseToRecoverAction: moves.pauseToRecoverActionMove
+              pauseToRecoverAction: moves.pauseToRecoverActionMove,
+              chargeAttackAction: moves.chargeAttackActionMove,
             },
             next: 'pickUnitOnBoard'
           },
