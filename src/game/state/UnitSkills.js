@@ -454,7 +454,7 @@ const handleRoundDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates})
 }
 
 const handleHealOnAttack = ({G, ctx, events}, {unitId, updates}) => {
-  if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Chained) {
+  if (updates.damageType === DamageType.Default) {
     const thisUnit = getUnitById(G, unitId)
     const healValue = Math.max(thisUnit.unitState.baseStats.heals - thisUnit.heals, 0)
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {

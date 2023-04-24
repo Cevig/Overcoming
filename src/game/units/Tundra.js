@@ -76,7 +76,9 @@ export class UTundra {
     const stat = [1, 10, 1]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.allTimeActions.push({name: UnitSkills.pauseToRecover, qty: 2})
+    abilities.statUpdates.attack.push(UnitSkills.chainDamage, UnitSkills.AddFreezeEffect, UnitSkills.AddUnfocusedEffect, UnitSkills.HealOnAttack)
+    abilities.statUpdates.defence.push({name: UnitSkills.RaidBlock, origin: true})
+
     return getIdol(UTundra.marenaName, Biom.Tundra, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }
