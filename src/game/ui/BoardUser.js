@@ -82,6 +82,10 @@ export class BoardUser extends React.Component {
               <button onClick={() => props.moves.skipHook()}>Пропустити</button>
               : <span></span>
             }
+            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "throwOverAction") ?
+              <button onClick={() => props.moves.skipHook()}>Пропустити</button>
+              : <span></span>
+            }
             {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction") ?
               <button onClick={() => props.moves.doActionToEnemy()}>Перемістити слугу</button>
               : <span></span>

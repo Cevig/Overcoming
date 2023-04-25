@@ -206,6 +206,13 @@ export const Overcoming = {
             }
           },
 
+          throwOverAction: {
+            moves: {
+              throwOver: moves.throwOverActionMove,
+              skipHook: moves.skipHook
+            }
+          },
+
           healAllyActionStage: {
             moves: {
               healAlly: moves.doHealAlly

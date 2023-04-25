@@ -36,12 +36,16 @@ export const handleAbility = (data, skill, eventData) => {
     [UnitSkills.AddUnfocusedEffect]: handleUnfocusedEffectOnAttack,
     [UnitSkills.AddPoisonEffect]: handlePoisonEffectOnAttack,
     [UnitSkills.AddVengeanceEffect]: handleVengeanceEffectOnAttack,
+    [UnitSkills.AddStunEffect]: handleAddStunEffectOnAttack,
     [UnitSkills.MaraAura]: handleMaraAura,
+    [UnitSkills.LowHealsAura]: handleLowHealsAura,
     [UnitSkills.Raid]: handleRaid,
     [UnitSkills.LethalGrab]: handleLethalGrab,
     [UnitSkills.Urka]: handleUrka,
     [UnitSkills.InstantKill]: handleInstantKillOnAttack,
+    [UnitSkills.InstantKillOnCounter]: handleInstantKillOnCounterOnAttack,
     [UnitSkills.Lesavka]: handleLesavka,
+    [UnitSkills.ThrowOver]: handleThrowOver,
     [UnitSkills.UtilizeDeath]: handleUtilizeDeath,
     [UnitSkills.chainDamage]: handleChainDamageOnAttack,
     [UnitSkills.HalaAura]: handleHalaAura,
@@ -52,6 +56,7 @@ export const handleAbility = (data, skill, eventData) => {
     [UnitSkills.HealOnAttack]: handleHealOnAttack,
     [UnitSkills.DeadlyDamage]: handleDeadlyDamageOnDefence,
     [UnitSkills.DoubleDamage]: handleDoubleDamageOnDefence,
+    [UnitSkills.DoubleDamageInDefence]: handleDoubleDamageInDefenceOnDefence,
     [UnitSkills.ReturnDamage]: handleReturnDamageOnDefence,
     [UnitSkills.RoundDamage]: handleRoundDamageOnAttack,
     [UnitSkills.BlockDamage]: handleBlockDamageOnDefence,
@@ -113,6 +118,35 @@ const handleMaraAura = ({G, ctx, events}, {unitId}) => {
           status: [{name: auraKeyword, qty: value}]
         }
       });
+    }
+  })
+}
+
+const handleLowHealsAura = ({G, ctx, events}, {unitId}) => {
+  const thisUnit = getUnitById(G, unitId)
+
+  getInGameUnits(G, unit => unit.unitState.playerId !== thisUnit.unitState.playerId).forEach(enemy => {
+    const nearLowHealsAuras = getNearestEnemies(G, enemy.unitState).filter(unit => unit.abilities.onMove.find(skill => skill.name === UnitSkills.LowHealsAura))
+    const auraKeyword = UnitStatus.HealsDownAura
+    const enemyStatus = getStatus(enemy, auraKeyword)
+
+    let value = 0
+    if (enemyStatus !== undefined) {
+      value = value - enemyStatus.qty
+    }
+    if (nearLowHealsAuras.length > 0) {
+      value = value + nearLowHealsAuras.reduce((val, _) => val + 1, 0)
+    }
+    if (value < 0 || (value > 0 && enemy.heals > 1)) {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: thisUnit,
+        enemy: enemy,
+        updates: {
+          damage: value,
+          damageType: DamageType.ReplaceHeals,
+          status: [{name: auraKeyword, qty: value}]
+        }
+      })
     }
   })
 }
@@ -306,6 +340,26 @@ const handleDoubleDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
   return updates
 }
 
+const handleDoubleDamageInDefenceOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
+  if (DamageTypes.find(type => type === updates.damageType)) {
+    const thisUnit = getUnitById(G, unitId)
+    const enemy = getUnitById(G, enemyId)
+    if (enemy.type !== UnitTypes.Idol && enemy.unitState.initiatorFor.find(id => thisUnit.id === id)) {
+      updates.damage = updates.damage * 2
+
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${thisUnit.name} отримує подвійний урон адже ${enemy.name} ініціював битву`,
+      })
+    }
+  }
+
+  return updates
+}
+
 const handleReturnDamageOnDefence = ({G, ctx, events}, {unitId, enemyId, updates}) => {
   if (DamageTypes.find(type => type === updates.damageType)) {
     const thisUnit = getUnitById(G, unitId)
@@ -419,6 +473,14 @@ const handleVengeanceEffectOnAttack = ({G, ctx, events}, {unitId, enemyId, updat
         status: [{name: UnitStatus.VengeanceTarget, qty: 99, enemyId: enemyId}]
       }
     })
+  }
+  return updates
+}
+
+const handleAddStunEffectOnAttack = ({G, ctx, events}, {unitId, enemyId, updates}) => {
+  if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Chained) {
+    if (updates.status) updates.status.push({name: UnitStatus.Stun, qty: 1})
+    else updates.status = [{name: UnitStatus.Stun, qty: 1}]
   }
   return updates
 }
@@ -686,6 +748,24 @@ const handleInstantKillOnAttack = ({G}, {unitId, enemyId, updates}) => {
   } else return {}
 }
 
+const handleInstantKillOnCounterOnAttack = ({G, ctx, events}, {unitId, enemyId, updates}) => {
+  if (updates.damageType === DamageType.Counter) {
+    const thisUnit = getUnitById(G, unitId)
+    const enemy = getUnitById(G, enemyId)
+    if (enemy.type !== UnitTypes.Idol) {
+      updates.damage = 99;
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${thisUnit.name} смертельно вражає відповіддю`,
+      })
+    }
+    return updates
+  } else return {}
+}
+
 const handleLesavka = ({G, events, ctx}, {unitId, enemyId}) => {
   const thisUnit = getUnitById(G, unitId)
   const enemy = getUnitById(G, enemyId)
@@ -697,6 +777,28 @@ const handleLesavka = ({G, events, ctx}, {unitId, enemyId}) => {
   if (G.availablePoints.length > 0) {
     G.currentUnit = enemy
     events.setActivePlayers({ currentPlayer: 'hookUnitAction' });
+  } else {
+    thisUnit.unitState.isClickable = false
+    G.availablePoints = []
+    G.currentUnit = null
+    G.endFightTurn = true
+  }
+}
+
+const handleThrowOver = ({G, events, ctx}, {unitId, enemyId}) => {
+  const thisUnit = getUnitById(G, unitId)
+  const enemy = getUnitById(G, enemyId)
+
+  const thisUnitPoint = thisUnit.unitState.point
+  const enemyPoint = enemy.unitState.point
+  const vector = {x: thisUnitPoint.x - enemyPoint.x, y: thisUnitPoint.y - enemyPoint.y, z: thisUnitPoint.z - enemyPoint.z}
+  const newEnemyPoint = createPoint(...[thisUnitPoint.x + vector.x, thisUnitPoint.y + vector.y, thisUnitPoint.z + vector.z])
+
+  if (getInGameUnits(G).find(unit => isSame(unit.unitState.point)(newEnemyPoint)) === undefined) G.availablePoints = [newEnemyPoint]
+
+  if (G.availablePoints.length > 0) {
+    G.currentUnit = enemy
+    events.setActivePlayers({ currentPlayer: 'throwOverAction' });
   } else {
     thisUnit.unitState.isClickable = false
     G.availablePoints = []

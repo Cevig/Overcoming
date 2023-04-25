@@ -137,6 +137,23 @@ export const onPositioningStart = (G, ctx, events) => {
         }
       })
     }
+    if (hasStatus(unit, UnitStatus.Stun)) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${unit.name} приголомшений та пропускає хід`,
+      })
+      unit.unitState.isClickable = false
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: unit,
+        enemy: unit,
+        updates: {
+          status: [{name: UnitStatus.Stun, qty: -1}]
+        }
+      })
+    }
     unit.unitState.isMovedLastPhase = false
     unit.unitState.initiatorFor = []
   })

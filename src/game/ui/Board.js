@@ -179,6 +179,11 @@ export function Board (props) {
         if (props.G.currentEnemySelectedId) props.moves.replaceUnits(found);
         else props.moves.replaceUnitsFirst(found);
       }
+    } else if (stage && stage === 'throwOverAction') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.throwOver(found);
+      }
     }
   }
 

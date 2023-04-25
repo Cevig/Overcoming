@@ -277,6 +277,23 @@ export const moves = {
     G.endFightTurn = true
   },
 
+  throwOverActionMove: ({G, ctx, events}, point) => {
+    const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
+    handleUnitMove(G, ctx, unit.id, point)
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та перекидує істоту`,
+    })
+    thisUnit.unitState.isClickable = false
+    G.availablePoints = []
+    G.currentUnit = null
+    G.endFightTurn = true
+  },
+
   moveAgain: ({G, ctx, events}, point) => {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     unit.unitState.isClickable = false
