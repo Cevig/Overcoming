@@ -34,8 +34,8 @@ export const DamageType = Object.freeze({
   Poison: "Отруєння",
   Chained: "Ланцюжок",
 })
-
 export const DamageTypes = [DamageType.Default, DamageType.Counter, DamageType.Raid, DamageType.Chained]
+
 export const UnitStatus = Object.freeze({
   Freeze: "Нерухомість",
   InitiativeDown: "Зниження ініціативи",
@@ -49,6 +49,7 @@ export const UnitStatus = Object.freeze({
   Poison: "Отруєння",
   Unfocused: "Розгубленість",
   Vengeance: "Помста",
+  VengeanceTarget: "Ціль для мстивих",
   Unarmed: "Від'ємно озброєний",
 })
 
@@ -63,7 +64,6 @@ export const UnitKeywords = Object.freeze({
   ReplaceHealsRaid: "Рейд з переливом життя",
   AdditionalSacrificeRaid: "Посилений Жертовний Рейд",
   ExtendedMove: "Швидкість",
-  VengeanceTarget: "Ціль для мстивих",
   AlwaysCounterDamage: "Нескінченна відповідь",
   FullDeathDamage: "Повна відповідь"
 })
@@ -102,4 +102,6 @@ export const UnitSkills = Object.freeze({
   DecreaseInitiative: "Атака знижує ініціативу",
   ChargeAttack: "Зарядити атаку",
   RemoveChargeAttack: "Повернути показники сили",
+  SetElokoCurse: "Зачарувати істоту",
+  ReturnDamage: "Повернути урон"
 })

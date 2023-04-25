@@ -118,6 +118,10 @@ export class BoardUser extends React.Component {
               <button onClick={() => props.moves.chargeAttackAction()}>Зарядити атаку</button>
               : <span></span>
             }
+            {this.isSetElokoCurseAvailable() ?
+              <button onClick={() => props.moves.setElokoCurseAction()}>Зачарувати істоту</button>
+              : <span></span>
+            }
           </div>
         </div>
       </div>
@@ -138,6 +142,16 @@ export class BoardUser extends React.Component {
   isWeaponThrowAvailable() {
     const props = this.props.props
     if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.throwWeapon && skill.qty > 0)) {
+      if (props.ctx.activePlayers && props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") {
+        return true
+      }
+    }
+    return false
+  }
+
+  isSetElokoCurseAvailable() {
+    const props = this.props.props
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.SetElokoCurse && skill.qty > 0)) {
       if (props.ctx.activePlayers && props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") {
         return true
       }

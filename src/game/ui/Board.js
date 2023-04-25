@@ -137,6 +137,11 @@ export function Board (props) {
         if (props.G.currentEnemySelectedId) props.moves.replaceUnits(found);
         else props.moves.replaceUnitsFirst(found);
       }
+    } else if (stage && stage === 'setElokoCurseActionStage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.setElokoCurse(found);
+      }
     }
   }
 

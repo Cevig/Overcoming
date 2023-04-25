@@ -97,6 +97,7 @@ export const Overcoming = {
               replaceUnitsAction: moves.replaceUnitsActionMove,
               pauseToRecoverAction: moves.pauseToRecoverActionMove,
               chargeAttackAction: moves.chargeAttackActionMove,
+              setElokoCurseAction: moves.setElokoCurseActionMove,
             },
             next: 'pickUnitOnBoard'
           },
@@ -151,6 +152,12 @@ export const Overcoming = {
             moves: {
               replaceUnitsFirst: moves.doReplaceUnitsActionFirst,
               replaceUnits: moves.doReplaceUnitsAction
+            }
+          },
+
+          setElokoCurseActionStage: {
+            moves: {
+              setElokoCurse: moves.doSetElokoCurse
             }
           },
         }

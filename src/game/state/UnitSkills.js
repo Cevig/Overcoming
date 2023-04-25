@@ -52,6 +52,7 @@ export const handleAbility = (data, skill, eventData) => {
     [UnitSkills.HealOnAttack]: handleHealOnAttack,
     [UnitSkills.DeadlyDamage]: handleDeadlyDamageOnDefence,
     [UnitSkills.DoubleDamage]: handleDoubleDamageOnDefence,
+    [UnitSkills.ReturnDamage]: handleReturnDamageOnDefence,
     [UnitSkills.RoundDamage]: handleRoundDamageOnAttack,
     [UnitSkills.BlockDamage]: handleBlockDamageOnDefence,
     [UnitSkills.InjuredDamage]: handleInjuredDamageOnDefence,
@@ -305,6 +306,35 @@ const handleDoubleDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
   return updates
 }
 
+const handleReturnDamageOnDefence = ({G, ctx, events}, {unitId, enemyId, updates}) => {
+  if (DamageTypes.find(type => type === updates.damageType)) {
+    const thisUnit = getUnitById(G, unitId)
+    const dmg = Math.trunc(updates.damage / 2)
+
+    if (dmg > 0) {
+      const enemy = getUnitById(G, enemyId)
+
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${thisUnit.name} завдає шкоди за допомогою здібності ${UnitSkills.ReturnDamage}`,
+      })
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: thisUnit,
+        enemy: enemy,
+        updates: {
+          damage: dmg,
+          damageType: DamageType.Counter,
+        }
+      })
+    }
+  }
+
+  return updates
+}
+
 const handleBlockDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
   if (updates.damageType !== DamageType.Chained && DamageTypes.find(type => type === updates.damageType)) {
     const thisUnit = getUnitById(G, unitId)
@@ -377,10 +407,18 @@ const handlePoisonEffectOnAttack = ({G}, {unitId, updates}) => {
   return updates
 }
 
-const handleVengeanceEffectOnAttack = ({G}, {unitId, updates}) => {
+const handleVengeanceEffectOnAttack = ({G, ctx, events}, {unitId, enemyId, updates}) => {
   if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Chained) {
     if (updates.status) updates.status.push({name: UnitStatus.Vengeance, qty: 99})
     else updates.status = [{name: UnitStatus.Vengeance, qty: 99}]
+    const thisUnit = getUnitById(G, unitId)
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: thisUnit,
+      updates: {
+        status: [{name: UnitStatus.VengeanceTarget, qty: 99, enemyId: enemyId}]
+      }
+    })
   }
   return updates
 }
@@ -553,7 +591,10 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
     }
 
     if (hasStatus(thisUnit, UnitStatus.Vengeance)) {
-      const vengeanceTarget = getInGameUnits(G).find(unit => hasKeyword(unit, UnitKeywords.VengeanceTarget))
+      const vengeanceTarget = getInGameUnits(G).find(unit => {
+        const status = getStatus(unit, UnitStatus.VengeanceTarget)
+        return status && status.enemyId === unit.id
+      })
       if (vengeanceTarget) {
         if (raidEnemies.find(enemy => enemy.id === vengeanceTarget.id)) {
           raidEnemies = [vengeanceTarget]
@@ -623,7 +664,7 @@ const handleUrka = ({G, events, ctx}, {unitId}) => {
   } else {
     G.availablePoints = []
   }
-
+  G.currentUnit = thisUnit
   events.setActivePlayers({ currentPlayer: 'showUrkaAction' });
 }
 

@@ -77,7 +77,6 @@ export class UForest {
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.keywords.push(UnitKeywords.ExtendedMove)
-    abilities.keywords.push(UnitKeywords.VengeanceTarget)
     abilities.statUpdates.attack.push(UnitSkills.AddUnfocusedEffect, UnitSkills.AddPoisonEffect, UnitSkills.AddVengeanceEffect)
 
     return getIdol(UForest.chygaysterName, Biom.Forest, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)

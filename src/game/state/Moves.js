@@ -6,6 +6,7 @@ import {
   getNearestEnemies2,
   getNeighbors,
   getNeighbors2,
+  getStatus,
   getUnitById,
   handleUnitDeath,
   handleUnitMove,
@@ -159,7 +160,10 @@ export const moves = {
       }
 
       if (hasStatus(currentUnit, UnitStatus.Vengeance)) {
-        const vengeanceTarget = getInGameUnits(G).find(unit => hasKeyword(unit, UnitKeywords.VengeanceTarget))
+        const vengeanceTarget = getInGameUnits(G).find(unit => {
+          const status = getStatus(unit, UnitStatus.VengeanceTarget)
+          return status && status.enemyId === currentUnit.id
+        })
         if (vengeanceTarget) {
           if (enemies.find(enemy => enemy.id === vengeanceTarget.id)) {
             enemies = [vengeanceTarget]
@@ -653,6 +657,23 @@ export const moves = {
     events.setActivePlayers({ currentPlayer: 'throwWeaponActionStage' });
   },
 
+  setElokoCurseActionMove: ({ G, ctx, events }) => {
+    G.availablePoints = getInGameUnits(G, unit => G.currentUnit.unitState.playerId !== unit.unitState.playerId)
+      .filter(unit => unit.type !== UnitTypes.Idol)
+      .map(u => u.unitState.point)
+    if (G.availablePoints.length === 0) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
+      })
+    }
+    G.currentActionUnitId = G.currentUnit.id
+    events.setActivePlayers({ currentPlayer: 'setElokoCurseActionStage' });
+  },
+
   doThrowWeapon: ({ G, ctx, events }, point) => {
     const thisUnit = getUnitById(G, G.currentActionUnitId)
     const enemy = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
@@ -692,6 +713,45 @@ export const moves = {
     if (enemy.heals <= 0) {
       handleUnitDeath({G: G, ctx: ctx, events: events}, enemy, thisUnit)
     }
+
+    moves.backFromAction({ G, ctx, events })
+  },
+
+  doSetElokoCurse: ({ G, ctx, events }, point) => {
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    const enemy = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
+
+    let actionQty = 0
+    thisUnit.abilities.allTimeActions.forEach(action => {
+      if (action.name === UnitSkills.SetElokoCurse) {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та зачаровує ціль. Залишилось ${actionQty} заряди`,
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: enemy,
+      updates: {
+        initiative: 3,
+        status: [{name: UnitStatus.Vengeance, qty: 99}, {name: UnitStatus.InitiativeDown, qty: 3}]
+      }
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: thisUnit,
+      updates: {
+        status: [{name: UnitStatus.VengeanceTarget, qty: 99, enemyId: enemy.id}]
+      }
+    })
 
     moves.backFromAction({ G, ctx, events })
   },
