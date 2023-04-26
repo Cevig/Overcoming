@@ -21,6 +21,7 @@ import {USteppe} from "../units/Steppe";
 import {
   DamageType,
   DamageTypes,
+  NegativeStatues,
   UnitKeywords,
   UnitSkills,
   UnitStatus,
@@ -32,15 +33,18 @@ export const handleAbility = (data, skill, eventData) => {
   const abilitiesMap = {
     [UnitSkills.Surround3]: handlePolydnicaSurroundings,
     [UnitSkills.Wholeness]: handleWholenessOnDefence,
+    [UnitSkills.BlockStatuses]: handleBlockStatusesOnDefence,
     [UnitSkills.AddFreezeEffect]: handleFreezeEffectOnAttack,
     [UnitSkills.AddUnfocusedEffect]: handleUnfocusedEffectOnAttack,
     [UnitSkills.AddPoisonEffect]: handlePoisonEffectOnAttack,
+    [UnitSkills.AddPoisonEffectOnRaid]: handleAddPoisonEffectOnRaidOnAttack,
     [UnitSkills.AddVengeanceEffect]: handleVengeanceEffectOnAttack,
     [UnitSkills.AddStunEffect]: handleAddStunEffectOnAttack,
     [UnitSkills.MaraAura]: handleMaraAura,
     [UnitSkills.LowHealsAura]: handleLowHealsAura,
     [UnitSkills.Raid]: handleRaid,
     [UnitSkills.LethalGrab]: handleLethalGrab,
+    [UnitSkills.LethalBlow]: handleLethalBlow,
     [UnitSkills.Urka]: handleUrka,
     [UnitSkills.InstantKill]: handleInstantKillOnAttack,
     [UnitSkills.InstantKillOnCounter]: handleInstantKillOnCounterOnAttack,
@@ -251,6 +255,32 @@ const handleWholenessOnDefence = ({G, ctx}, {unitId, updates}) => {
   return updates
 }
 
+const handleBlockStatusesOnDefence = ({G, ctx}, {unitId, updates}) => {
+  const thisUnit = getUnitById(G, unitId)
+
+  if (updates.status) {
+    updates.status.forEach(status => {
+      if (NegativeStatues.find(ns => ns === status.name) && status.qty > 0) {
+        gameLog.addLog({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `${thisUnit.name} блокує негатив і відводить статус ${status.name}`,
+        })
+        updates.status = updates.status.filter(us => us.name !== status.name)
+        if (status.name === UnitStatus.PowerDown && updates.power && updates.power > 0) {
+          updates.power = 0
+        }
+        if (status.name === UnitStatus.InitiativeDown && updates.initiative && updates.initiative > 0) {
+          updates.initiative = 0
+        }
+      }
+    })
+  }
+  return updates
+}
+
 const handleRaidBlockOnDefence = ({G, ctx}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Raid) {
     const thisUnit = getUnitById(G, unitId)
@@ -455,6 +485,14 @@ const handleUnfocusedEffectOnAttack = ({G}, {unitId, updates}) => {
 
 const handlePoisonEffectOnAttack = ({G}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Chained) {
+    if (updates.status) updates.status.push({name: UnitStatus.Poison, qty: 99})
+    else updates.status = [{name: UnitStatus.Poison, qty: 99}]
+  }
+  return updates
+}
+
+const handleAddPoisonEffectOnRaidOnAttack = ({G}, {unitId, updates}) => {
+  if (updates.damageType === DamageType.Raid) {
     if (updates.status) updates.status.push({name: UnitStatus.Poison, qty: 99})
     else updates.status = [{name: UnitStatus.Poison, qty: 99}]
   }
@@ -689,10 +727,8 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
   }
 }
 
-const handleLethalGrab = ({G, ctx}, {unitId, target}) => {
-  if (!unitId) return
-  const thisUnit = getUnitById(G, unitId)
-  if (thisUnit.abilities.onDeath.find(a => a.name === UnitSkills.LethalGrab) === undefined) return;
+const handleLethalGrab = ({G, ctx}, {killerId, target, thisUnit}) => {
+  if (thisUnit.id !== killerId) return;
 
   if (target.type === UnitTypes.Idol) {
     thisUnit.power++
@@ -712,6 +748,30 @@ const handleLethalGrab = ({G, ctx}, {unitId, target}) => {
     phase: ctx.phase,
     text: `Характеристики ${thisUnit.name} були збільшені`,
   })
+}
+
+const handleLethalBlow = ({G, ctx, events}, {thisUnit, target}) => {
+  if (thisUnit.id !== target.id) return
+
+  const nearEnemies = getNearestEnemies(G, thisUnit.unitState)
+  if (nearEnemies.length > 0) {
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} лакає всіх поблизу!`,
+    })
+    nearEnemies.forEach(enemy => {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: thisUnit,
+        enemy: enemy,
+        updates: {
+          status: [{name: UnitStatus.Unarmed, qty: 1}]
+        }
+      })
+    })
+  }
 }
 
 const handleUrka = ({G, events, ctx}, {unitId}) => {
@@ -807,21 +867,19 @@ const handleThrowOver = ({G, events, ctx}, {unitId, enemyId}) => {
   }
 }
 
-const handleUtilizeDeath = ({G, ctx, events}, {point}) => {
-  const thisUnit = getInGameUnits(G).find(unit => unit.abilities.onDeath.find(ability => ability.name === UnitSkills.UtilizeDeath))
-
-  if (getNeighbors2(thisUnit.unitState.point).find(isSame(point))) {
+const handleUtilizeDeath = ({G, ctx, events}, {thisUnit, target}) => {
+  if (getNeighbors2(thisUnit.unitState.point).find(isSame(target.unitState.point))) {
     const action = thisUnit.abilities.allTimeActions.find(action => action.name === UnitSkills.abasuCurse)
     if (action) {
       action.qty++
-    }
 
-    gameLog.addLog({
-      id: Math.random().toString(10).slice(2),
-      turn: ctx.turn,
-      player: +ctx.currentPlayer,
-      phase: ctx.phase,
-      text: `${thisUnit.name} отримує заряд`,
-    })
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${thisUnit.name} отримує заряд`,
+      })
+    }
   }
 }

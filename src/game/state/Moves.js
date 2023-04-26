@@ -77,18 +77,18 @@ export const moves = {
       let availablePoints = getNeighbors(currentUnit.unitState.point)
         .filter(point => gameUnits.every(unit => isNotSame(unit.unitState.point)(point)))
         .filter(point => {
-          if (enemies.length > 0) {
+          if (enemies.length > 0 && !hasKeyword(currentUnit, UnitKeywords.AbsoluteMove)) {
             const surroundings = getNeighbors(point)
             return enemies.every(enemy => surroundings.find(isSame(enemy.unitState.point)) !== undefined)
           } else return true
         })
-      if (hasKeyword(currentUnit, UnitKeywords.ExtendedMove)) {
+      if (hasKeyword(currentUnit, UnitKeywords.ExtendedMove) || hasKeyword(currentUnit, UnitKeywords.AbsoluteMove)) {
         availablePoints = availablePoints.flatMap(mainPoint => {
           const newEnemies = getNearestEnemies(G, {point: mainPoint, playerId: currentUnit.unitState.playerId})
           const extendedPoints = getNeighbors(mainPoint)
             .filter(point => gameUnits.every(unit => isNotSame(unit.unitState.point)(point)))
             .filter(point => {
-              if (newEnemies.length > 0) {
+              if (newEnemies.length > 0 && !hasKeyword(currentUnit, UnitKeywords.AbsoluteMove)) {
                 const surroundings = getNeighbors(point)
                 return newEnemies.every(enemy => surroundings.find(isSame(enemy.unitState.point)) !== undefined)
               } else return true
@@ -847,18 +847,44 @@ export const moves = {
       phase: ctx.phase,
       text: `${thisUnit.name} викорстовує здібність та відновлює життя. Залишилось ${actionQty} заряди`,
     })
-
+    const unitStatus = hasStatus(thisUnit, UnitStatus.Unfocused)
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
       currentUnit: thisUnit,
       enemy: thisUnit,
       updates: {
         damage: -(Math.max((thisUnit.unitState.baseStats.heals - thisUnit.heals), 0)),
         damageType: DamageType.Heal,
-        status: [{name: UnitStatus.Unfocused, qty: ctx.phase === 'Positioning' ? 1 : 2}]
+        status: [{name: UnitStatus.Unfocused, qty: ctx.phase === 'Positioning' ? 1 : unitStatus ? 1 : 2}]
       }
     })
 
     moves.backFromAction({ G, ctx, events })
+  },
+
+  notMovedRecoverActionMove: ({ G, ctx, events }) => {
+    const thisUnit = getUnitById(G, G.currentUnit.id)
+
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та відновлює життя`,
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: thisUnit,
+      updates: {
+        damage: -(Math.max((thisUnit.unitState.baseStats.heals - thisUnit.heals), 0)),
+        damageType: DamageType.Heal
+      }
+    })
+
+    G.currentUnit = null
+    thisUnit.unitState.isClickable = false
+    G.availablePoints = []
+    events.endTurn()
   },
 
   chargeAttackActionMove: ({ G, ctx, events }) => {

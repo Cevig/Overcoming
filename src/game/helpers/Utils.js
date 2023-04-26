@@ -193,36 +193,6 @@ export const resolveUnitsInteraction = (data, fightData) => {
     updates: onAttackMods
   })
 
-  if(resultMods.damage !== undefined) {
-    enemy.heals = (enemy.heals - resultMods.damage)
-    gameLog.addLog({
-      id: Math.random().toString(10).slice(2),
-      turn: ctx.turn,
-      player: +ctx.currentPlayer,
-      phase: ctx.phase,
-      text: `${enemy.name} отримує ${Math.abs(resultMods.damage)} ${resultMods.damage >= 0 ? `урону` : `до життя`} від ${currentUnit.name}`,
-    })
-  }
-  if(resultMods.power !== undefined) {
-    enemy.power = (enemy.power - resultMods.power)
-    gameLog.addLog({
-      id: Math.random().toString(10).slice(2),
-      turn: ctx.turn,
-      player: +ctx.currentPlayer,
-      phase: ctx.phase,
-      text: `Силу ${enemy.name} ${resultMods.power >= 0 ? 'знижено' : 'підвищено'} на ${Math.abs(resultMods.power)}`,
-    })
-  }
-  if(resultMods.initiative !== undefined) {
-    enemy.initiative = (enemy.initiative - resultMods.initiative)
-    gameLog.addLog({
-      id: Math.random().toString(10).slice(2),
-      turn: ctx.turn,
-      player: +ctx.currentPlayer,
-      phase: ctx.phase,
-      text: `Ініціативу ${enemy.name} ${resultMods.initiative >= 0 ? 'знижено' : 'підвищено'} на ${Math.abs(resultMods.initiative)}`,
-    })
-  }
   if (resultMods.status !== undefined) {
     resultMods.status.forEach(status => {
       const enemyStatus = getStatus(enemy, status.name)
@@ -258,6 +228,36 @@ export const resolveUnitsInteraction = (data, fightData) => {
       }
     })
   }
+  if(resultMods.damage !== undefined) {
+    enemy.heals = (enemy.heals - resultMods.damage)
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${enemy.name} отримує ${Math.abs(resultMods.damage)} ${resultMods.damage >= 0 ? `урону` : `до життя`} від ${currentUnit.name}`,
+    })
+  }
+  if(resultMods.power !== undefined) {
+    enemy.power = (enemy.power - resultMods.power)
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `Силу ${enemy.name} ${resultMods.power >= 0 ? 'знижено' : 'підвищено'} на ${Math.abs(resultMods.power)}`,
+    })
+  }
+  if(resultMods.initiative !== undefined) {
+    enemy.initiative = (enemy.initiative - resultMods.initiative)
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `Ініціативу ${enemy.name} ${resultMods.initiative >= 0 ? 'знижено' : 'підвищено'} на ${Math.abs(resultMods.initiative)}`,
+    })
+  }
 }
 
 export const hasStatus = (unit, keyword) =>
@@ -275,8 +275,7 @@ export const hasKeyword = (unit, keyword) =>
 
 export const handleUnitDeath = (data, target, killer = null) => {
   const {G, ctx} = data
-  const point = {...target.unitState.point}
-  target.unitState.isInGame = false
+
   gameLog.addLog({
     id: Math.random().toString(10).slice(2),
     turn: ctx.turn,
@@ -284,17 +283,19 @@ export const handleUnitDeath = (data, target, killer = null) => {
     phase: ctx.phase,
     text: `Було вбито ${target.name} гравця ${target.unitState.playerId+1}`,
   })
+
+  const unitsWithOnDeath = getInGameUnits(G, unit => unit.abilities.onDeath.length)
+  unitsWithOnDeath.forEach(unit => {
+    unit.abilities.onDeath.forEach(skill => {
+      handleAbility(data, skill.name, {killerId: killer ? killer.id : null, target: target, thisUnit: unit})
+    })
+  })
+  target.unitState.isInGame = false
   target.unitState.point = createPoint(100, 100, 100)
   target.abilities.onMove.forEach(skill => {
     handleAbility(data, skill.name, {unitId: target.id})
   })
   target.unitState.point = null
-  const unitsWithOnDeath = getInGameUnits(G, unit => unit.abilities.onDeath.length)
-  unitsWithOnDeath.forEach(unit => {
-    unit.abilities.onDeath.forEach(skill => {
-      handleAbility(data, skill.name, {unitId: killer ? killer.id : null, target: unit, point: point})
-    })
-  })
 }
 
 export const setEnemyMarks = (props, unit) =>

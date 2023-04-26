@@ -99,6 +99,13 @@ export const onPositioningStart = (G, ctx, events) => {
 
   units.forEach(unit => {
     if (hasStatus(unit, UnitStatus.Poison)) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${unit.name} страждає від отруєння`,
+      })
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: unit,
         enemy: unit,
@@ -107,13 +114,6 @@ export const onPositioningStart = (G, ctx, events) => {
           damageType: DamageType.Poison,
           status: [{name: UnitStatus.Poison, qty: -1}]
         }
-      })
-      gameLog.addLog({
-        id: Math.random().toString(10).slice(2),
-        turn: ctx.turn,
-        player: +ctx.currentPlayer,
-        phase: ctx.phase,
-        text: `${unit.name} страждає від отруєння`,
       })
       if (unit.heals <= 0) {
         handleUnitDeath({G: G, ctx: ctx, events: events}, unit)
@@ -205,8 +205,10 @@ export const setInFightUnits = (G, ctx) => {
   getInGameUnits(G).forEach(unit => {
     if(getNearestEnemies(G, unit.unitState).length > 0) {
       unit.unitState.isInFight = true
+      unit.unitState.isAttackedLastPhase = true
     } else {
       unit.unitState.isInFight = false
+      unit.unitState.isAttackedLastPhase = false
     }
   });
   if(getInGameUnits(G, (unit) => unit.unitState.isInFight).length > 0)

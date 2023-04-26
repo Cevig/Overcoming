@@ -96,6 +96,7 @@ export const Overcoming = {
               throwWeaponAction: moves.throwWeaponActionMove,
               replaceUnitsAction: moves.replaceUnitsActionMove,
               pauseToRecoverAction: moves.pauseToRecoverActionMove,
+              notMovedRecoverAction: moves.notMovedRecoverActionMove,
               chargeAttackAction: moves.chargeAttackActionMove,
               setElokoCurseAction: moves.setElokoCurseActionMove,
             },

@@ -47,13 +47,14 @@ export const UnitStatus = Object.freeze({
   PowerUp: "Силу збільшено",
   PowerUpCharge: "Силу збільшено на удар",
   PowerUpSupport: "Підтримка",
-  Curse: "Прокляття",
   Poison: "Отруєння",
   Unfocused: "Розгубленість",
   Vengeance: "Помста",
   VengeanceTarget: "Ціль для мстивих",
   Unarmed: "Від'ємно озброєний",
 })
+
+export const NegativeStatues = [UnitStatus.Freeze, UnitStatus.Stun, UnitStatus.InitiativeDown, UnitStatus.PowerDown, UnitStatus.Poison, UnitStatus.Unfocused, UnitStatus.Vengeance, UnitStatus.Unarmed]
 
 export const UnitKeywords = Object.freeze({
   Sneaky: "Спритність",
@@ -66,6 +67,7 @@ export const UnitKeywords = Object.freeze({
   ReplaceHealsRaid: "Рейд з переливом життя",
   AdditionalSacrificeRaid: "Посилений Жертовний Рейд",
   ExtendedMove: "Швидкість",
+  AbsoluteMove: "Неприборкана Швидкість",
   AlwaysCounterDamage: "Нескінченна відповідь",
   FullDeathDamage: "Повна відповідь"
 })
@@ -73,9 +75,11 @@ export const UnitKeywords = Object.freeze({
 export const UnitSkills = Object.freeze({
   Surround3: "Оточити до смерті",
   Wholeness: "Цілісність",
+  BlockStatuses: "Нівелювання негативу",
   AddFreezeEffect: "Атака зупиняє",
   AddUnfocusedEffect: "Атака розгублює",
   AddPoisonEffect: "Атака отруює",
+  AddPoisonEffectOnRaid: "Рейд отруює",
   AddStunEffect: "Атака приголомшує",
   AddVengeanceEffect: "Атака примушує помститися",
   MaraAura: "Аура зниження ініціативи",
@@ -84,6 +88,7 @@ export const UnitSkills = Object.freeze({
   ObajifoAura: "Аура підвищення ініціативи",
   Raid: "Рейд",
   LethalGrab: "Вбирання останків",
+  LethalBlow: "Вибух Жаху",
   Urka: "Ирка можливості",
   InstantKill: "Миттєва смерть",
   InstantKillOnCounter: "Смертельна відповідь",
@@ -96,6 +101,7 @@ export const UnitSkills = Object.freeze({
   throwWeapon: "Шпурнути ікла",
   replaceUnits: "Поміняти місцями",
   pauseToRecover: "Час відновитись",
+  NotMovedRecover: "Відновитись",
   RaidBlock: "Рейд вже не той",
   AntiVestnick: `Опір до ${UnitTypes.Vestnick}`,
   ReduceDamage: `Товстошкірий`,
