@@ -8,7 +8,8 @@ import {
   hasStatus,
   isNotSame,
   resolveUnitsInteraction,
-  shuffleArray
+  shuffleArray,
+  sortFightOrder
 } from '../helpers/Utils';
 import {
   DamageType,
@@ -18,7 +19,6 @@ import {
   UnitTypes
 } from '../helpers/Constants';
 import {startPositions} from "./Setup";
-import {biomComparison} from "../helpers/UnitPriority";
 import {handleOnMoveActions} from "./GameActions";
 import {gameLog} from "../helpers/Log";
 
@@ -37,6 +37,7 @@ const setColorMap = G => {
 
 export const onPositioningStart = (G, ctx, events) => {
   G.grid.unstablePoints = []
+  G.endFightPhase = false
   const units = getInGameUnits(G)
   if((G.moveOrder >= 2) && (G.moveOrder % 2 === 0)) {
     gameLog.addLog({
@@ -104,7 +105,7 @@ export const onPositioningStart = (G, ctx, events) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${unit.name} страждає від отруєння`,
+        text: `${unit.name} страждає від ${UnitStatus.Poison}`,
       })
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: unit,
@@ -199,17 +200,11 @@ export const onEndPositioningTurn = (G, ctx) => {
 }
 
 export const endFightPhase = (G, ctx) =>
-  getInGameUnits(G, (unit) => unit.unitState.isClickable && unit.unitState.isInFight).length === 0
+  G.endFightPhase
 
 export const setInFightUnits = (G, ctx) => {
   getInGameUnits(G).forEach(unit => {
-    if(getNearestEnemies(G, unit.unitState).length > 0) {
-      unit.unitState.isInFight = true
-      unit.unitState.isAttackedLastPhase = true
-    } else {
-      unit.unitState.isInFight = false
-      unit.unitState.isAttackedLastPhase = false
-    }
+    unit.unitState.isInFight = getNearestEnemies(G, unit.unitState).length > 0;
   });
   if(getInGameUnits(G, (unit) => unit.unitState.isInFight).length > 0)
     getInGameUnits(G).forEach(unit => unit.unitState.isClickable = unit.unitState.isInFight)
@@ -244,9 +239,9 @@ export const setFightOrder = (G, events, ctx) => {
     })
 
   G.fightQueue = getInGameUnits(G, (unit) => unit.unitState.isInFight)
-    .sort((u1, u2) =>
-      (u1.initiative > u2.initiative) ? 1 : (u1.initiative < u2.initiative) ? -1 : biomComparison(u1.biom, u2.biom)
-    ).reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
+    .sort((u1, u2) => sortFightOrder(u1, u2))
+    .reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
+  G.endFightPhase = G.fightQueue.length === 0
 }
 
 export const postProcess = ({ G, ctx, events, playerID }) => {

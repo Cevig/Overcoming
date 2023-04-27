@@ -39,55 +39,6 @@ const UnitList = (data) => {
     useState(1),
     useState(1),
     useState(1),
-
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1)
   ]
   // const [selectedStars, setSelectedStars] = useState(1);
   // Define the state for the list of created unit instances

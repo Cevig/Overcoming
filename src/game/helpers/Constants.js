@@ -52,9 +52,10 @@ export const UnitStatus = Object.freeze({
   Vengeance: "Помста",
   VengeanceTarget: "Ціль для мстивих",
   Unarmed: "Від'ємно озброєний",
+  Fired: "Згорілий",
 })
 
-export const NegativeStatues = [UnitStatus.Freeze, UnitStatus.Stun, UnitStatus.InitiativeDown, UnitStatus.PowerDown, UnitStatus.Poison, UnitStatus.Unfocused, UnitStatus.Vengeance, UnitStatus.Unarmed]
+export const NegativeStatues = [UnitStatus.Freeze, UnitStatus.Stun, UnitStatus.InitiativeDown, UnitStatus.InitiativeDownAura, UnitStatus.HealsDownAura, UnitStatus.PowerDown, UnitStatus.Poison, UnitStatus.Unfocused, UnitStatus.Vengeance, UnitStatus.Unarmed, UnitStatus.Fired]
 
 export const UnitKeywords = Object.freeze({
   Sneaky: "Спритність",
@@ -69,7 +70,8 @@ export const UnitKeywords = Object.freeze({
   ExtendedMove: "Швидкість",
   AbsoluteMove: "Неприборкана Швидкість",
   AlwaysCounterDamage: "Нескінченна відповідь",
-  FullDeathDamage: "Повна відповідь"
+  FullDeathDamage: "Повна відповідь",
+  RestrictedRoundDamage: "Обмежена Конусна атака",
 })
 
 export const UnitSkills = Object.freeze({
@@ -86,6 +88,7 @@ export const UnitSkills = Object.freeze({
   LowHealsAura: "Аура зниження життя",
   HalaAura: "Аура нівелювання рейду",
   ObajifoAura: "Аура підвищення ініціативи",
+  UnfocusedAura: "Аура розгубленості",
   Raid: "Рейд",
   LethalGrab: "Вбирання останків",
   LethalBlow: "Вибух Жаху",
@@ -110,11 +113,13 @@ export const UnitSkills = Object.freeze({
   DoubleDamage: "Подвійний урон",
   DoubleDamageInDefence: "Подвійний урон через повільність",
   RoundDamage: "Конусна атака",
+  ThroughDamage: "Пронизуюча атака",
   BlockDamage: "Заблокувати урон",
   InjuredDamage: "Вибух адреналіну",
   DecreaseInitiative: "Атака знижує ініціативу",
   ChargeAttack: "Зарядити атаку",
   RemoveChargeAttack: "Повернути показники сили",
   SetElokoCurse: "Зачарувати істоту",
+  SetItOnFire: "Вижигаюче полум'я",
   ReturnDamage: "Повернути урон"
 })

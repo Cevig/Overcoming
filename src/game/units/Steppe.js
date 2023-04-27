@@ -48,14 +48,15 @@ export class USteppe {
 
   static getLetavica = (id, playerId, level, createPosition) => {
     const stat = () => {
-      if (level === 1) return [2, 4, 4]
-      if (level === 2) return [2, 5, 4]
-      if (level === 3) return [3, 5, 5]
+      if (level === 1) return [2, 3, 4]
+      if (level === 2) return [2, 4, 4]
+      if (level === 3) return [3, 4, 5]
     }
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {
       abilities.keywords.push(UnitKeywords.Unfocused)
       abilities.actions.push({name: UnitSkills.Raid, qty: 99})
+      abilities.keywords.push(UnitKeywords.ReplaceHealsRaid)
       if (level > 1) {
         abilities.onDeath.push({name: UnitSkills.LethalGrab})
       }

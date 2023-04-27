@@ -58,7 +58,7 @@ export class UMash {
     if (level > 0) {
       abilities.keywords.push(UnitKeywords.Unfocused)
       abilities.actions.push({name: UnitSkills.Raid, qty: 99})
-      abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffect)
+      abilities.statUpdates.attack.push(UnitSkills.AddVengeanceEffect)
       if (level > 1) {
         abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffectOnRaid)
       }

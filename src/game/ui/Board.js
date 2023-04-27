@@ -142,6 +142,11 @@ export function Board (props) {
       if (found !== undefined) {
         props.moves.setElokoCurse(found);
       }
+    } else if (stage && stage === 'setItOnFireActionStage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.setItOnFire(found);
+      }
     }
   }
 
@@ -183,6 +188,11 @@ export function Board (props) {
       const found = props.G.availablePoints.find(isSame(point));
       if (found !== undefined) {
         props.moves.throwOver(found);
+      }
+    } else if (stage && stage === 'setItOnFireActionStage') {
+      const found = props.G.availablePoints.find(isSame(point));
+      if (found !== undefined) {
+        props.moves.setItOnFire(found);
       }
     }
   }

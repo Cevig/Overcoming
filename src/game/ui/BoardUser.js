@@ -130,6 +130,10 @@ export class BoardUser extends React.Component {
               <button onClick={() => props.moves.setElokoCurseAction()}>Зачарувати істоту</button>
               : <span></span>
             }
+            {this.isSetItOnFireAvailable() ?
+              <button onClick={() => props.moves.setItOnFireAction()}>Спалити істоту</button>
+              : <span></span>
+            }
           </div>
         </div>
       </div>
@@ -161,6 +165,17 @@ export class BoardUser extends React.Component {
     const props = this.props.props
     if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.SetElokoCurse && skill.qty > 0)) {
       if (props.ctx.activePlayers && props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") {
+        return true
+      }
+    }
+    return false
+  }
+
+  isSetItOnFireAvailable() {
+    const props = this.props.props
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.SetItOnFire && skill.qty > 0)) {
+      if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
+        (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
         return true
       }
     }
@@ -203,7 +218,8 @@ export class BoardUser extends React.Component {
   isNotMovedRecoverAvailable() {
     const props = this.props.props
     if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.NotMovedRecover &&
-      getNearestEnemies(props.G, props.G.currentUnit.unitState).length === 0 && props.G.currentUnit.heals < props.G.currentUnit.unitState.baseStats.heals)) {
+      props.G.currentUnit.unitState.point && getNearestEnemies(props.G, props.G.currentUnit.unitState).length === 0 &&
+      props.G.currentUnit.heals < props.G.currentUnit.unitState.baseStats.heals)) {
       if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard" )) {
         return true
       }

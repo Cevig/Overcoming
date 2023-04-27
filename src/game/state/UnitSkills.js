@@ -57,12 +57,14 @@ export const handleAbility = (data, skill, eventData) => {
     [UnitSkills.AntiVestnick]: handleAntiVestnickOnDefence,
     [UnitSkills.ReduceDamage]: handleReduceDamageOnDefence,
     [UnitSkills.ObajifoAura]: handleObajifoAura,
+    [UnitSkills.UnfocusedAura]: handleUnfocusedAura,
     [UnitSkills.HealOnAttack]: handleHealOnAttack,
     [UnitSkills.DeadlyDamage]: handleDeadlyDamageOnDefence,
     [UnitSkills.DoubleDamage]: handleDoubleDamageOnDefence,
     [UnitSkills.DoubleDamageInDefence]: handleDoubleDamageInDefenceOnDefence,
     [UnitSkills.ReturnDamage]: handleReturnDamageOnDefence,
     [UnitSkills.RoundDamage]: handleRoundDamageOnAttack,
+    [UnitSkills.ThroughDamage]: handleThroughDamageOnAttack,
     [UnitSkills.BlockDamage]: handleBlockDamageOnDefence,
     [UnitSkills.InjuredDamage]: handleInjuredDamageOnDefence,
     [UnitSkills.DecreaseInitiative]: handleDecreaseInitiativeOnAttack,
@@ -215,6 +217,36 @@ const handleHalaAura = ({G, ctx, events}, {unitId}) => {
   })
 }
 
+const handleUnfocusedAura = ({G, ctx, events}, {unitId}) => {
+  const thisUnit = getUnitById(G, unitId)
+  const gameUnits = getInGameUnits(G, unit => unit.unitState.playerId !== thisUnit.unitState.playerId)
+  gameUnits.forEach(enemy => {
+    const nearUnfocusedAuras = getNearestEnemies(G, enemy.unitState).filter(unit => unit.abilities.onMove.find(skill => skill.name === UnitSkills.UnfocusedAura))
+    const auraKeyword = UnitStatus.Unfocused
+    const enemyStatus = getStatus(enemy, auraKeyword)
+
+    if (nearUnfocusedAuras.length > 0 && enemyStatus === undefined) {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: thisUnit,
+        enemy: enemy,
+        updates: {
+          status: [{name: auraKeyword, qty: 10100}]
+        }
+      })
+
+    }
+    if (nearUnfocusedAuras <= 0 && enemyStatus && enemyStatus.qty > 10000) {
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: thisUnit,
+        enemy: enemy,
+        updates: {
+          status: [{name: auraKeyword, qty: -10100}]
+        }
+      })
+    }
+  })
+}
+
 /////////////////////////////////////////////////////
 
 const handleWholenessOnDefence = ({G, ctx}, {unitId, updates}) => {
@@ -272,8 +304,11 @@ const handleBlockStatusesOnDefence = ({G, ctx}, {unitId, updates}) => {
         if (status.name === UnitStatus.PowerDown && updates.power && updates.power > 0) {
           updates.power = 0
         }
-        if (status.name === UnitStatus.InitiativeDown && updates.initiative && updates.initiative > 0) {
+        if ((status.name === UnitStatus.InitiativeDown || status.name === UnitStatus.InitiativeDownAura) && updates.initiative && updates.initiative > 0) {
           updates.initiative = 0
+        }
+        if ((status.name === UnitStatus.HealsDownAura || status.name === UnitStatus.Fired) && updates.damage && updates.damage > 0) {
+          updates.damage = 0
         }
       }
     })
@@ -500,15 +535,15 @@ const handleAddPoisonEffectOnRaidOnAttack = ({G}, {unitId, updates}) => {
 }
 
 const handleVengeanceEffectOnAttack = ({G, ctx, events}, {unitId, enemyId, updates}) => {
-  if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Chained) {
-    if (updates.status) updates.status.push({name: UnitStatus.Vengeance, qty: 99})
-    else updates.status = [{name: UnitStatus.Vengeance, qty: 99}]
+  if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Chained || updates.damageType === DamageType.Raid) {
+    if (updates.status) updates.status.push({name: UnitStatus.Vengeance, qty: 99, enemyId: unitId})
+    else updates.status = [{name: UnitStatus.Vengeance, qty: 99, enemyId: unitId}]
     const thisUnit = getUnitById(G, unitId)
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
       currentUnit: thisUnit,
       enemy: thisUnit,
       updates: {
-        status: [{name: UnitStatus.VengeanceTarget, qty: 99, enemyId: enemyId}]
+        status: [{name: UnitStatus.VengeanceTarget, qty: 99}]
       }
     })
   }
@@ -573,7 +608,7 @@ const handleRoundDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates})
           currentUnit: thisUnit,
           enemy: enemyAlly,
           updates: {
-            damage: updates.damage,
+            damage: hasKeyword(thisUnit, UnitKeywords.RestrictedRoundDamage) ? 1 : updates.damage,
             damageType: DamageType.Chained,
           }
         })
@@ -586,6 +621,46 @@ const handleRoundDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates})
           })
         }
       })
+    }
+  }
+  return updates
+}
+
+const handleThroughDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates}) => {
+  if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Counter || updates.damageType === DamageType.Chained) {
+    const thisUnit = getUnitById(G, unitId)
+    const enemy = getUnitById(G, enemyId)
+    const thisPoint = thisUnit.unitState.point
+    const enemyPoint = enemy.unitState.point
+    const vector = {x: enemyPoint.x - thisPoint.x, y: enemyPoint.y - thisPoint.y, z: enemyPoint.z - thisPoint.z}
+    const newEnemyPoint = createPoint(...[enemyPoint.x + vector.x, enemyPoint.y + vector.y, enemyPoint.z + vector.z])
+    const newEnemy = getInGameUnits(G, unit => thisUnit.unitState.playerId !== unit.unitState.playerId)
+      .find(unit => isSame(newEnemyPoint)(unit.unitState.point))
+
+    if (newEnemy) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `Произуючий удар по ${newEnemy.name}`,
+      })
+      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+        currentUnit: thisUnit,
+        enemy: newEnemy,
+        updates: {
+          damage: updates.damage,
+          damageType: DamageType.Chained,
+        }
+      })
+      if(newEnemy.heals <= 0) {
+        handleUnitDeath({G: G, ctx: ctx, events: events}, newEnemy, thisUnit)
+        G.fightQueue.forEach((unitInQ, i, q) => {
+          if(unitInQ.unitId === newEnemy.id) {
+            q.splice(i, 1);
+          }
+        })
+      }
     }
   }
   return updates
@@ -690,11 +765,9 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
       raidEnemies = [mainTargetEnemy]
     }
 
+    const vengeanceStatus = getStatus(thisUnit, UnitStatus.Vengeance)
     if (hasStatus(thisUnit, UnitStatus.Vengeance)) {
-      const vengeanceTarget = getInGameUnits(G).find(unit => {
-        const status = getStatus(unit, UnitStatus.VengeanceTarget)
-        return status && status.enemyId === unit.id
-      })
+      const vengeanceTarget = getInGameUnits(G).find(unit => hasStatus(unit, UnitStatus.VengeanceTarget) && vengeanceStatus.enemyId === unit.id)
       if (vengeanceTarget) {
         if (raidEnemies.find(enemy => enemy.id === vengeanceTarget.id)) {
           raidEnemies = [vengeanceTarget]

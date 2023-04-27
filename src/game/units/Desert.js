@@ -72,7 +72,7 @@ export class UDesert {
   }
 
   static getSfinks = (id, playerId, _, createPosition) => {
-    const stat = [2, 11, 4]
+    const stat = [2, 12, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.keywords.push(UnitKeywords.Sneaky)

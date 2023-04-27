@@ -158,12 +158,9 @@ export const moves = {
           text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemy.name}!`,
         })
       }
-
-      if (hasStatus(currentUnit, UnitStatus.Vengeance)) {
-        const vengeanceTarget = getInGameUnits(G).find(unit => {
-          const status = getStatus(unit, UnitStatus.VengeanceTarget)
-          return status && status.enemyId === currentUnit.id
-        })
+      const vengeanceStatus = getStatus(currentUnit, UnitStatus.Vengeance)
+      if (vengeanceStatus) {
+        const vengeanceTarget = getInGameUnits(G).find(unit => hasStatus(unit, UnitStatus.VengeanceTarget) && vengeanceStatus.enemyId === unit.id)
         if (vengeanceTarget) {
           if (enemies.find(enemy => enemy.id === vengeanceTarget.id)) {
             enemies = [vengeanceTarget]
@@ -326,7 +323,7 @@ export const moves = {
       currentUnit: unit,
       enemy: enemy,
       updates: {
-        damage: unit.power,
+        damage: unit.power > 0 ? unit.power : 0,
         damageType: DamageType.Default,
       }
     })
@@ -380,7 +377,7 @@ export const moves = {
   raidAttack: ({G, events, ctx}, point) => {
     const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
     const thisUnit = getUnitById(G, G.currentUnit.id)
-    let raidDmg = Math.trunc(G.currentUnit.power / 2)
+    let raidDmg = G.currentUnit.power > 0 ? Math.trunc(G.currentUnit.power / 2) : 0
     if (hasKeyword(thisUnit, UnitKeywords.AdditionalSacrificeRaid)) raidDmg = raidDmg + 1;
 
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -409,7 +406,7 @@ export const moves = {
       }
     }
 
-    const nearAllies = getNearestAllies(G, enemy.unitState)
+    const nearAllies = enemy.unitState.point ? getNearestAllies(G, enemy.unitState) : []
     if (enemy.heals > 0 && thisUnit.heals > 0 && nearAllies.length > 0 && hasKeyword(thisUnit, UnitKeywords.ReplaceHealsRaid)) {
       G.availablePoints = nearAllies.map(u => u.unitState.point)
       G.currentActionUnitId = thisUnit.id
@@ -691,6 +688,23 @@ export const moves = {
     events.setActivePlayers({ currentPlayer: 'setElokoCurseActionStage' });
   },
 
+  setItOnFireActionMove: ({ G, ctx, events }) => {
+    G.availablePoints = getInGameUnits(G, unit => G.currentUnit.unitState.playerId !== unit.unitState.playerId)
+      .filter(unit => !hasStatus(unit, UnitStatus.Fired))
+      .map(u => u.unitState.point)
+    if (G.availablePoints.length === 0) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
+      })
+    }
+    G.currentActionUnitId = G.currentUnit.id
+    events.setActivePlayers({ currentPlayer: 'setItOnFireActionStage' });
+  },
+
   doThrowWeapon: ({ G, ctx, events }, point) => {
     const thisUnit = getUnitById(G, G.currentActionUnitId)
     const enemy = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
@@ -714,7 +728,7 @@ export const moves = {
       currentUnit: thisUnit,
       enemy: enemy,
       updates: {
-        damage: thisUnit.power,
+        damage: thisUnit.power > 0 ? thisUnit.power : 0,
         damageType: DamageType.Default,
       }
     })
@@ -758,7 +772,7 @@ export const moves = {
       enemy: enemy,
       updates: {
         initiative: 3,
-        status: [{name: UnitStatus.Vengeance, qty: 99}, {name: UnitStatus.InitiativeDown, qty: 3}]
+        status: [{name: UnitStatus.Vengeance, qty: 99, enemyId: thisUnit.id}, {name: UnitStatus.InitiativeDown, qty: 3}]
       }
     })
 
@@ -766,11 +780,47 @@ export const moves = {
       currentUnit: thisUnit,
       enemy: thisUnit,
       updates: {
-        status: [{name: UnitStatus.VengeanceTarget, qty: 99, enemyId: enemy.id}]
+        status: [{name: UnitStatus.VengeanceTarget, qty: 99}]
       }
     })
 
     moves.backFromAction({ G, ctx, events })
+  },
+
+  doSetItOnFire: ({ G, ctx, events }, point) => {
+    const thisUnit = getUnitById(G, G.currentActionUnitId)
+    const enemy = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
+
+    let actionQty = 0
+    thisUnit.abilities.allTimeActions.forEach(action => {
+      if (action.name === UnitSkills.SetItOnFire) {
+        action.qty--;
+        actionQty = action.qty
+      }
+    })
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisUnit.name} викорстовує здібність та випалює ціль. Залишилось ${actionQty} заряди`,
+    })
+
+    resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+      currentUnit: thisUnit,
+      enemy: enemy,
+      updates: {
+        power: 1,
+        damage: 1,
+        damageType: DamageType.Poison,
+        status: [{name: UnitStatus.Fired, qty: 99}, {name: UnitStatus.PowerDown, qty: 1}]
+      }
+    })
+
+    G.currentUnit = null
+    thisUnit.unitState.isClickable = false
+    G.availablePoints = []
+    ctx.phase === 'Positioning' ? events.endTurn() : G.endFightTurn = true
   },
 
   replaceUnitsActionMove: ({ G, ctx, events }) => {

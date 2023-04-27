@@ -6,6 +6,7 @@ import {
 } from "../state/GameActions";
 import {handleAbility} from "../state/UnitSkills";
 import {gameLog} from "./Log";
+import {biomComparison} from "./UnitPriority";
 
 export const createPoint = (...pos) => {
   const [x, y, z] = pos;
@@ -171,12 +172,40 @@ export const endFightTurnCondition = (G, ctx) => {
 }
 
 export const onEndFightTurn = (G, ctx) => {
-  if(G.fightQueue.length && getUnitById(G, G.fightQueue[0].unitId).unitState.isClickable === false)
-    G.fightQueue.shift();
+
+  getInGameUnits(G).forEach(unit => {
+    const isNearEnemies = getNearestEnemies(G, unit.unitState).length > 0;
+    if (!unit.unitState.isInFight && isNearEnemies) {
+      unit.unitState.isClickable = true
+      unit.unitState.isInFight = true
+    }
+    if (unit.unitState.isInFight && !isNearEnemies) {
+      unit.unitState.isClickable = false
+      unit.unitState.isInFight = false
+    }
+  });
+
+  const skippedTurnUnits = getInGameUnits(G, (unit) => unit.unitState.isInFight && unit.unitState.isClickable && unit.unitState.skippedTurn)
+    .sort((u1, u2) => sortFightOrder(u1, u2))
+    .reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
+  const notMovedUnits = getInGameUnits(G, (unit) => unit.unitState.isInFight && unit.unitState.isClickable && !unit.unitState.skippedTurn)
+    .sort((u1, u2) => sortFightOrder(u1, u2))
+    .reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
+  G.fightQueue = notMovedUnits.concat(skippedTurnUnits)
+
   G.endFightTurn = false
+  G.endFightPhase = G.fightQueue.length === 0
   G.currentActionUnitId = undefined
   G.currentEnemySelectedId = undefined
   return G
+}
+
+export const sortFightOrder = (u1, u2) => {
+  if (u1.initiative > u2.initiative) return 1;
+  if (u1.initiative < u2.initiative) return -1;
+  if (u1.unitState.initiatorFor.find(id => u2.id === id)) return -1;
+  if (u2.unitState.initiatorFor.find(id => u1.id === id)) return 1;
+  return biomComparison(u1.biom, u2.biom)
 }
 
 export const resolveUnitsInteraction = (data, fightData) => {

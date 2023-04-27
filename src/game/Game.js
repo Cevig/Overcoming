@@ -99,6 +99,7 @@ export const Overcoming = {
               notMovedRecoverAction: moves.notMovedRecoverActionMove,
               chargeAttackAction: moves.chargeAttackActionMove,
               setElokoCurseAction: moves.setElokoCurseActionMove,
+              setItOnFireAction: moves.setItOnFireActionMove,
             },
             next: 'pickUnitOnBoard'
           },
@@ -161,6 +162,12 @@ export const Overcoming = {
               setElokoCurse: moves.doSetElokoCurse
             }
           },
+
+          setItOnFireActionStage: {
+            moves: {
+              setItOnFire: moves.doSetItOnFire
+            }
+          },
         }
       }
     },
@@ -195,7 +202,8 @@ export const Overcoming = {
               healAllyAction: moves.healAllyActionMove,
               curseAction: moves.curseActionMove,
               replaceUnitsAction: moves.replaceUnitsActionMove,
-              pauseToRecoverAction: moves.pauseToRecoverActionMove
+              pauseToRecoverAction: moves.pauseToRecoverActionMove,
+              setItOnFireAction: moves.setItOnFireActionMove,
             },
             next: 'pickUnitForAttack'
           },
@@ -232,7 +240,13 @@ export const Overcoming = {
               replaceUnitsFirst: moves.doReplaceUnitsActionFirst,
               replaceUnits: moves.doReplaceUnitsAction
             }
-          }
+          },
+
+          setItOnFireActionStage: {
+            moves: {
+              setItOnFire: moves.doSetItOnFire
+            }
+          },
         }
       }
     }
