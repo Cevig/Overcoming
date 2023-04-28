@@ -6,7 +6,17 @@ const createPlayer = (id, name, bioms) => ({
   name,
   units: [],
   bioms: bioms,
-  isInGame: true
+  isInGame: true,
+  availablePoints: [],
+  currentUnit: null,
+  grid: {
+    colorMap: {
+      [playerColors[0]]: startPositions[0],//red
+      [playerColors[1]]: startPositions[1],//blue
+      [playerColors[2]]: startPositions[2],//green
+      [playerColors[3]]: startPositions[3]//yellow
+    }
+  }
 });
 
 export const startPositions = [

@@ -9,8 +9,6 @@ import {
 import {UnitUI} from './UnitUI';
 import {motion} from 'framer-motion';
 import {Link} from "react-router-dom";
-import {playerColors} from "../helpers/Constants";
-import {startPositions} from "../state/Setup";
 import {BoardUser} from "./BoardUser";
 import {BoardLogs} from "./BoardLogs";
 import UnitInfoPopup from "./UnitInfoPopup";
@@ -63,19 +61,19 @@ export function Board (props) {
     }
   }
   const handleSetupMoves = (point) => {
-    const stage = props.ctx.activePlayers[+props.ctx.currentPlayer]
+    const stage = props.ctx.activePlayers[+props.playerID]
     if (stage && stage === 'pickUnit') {
       const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
-      if (found && found.unitState.playerId === +props.ctx.currentPlayer && found.unitState.isClickable === true) {
+      if (found && found.unitState.playerId === +props.playerID && found.unitState.isClickable === true) {
         props.moves.selectOldUnit(found);
       }
     } else if (stage && stage === 'placeUnit') {
-      const found = props.G.availablePoints.find(isSame(point));
+      const found = props.G.players[+props.playerID].availablePoints.find(isSame(point));
       if (found !== undefined) {
         props.moves.moveUnit(found);
       }
     } else if (stage && stage === 'chooseBlockSideActionStage') {
-      const found = props.G.availablePoints.find(isSame(point));
+      const found = props.G.players[+props.playerID].availablePoints.find(isSame(point));
       if (found !== undefined) {
         props.moves.setBlockSide(found);
       }
@@ -198,13 +196,8 @@ export function Board (props) {
   }
 
   let colorMapSecret = {}
-  if ((props.ctx.phase === "Setup") && (props.ctx.currentPlayer !== props.playerID)) {
-    colorMapSecret = {
-        [playerColors[0]]: startPositions[0],//red
-        [playerColors[1]]: startPositions[1],//blue
-        [playerColors[2]]: startPositions[2],//green
-        [playerColors[3]]: startPositions[3]//yellow
-      }
+  if ((props.ctx.phase === "Setup")) {
+    colorMapSecret = props.G.players[+props.playerID].grid.colorMap;
   } else {
     colorMapSecret = props.G.grid.colorMap;
   }

@@ -58,9 +58,12 @@ export class BoardUser extends React.Component {
       <div style={styles.mainStyles}>
         <UnitList data={props} info={this.props.info}/>
         {/*<div>phase: {props.ctx.phase}</div>*/}
-        <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24, marginTop: 15}}>
-          <span style={{color: "#444444"}}>Хід:</span> Гравець {player ? player.id + 1 : "Невідомий"}
-        </div>
+        {props.ctx.phase !== 'Setup' ?
+          <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24, marginTop: 15}}>
+            <span style={{color: "#444444"}}>Хід:</span> Гравець {player ? player.id + 1 : "Невідомий"}
+          </div>
+          : <></>
+        }
         {this.showFightQueue()}
         <div style={{marginTop: "auto", marginBottom: 30}}>
           <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20, fontSize: 22}}>Дії</div>
@@ -229,8 +232,8 @@ export class BoardUser extends React.Component {
 
   isSetBlockSideAvailable() {
     const props = this.props.props
-    if (props.G.currentUnit && props.G.currentUnit.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage && skill.point === null)) {
-      if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnit")) {
+    if (props.G.players[+props.playerID].currentUnit && props.G.players[+props.playerID].currentUnit.unitState.isInGame && props.G.players[+props.playerID].currentUnit.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage && skill.point === null)) {
+      if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit")) {
         return true
       }
     }

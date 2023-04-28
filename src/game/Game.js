@@ -27,7 +27,7 @@ export const Overcoming = {
     Setup: {
       turn: {
         activePlayers: {
-          currentPlayer: { stage: 'pickUnit' }
+          all: { stage: 'pickUnit' }
         },
         stages: {
           pickUnit: {
@@ -54,6 +54,10 @@ export const Overcoming = {
             moves: {
               setBlockSide: moves.doSetBlockSide
             }
+          },
+
+          finishSetupStage: {
+            moves: {}
           }
         },
         onMove: (data) => postProcess(data)

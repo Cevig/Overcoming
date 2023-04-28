@@ -22,17 +22,31 @@ import {startPositions} from "./Setup";
 import {handleOnMoveActions} from "./GameActions";
 import {gameLog} from "../helpers/Log";
 
-const setColorMap = G => {
-  G.grid.colorMap = {
-    [playerColors[0]]: startPositions[0],//red
-    [playerColors[1]]: startPositions[1],//blue
-    [playerColors[2]]: startPositions[2],//green
-    [playerColors[3]]: startPositions[3]//yellow
+const setColorMap = (G, ctx, playerID) => {
+  if (ctx.phase === 'Setup') {
+    G.players[+playerID].grid.colorMap = {
+      [playerColors[0]]: startPositions[0],//red
+      [playerColors[1]]: startPositions[1],//blue
+      [playerColors[2]]: startPositions[2],//green
+      [playerColors[3]]: startPositions[3]//yellow
+    }
+
+    Object.entries(G.grid.colorMap).forEach(([color, points]) => {
+      G.players[+playerID].grid.colorMap[color] = points.filter(mapPoint => G.players[+playerID].availablePoints.every(availablePoint => isNotSame(mapPoint)(availablePoint)))
+    })
+    G.players[+playerID].grid.colorMap['#dd666f'] = G.players[+playerID].availablePoints
+  } else {
+    G.grid.colorMap = {
+      [playerColors[0]]: startPositions[0],//red
+      [playerColors[1]]: startPositions[1],//blue
+      [playerColors[2]]: startPositions[2],//green
+      [playerColors[3]]: startPositions[3]//yellow
+    }
+    Object.entries(G.grid.colorMap).forEach(([color, points]) => {
+      G.grid.colorMap[color] = points.filter(mapPoint => G.availablePoints.every(availablePoint => isNotSame(mapPoint)(availablePoint)))
+    })
+    G.grid.colorMap['#dd666f'] = G.availablePoints
   }
-  Object.entries(G.grid.colorMap).forEach(([color, points]) => {
-    G.grid.colorMap[color] = points.filter(mapPoint => G.availablePoints.every(availablePoint => isNotSame(mapPoint)(availablePoint)))
-  })
-  G.grid.colorMap['#dd666f'] = G.availablePoints
 };
 
 export const onPositioningStart = (G, ctx, events) => {
@@ -245,7 +259,7 @@ export const setFightOrder = (G, events, ctx) => {
 }
 
 export const postProcess = ({ G, ctx, events, playerID }) => {
-  setColorMap(G);
+  setColorMap(G, ctx, playerID);
 
   if (ctx.phase !== 'Setup') {
     handleOnMoveActions({ G, ctx, events, playerID })

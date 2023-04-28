@@ -30,42 +30,44 @@ import {gameLog} from "../helpers/Log";
 
 export const moves = {
 
-  summonUnit: ({G, ctx, events}, currentUnit) => {
-    G.players[ctx.currentPlayer].units.push(currentUnit)
+  summonUnit: ({G, ctx, events, playerID}, currentUnit) => {
+    G.players[+playerID].units.push(currentUnit)
   },
-  selectNewUnit: ({G, ctx, events}, currentUnit) => {
-    if (G.players[ctx.currentPlayer].units.filter(unit => unit.unitState.isInGame === false).length > 0) {
+  selectNewUnit: ({G, ctx, events, playerID}, currentUnit) => {
+    const player = G.players[+playerID]
+    if (player.units.filter(unit => unit.unitState.isInGame === false).length > 0) {
       if (currentUnit.type === UnitTypes.Idol)
-        G.availablePoints = [startPositions[ctx.currentPlayer][0]]
+        player.availablePoints = [startPositions[+playerID][0]]
       else
-        G.availablePoints = startPositions[ctx.currentPlayer].slice(1, startPositions[ctx.currentPlayer].length)
-      G.currentUnit = currentUnit
+        player.availablePoints = startPositions[+playerID].slice(1, startPositions[+playerID].length)
+      player.currentUnit = currentUnit
       events.endStage();
     }
   },
-  selectOldUnit: ({ G, ctx, events }, currentUnit) => {
+  selectOldUnit: ({ G, ctx, events, playerID }, currentUnit) => {
+    const player = G.players[+playerID]
     if (currentUnit.type === UnitTypes.Idol)
-      G.availablePoints = [startPositions[ctx.currentPlayer][0]]
+      player.availablePoints = [startPositions[+playerID][0]]
     else
-      G.availablePoints = startPositions[ctx.currentPlayer].slice(1, startPositions[ctx.currentPlayer].length)
-    G.currentUnit = currentUnit
+      player.availablePoints = startPositions[+playerID].slice(1, startPositions[+playerID].length)
+    player.currentUnit = currentUnit
     events.endStage();
   },
 
-  chooseBlockSideActionMove: ({ G, ctx, events }) => {
-    G.availablePoints = getNeighbors(G.currentUnit.unitState.point)
-    events.setActivePlayers({ currentPlayer: 'chooseBlockSideActionStage' });
+  chooseBlockSideActionMove: ({ G, ctx, events, playerID }) => {
+    G.players[+playerID].availablePoints = getNeighbors(G.players[+playerID].currentUnit.unitState.point)
+    events.setStage('chooseBlockSideActionStage');
   },
 
-  doSetBlockSide: ({ G, ctx, events }, point) => {
-    const thisUnit = getUnitById(G, G.currentUnit.id)
+  doSetBlockSide: ({ G, ctx, events, playerID }, point) => {
+    const thisUnit = getUnitById(G, G.players[+playerID].currentUnit.id)
     const skill = thisUnit.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage)
     const currentPoint = thisUnit.unitState.point
     skill.point = createPoint(point.x - currentPoint.x, point.y - currentPoint.y, point.z - currentPoint.z)
 
-    G.currentUnit = null
-    G.availablePoints = []
-    events.setActivePlayers({ currentPlayer: 'pickUnit' });
+    G.players[+playerID].currentUnit = null
+    G.players[+playerID].availablePoints = []
+    events.setStage('pickUnit');
   },
 
   selectUnitOnBoard: ({ G, ctx, events }, currentUnit) => {
@@ -190,8 +192,9 @@ export const moves = {
     events.endStage();
   },
 
-  moveUnit: ({G, ctx, events}, point) => {
-    const unit = G.players[+ctx.currentPlayer].units.find(unit => unit.id === G.currentUnit.id)
+  moveUnit: ({G, ctx, events, playerID}, point) => {
+    const player = G.players[+playerID]
+    const unit = player.units.find(unit => unit.id === player.currentUnit.id)
     const unitToReplace = getInGameUnits(G).find(unit => isSame(point)(unit.unitState.point))
     if (unitToReplace !== undefined) {
       if (unit.unitState.point !== null) {
@@ -203,16 +206,17 @@ export const moves = {
     }
     unit.unitState.point = point
     unit.unitState.isInGame = true
-    G.currentUnit = null
-    G.availablePoints = []
+    player.currentUnit = null
+    player.availablePoints = []
     events.endStage();
   },
 
-  removeUnit: ({G, ctx, events}) => {
-    const unit = G.players[ctx.currentPlayer].units.find(unit => unit.id === G.currentUnit.id)
+  removeUnit: ({G, ctx, events, playerID}) => {
+    const player = G.players[+playerID]
+    const unit = player.units.find(unit => unit.id === player.currentUnit.id)
     unit.unitState.point = null
     unit.unitState.isInGame = false
-    G.availablePoints = []
+    player.availablePoints = []
     events.endStage();
   },
 
@@ -473,20 +477,26 @@ export const moves = {
   },
 
   complete: ({G, ctx, events, playerID}) => {
-    // if (getInGameUnits(G, (unit) => (unit.unitState.playerId === +ctx.currentPlayer) && (unit.type === UnitTypes.Idol)).length > 0) {
+    if (getInGameUnits(G, (unit) => (unit.unitState.playerId === +playerID) && (unit.type === UnitTypes.Idol)).length > 0) {
       G.setupComplete++
-      G.availablePoints = []
+      G.players[+playerID].availablePoints = []
       gameLog.addLog({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
-        player: +ctx.currentPlayer,
+        player: +playerID,
         phase: ctx.phase,
         text: `Гравець ${+playerID+1} завершив розташування`,
       })
-      events.endTurn()
-    // } else {
-    //   console.log("You can't start battle without an Idol on the field")
-    // }
+      events.setStage('finishSetupStage')
+    } else {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +playerID,
+        phase: ctx.phase,
+        text: `Гравцю ${+playerID+1} необхідно розмістити Ідола на полі`,
+      })
+    }
   },
 
   skipTurn: ({ G, events, ctx }) => {
