@@ -8,7 +8,7 @@ export class UDesert {
   static adzeName = "Адзе"
   static sfinksName = "Сфінкс"
   static vasiliskName = "Василіск"
-  static getAmfisbena = (id, playerId, level, createPosition) => {
+  static getAmfisbena = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 6, 3]
       if (level === 2) return [2, 6, 4]
@@ -26,9 +26,9 @@ export class UDesert {
       }
     }
 
-    return getCreature(UDesert.amfisbenaName, UnitTypes.Prispeshnick, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UDesert.amfisbenaName, UnitTypes.Prispeshnick, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
-  static getObajifo = (id, playerId, level, createPosition) => {
+  static getObajifo = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 3, 5]
       if (level === 2) return [2, 4, 6]
@@ -47,10 +47,10 @@ export class UDesert {
       }
     }
 
-    return getCreature(UDesert.obajifoName, UnitTypes.Ispolin, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UDesert.obajifoName, UnitTypes.Prominkor, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getAdze = (id, playerId, level, createPosition) => {
+  static getAdze = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 4]
       if (level === 2) return [2, 5, 4]
@@ -68,10 +68,10 @@ export class UDesert {
       }
     }
 
-    return getCreature(UDesert.adzeName, UnitTypes.Vestnick, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UDesert.adzeName, UnitTypes.Vestnick, Biom.Desert, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getSfinks = (id, playerId, _, createPosition) => {
+  static getSfinks = (id, playerId, _, createPosition, __) => {
     const stat = [2, 12, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -80,7 +80,7 @@ export class UDesert {
     return getIdol(UDesert.sfinksName, Biom.Desert, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
-  static getVasilisk = (id, playerId, _, createPosition) => {
+  static getVasilisk = (id, playerId, _, createPosition, __) => {
     const stat = [2, 8, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

@@ -1,10 +1,40 @@
 .log-container {
   margin: 5px;
   font-size: 18px;
-  max-height: 900px;
+  max-height: 700px;
   overflow-y: auto;
 }
 
 .log-container > div {
   margin-top: 5px;
+}
+
+.player-info{
+  background: white;
+  padding: 10px;
+  margin: 0 10px 10px 10px;
+  font-size: 26px;
+  line-height: 1.5;
+}
+
+.player-resources span{
+  font-weight: bold;
+}
+
+.player-heals span{
+  color: red;
+}
+
+.enemy-info {
+  background: white;
+  display: flex;
+  padding: 10px;
+  flex-direction: column;
+  font-size: 20px;
+  margin: 10px;
+  align-items: center;
+  line-height: 1.2;
+}
+.enemy-info.full{
+  align-items: start;
 }

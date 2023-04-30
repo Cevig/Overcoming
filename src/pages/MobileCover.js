@@ -8,7 +8,7 @@ class MobileCover extends Component {
       <TemplatePage
         content={
           <div style={{ fontSize: 35 }}>
-            Sorry , this page is currently available only on a Desktop Browser.
+            Вибачте, гра недоступна для телефонів.
           </div>
         }
       />

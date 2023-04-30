@@ -8,7 +8,7 @@ export class UJungle {
   static kaieryName = "Кайєрі"
   static elokoName = "Елоко"
   static adjatarName = "Аджатар"
-  static getBlemmii = (id, playerId, level, createPosition) => {
+  static getBlemmii = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 6, 3]
       if (level === 2) return [2, 6, 4]
@@ -23,11 +23,11 @@ export class UJungle {
       }
     }
 
-    return getCreature(UJungle.blemmiiName, UnitTypes.Prispeshnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UJungle.blemmiiName, UnitTypes.Prispeshnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
-  static getPetsyhos = (id, playerId, level, createPosition) => {
+  static getPetsyhos = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [1, 4, 5]
+      if (level === 1) return [2, 4, 5]
       if (level === 2) return [2, 5, 6]
       if (level === 3) return [4, 5, 5]
     }
@@ -35,10 +35,10 @@ export class UJungle {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.keywords.push(UnitKeywords.Sneaky)
     abilities.statUpdates.attack.push(UnitSkills.AddUnfocusedEffect)
-    return getCreature(UJungle.petsyhosName, UnitTypes.Ispolin, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UJungle.petsyhosName, UnitTypes.Prominkor, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getKaiery = (id, playerId, level, createPosition) => {
+  static getKaiery = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [1, 4, 4]
       if (level === 2) return [2, 4, 5]
@@ -49,10 +49,10 @@ export class UJungle {
     abilities.actions.push({name: UnitSkills.Raid, qty: 99});
     abilities.statUpdates.defence.push({name: UnitSkills.BlockDamage, point: null})
 
-    return getCreature(UJungle.kaieryName, UnitTypes.Vestnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UJungle.kaieryName, UnitTypes.Vestnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getEloko = (id, playerId, _, createPosition) => {
+  static getEloko = (id, playerId, _, createPosition, __) => {
     const stat = [2, 7, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -60,7 +60,7 @@ export class UJungle {
     return getIdol(UJungle.elokoName, Biom.Jungle, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
-  static getAdjatar = (id, playerId, _, createPosition) => {
+  static getAdjatar = (id, playerId, _, createPosition, __) => {
     const stat = [2, 9, 6]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

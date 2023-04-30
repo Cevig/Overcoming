@@ -54,11 +54,11 @@ export class BoardUser extends React.Component {
   render () {
     const props = this.props.props
     const player = props.G.players.find(p => p.id === +props.ctx.currentPlayer);
+    const playerClient = props.G.players.find(p => p.id === +props.playerID);
     return (
       <div style={styles.mainStyles}>
         <UnitList data={props} info={this.props.info}/>
-        {/*<div>phase: {props.ctx.phase}</div>*/}
-        {props.ctx.phase !== 'Setup' ?
+        {(props.ctx.phase !== 'Setup' && props.ctx.phase !== 'Building') ?
           <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24, marginTop: 15}}>
             <span style={{color: "#444444"}}>Хід:</span> Гравець {player ? player.id + 1 : "Невідомий"}
           </div>
@@ -67,77 +67,89 @@ export class BoardUser extends React.Component {
         {this.showFightQueue()}
         <div style={{marginTop: "auto", marginBottom: 30}}>
           <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20, fontSize: 22}}>Дії</div>
-          <div style={styles.actions}>
-            <button onClick={() => props.undo()}>Назад</button>
-            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
-              <button onClick={() => props.moves.removeUnit()}>Видалити</button>
-              : <span></span>
-            }
-            {props.ctx.phase === 'Setup' ?
-              <button onClick={() => props.moves.complete()}>Завершити</button>
-              : <span></span>
-            }
-            {this.isDefaultSkipTurnAvailable() ?
-              <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
-              : <span></span>
-            }
-            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "hookUnitAction") ?
-              <button onClick={() => props.moves.skipHook()}>Пропустити</button>
-              : <span></span>
-            }
-            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "throwOverAction") ?
-              <button onClick={() => props.moves.skipHook()}>Пропустити</button>
-              : <span></span>
-            }
-            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction") ?
-              <button onClick={() => props.moves.doActionToEnemy()}>Перемістити слугу</button>
-              : <span></span>
-            }
-            {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "curseAbasyActionStage") ?
-              <button onClick={() => props.moves.backFromAction()}>Повернутися до ходу</button>
-              : <span></span>
-            }
-            {this.isHealAllyAvailable() ?
-              <button onClick={() => props.moves.healAllyAction()}>Зцілити життя</button>
-              : <span></span>
-            }
-            {this.isCurseAbasuAvailable() ?
-              <button onClick={() => props.moves.curseAction()}>Причинити біль</button>
-              : <span></span>
-            }
-            {this.isWeaponThrowAvailable() ?
-              <button onClick={() => props.moves.throwWeaponAction()}>Шпурнути ікла</button>
-              : <span></span>
-            }
-            {this.isReplaceUnitsAvailable() ?
-              <button onClick={() => props.moves.replaceUnitsAction()}>Поміняти місцями</button>
-              : <span></span>
-            }
-            {this.isPauseToRecoverAvailable() ?
-              <button onClick={() => props.moves.pauseToRecoverAction()}>Час відновитись</button>
-              : <span></span>
-            }
-            {this.isNotMovedRecoverAvailable() ?
-              <button onClick={() => props.moves.notMovedRecoverAction()}>Можна відновитись</button>
-              : <span></span>
-            }
-            {this.isSetBlockSideAvailable() ?
-              <button onClick={() => props.moves.chooseBlockSideAction()}>Вибрати захищену сторону</button>
-              : <span></span>
-            }
-            {this.isChargeAttackAvailable() ?
-              <button onClick={() => props.moves.chargeAttackAction()}>Зарядити атаку</button>
-              : <span></span>
-            }
-            {this.isSetElokoCurseAvailable() ?
-              <button onClick={() => props.moves.setElokoCurseAction()}>Зачарувати істоту</button>
-              : <span></span>
-            }
-            {this.isSetItOnFireAvailable() ?
-              <button onClick={() => props.moves.setItOnFireAction()}>Спалити істоту</button>
-              : <span></span>
-            }
-          </div>
+          {playerClient.isPlayerInGame ?
+            <div style={styles.actions}>
+              <button onClick={() => props.undo()}>Назад</button>
+              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
+                <button onClick={() => props.moves.removeUnit()}>Видалити</button>
+                : <span></span>
+              }
+              {props.ctx.phase === 'Building' || props.ctx.phase === 'Setup' ?
+                <button onClick={() => props.moves.complete()}>Завершити</button>
+                : <span></span>
+              }
+              {props.ctx.activePlayers && ((props.ctx.activePlayers[+playerClient.id] === "purchase") ||
+                (props.ctx.activePlayers[+playerClient.id] === "pickUnit"))?
+                <button onClick={() => props.moves.surrender()}>Покинути гру</button>
+                : <span></span>
+              }
+              {this.isDefaultSkipTurnAvailable() ?
+                <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
+                : <span></span>
+              }
+              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "hookUnitAction") ?
+                <button onClick={() => props.moves.skipHook()}>Пропустити</button>
+                : <span></span>
+              }
+              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "throwOverAction") ?
+                <button onClick={() => props.moves.skipHook()}>Пропустити</button>
+                : <span></span>
+              }
+              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction") ?
+                <button onClick={() => props.moves.doActionToEnemy()}>Перемістити слугу</button>
+                : <span></span>
+              }
+              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "curseAbasyActionStage") ?
+                <button onClick={() => props.moves.backFromAction()}>Повернутися до ходу</button>
+                : <span></span>
+              }
+              {props.ctx.activePlayers && (props.ctx.activePlayers[+playerClient.id] === "resultsStage") ?
+                <button onClick={() => props.moves.nextRound()}>Наступний раунд</button>
+                : <span></span>
+              }
+              {this.isHealAllyAvailable() ?
+                <button onClick={() => props.moves.healAllyAction()}>Зцілити життя</button>
+                : <span></span>
+              }
+              {this.isCurseAbasuAvailable() ?
+                <button onClick={() => props.moves.curseAction()}>Причинити біль</button>
+                : <span></span>
+              }
+              {this.isWeaponThrowAvailable() ?
+                <button onClick={() => props.moves.throwWeaponAction()}>Шпурнути ікла</button>
+                : <span></span>
+              }
+              {this.isReplaceUnitsAvailable() ?
+                <button onClick={() => props.moves.replaceUnitsAction()}>Поміняти місцями</button>
+                : <span></span>
+              }
+              {this.isPauseToRecoverAvailable() ?
+                <button onClick={() => props.moves.pauseToRecoverAction()}>Час відновитись</button>
+                : <span></span>
+              }
+              {this.isNotMovedRecoverAvailable() ?
+                <button onClick={() => props.moves.notMovedRecoverAction()}>Можна відновитись</button>
+                : <span></span>
+              }
+              {this.isSetBlockSideAvailable() ?
+                <button onClick={() => props.moves.chooseBlockSideAction()}>Вибрати захищену сторону</button>
+                : <span></span>
+              }
+              {this.isChargeAttackAvailable() ?
+                <button onClick={() => props.moves.chargeAttackAction()}>Зарядити атаку</button>
+                : <span></span>
+              }
+              {this.isSetElokoCurseAvailable() ?
+                <button onClick={() => props.moves.setElokoCurseAction()}>Зачарувати істоту</button>
+                : <span></span>
+              }
+              {this.isSetItOnFireAvailable() ?
+                <button onClick={() => props.moves.setItOnFireAction()}>Спалити істоту</button>
+                : <span></span>
+              }
+            </div>
+            : <></>
+          }
         </div>
       </div>
     )

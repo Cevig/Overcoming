@@ -53,7 +53,7 @@ class Lobby extends Component {
     window.removeEventListener("beforeunload", this.cleanup.bind(this));
   }
   joinRoom = (player_no) => {
-    const username = "Player " + player_no;
+    const username = "Гравець " + (player_no+1);
     if (this.state.id) {
       const metadata = (Math.random() + 1).toString(36).substring(7);
       api.joinRoom(this.state.id, username, player_no, metadata).then(
@@ -122,8 +122,7 @@ class Lobby extends Component {
         return (
           <div>
             <div className="player-item">
-              <span className="player-item-edit"> (Edit) </span>
-              {player.name} - You
+              {player.name} - Ви
               <div className="player-ready"></div>
             </div>
           </div>
@@ -142,7 +141,7 @@ class Lobby extends Component {
       return (
         <div>
           <div className="player-item loading">
-            Waiting for player
+            Очікування гравців
             <div className="player-waiting"></div>
           </div>
         </div>
@@ -172,7 +171,7 @@ class Lobby extends Component {
       : WEB_SERVER_URL;
     return (
       <>
-        <div>Invite your friend by sending them the link below</div>
+        <div>Запроси друзів за допомогою посилання:</div>
         <div className="game-link">
           <div
             className="game-link-box"
@@ -181,11 +180,11 @@ class Lobby extends Component {
             {`${server}/lobby/${this.state.id}`}
           </div>
           <div className="game-link-button" onClick={this.copyToClipboard}>
-            {this.state.copied ? "Copied!" : " Copy "}
+            {this.state.copied ? "Готово!" : " Скопіювати "}
           </div>
         </div>
         <div>
-          Game Code
+          Код Гри
           <br /> <div className="game-code">{this.state.id}</div>
         </div>
         <div className="player-list">
@@ -196,7 +195,7 @@ class Lobby extends Component {
         </div>
         <div>
           <br />
-          The game will begin once all the players join!
+          Гра почнеться одразу як усі гравці приєднаються!
         </div>
       </>
     );
@@ -205,9 +204,9 @@ class Lobby extends Component {
     return (
       <>
         <div>
-          Sorry! This game does not exist.
+          Вибачайте! Такої гри немає.
           <br />
-          <Link to="/">Create a new one</Link>
+          <Link to="/">Створити нову</Link>
         </div>
       </>
     );

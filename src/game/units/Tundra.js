@@ -8,7 +8,7 @@ export class UTundra {
   static planetnickName = "Планетник"
   static medvedOborotenName = "Ведмідь-перевертень"
   static marenaName = "Марена"
-  static getLedyanoyJack = (id, playerId, level, createPosition) => {
+  static getLedyanoyJack = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
       if (level === 2) return [3, 5, 3]
@@ -18,9 +18,9 @@ export class UTundra {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.statUpdates.defence.push({name: UnitSkills.BlockDamage, point: null})
 
-    return getCreature(UTundra.ledyanoyJackName, UnitTypes.Prispeshnick, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UTundra.ledyanoyJackName, UnitTypes.Prispeshnick, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
-  static getBonakon = (id, playerId, level, createPosition) => {
+  static getBonakon = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 3, 5]
       if (level === 2) return [2, 4, 5]
@@ -37,10 +37,10 @@ export class UTundra {
       }
     }
 
-    return getCreature(UTundra.bonakonName, UnitTypes.Ispolin, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UTundra.bonakonName, UnitTypes.Prominkor, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getPlanetnick = (id, playerId, level, createPosition) => {
+  static getPlanetnick = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 4]
       if (level === 2) return [2, 5, 4]
@@ -60,10 +60,10 @@ export class UTundra {
       }
     }
 
-    return getCreature(UTundra.planetnickName, UnitTypes.Vestnick, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UTundra.planetnickName, UnitTypes.Vestnick, Biom.Tundra, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getMedvedOboroten = (id, playerId, _, createPosition) => {
+  static getMedvedOboroten = (id, playerId, _, createPosition, __) => {
     const stat = [2, 8, 3]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -72,7 +72,7 @@ export class UTundra {
     return getIdol(UTundra.medvedOborotenName, Biom.Tundra, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
-  static getMarena = (id, playerId, _, createPosition) => {
+  static getMarena = (id, playerId, _, createPosition, __) => {
     const stat = [1, 10, 1]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

@@ -19,7 +19,7 @@ class JoinPage extends Component {
       <TemplatePage
         content={
           <>
-            Enter the Game Code below to join the game:
+            Приєднатися до гри за допомогою коду:
             <form onSubmit={this.handleSubmit}>
               <input
                 type="text"
@@ -30,7 +30,7 @@ class JoinPage extends Component {
               <br />
               <input
                 type="submit"
-                value="Submit"
+                value="Пуск"
                 className="game-code-submit"
               />
             </form>

@@ -1,8 +1,14 @@
-import {useState} from 'react';
 import './UnitList.css';
 import {createUnitObject} from "../units/Unit";
-import {playerColors, UnitTypes} from "../helpers/Constants";
+import {
+  Buildings,
+  playerColors,
+  UnitKeywords,
+  UnitTypes
+} from "../helpers/Constants";
+import {hasKeyword} from "../helpers/Utils";
 
+const randIndex = Math.floor(Math.random()*4)
 const UnitList = (data) => {
 
   const player = data.data.G.players.find(p => p.id === +data.data.playerID)
@@ -14,45 +20,40 @@ const UnitList = (data) => {
     if (player !== undefined) {
       return player.bioms.flatMap(biom => {
           return [
-            createUnitObject(newId(), 99, biom),
+            createUnitObject(newId(), 99, biom, UnitTypes.Idol, 0),
             createUnitObject(newId(), 99, biom, UnitTypes.Idol, 1),
-            createUnitObject(newId(), 99, biom, UnitTypes.Prispeshnick),
-            createUnitObject(newId(), 99, biom, UnitTypes.Ispolin),
-            createUnitObject(newId(), 99, biom, UnitTypes.Vestnick),
+            createUnitObject(newId(), 99, biom, UnitTypes.Prispeshnick, 0, 1),
+            createUnitObject(newId(), 99, biom, UnitTypes.Prispeshnick, 0, 2),
+            createUnitObject(newId(), 99, biom, UnitTypes.Prispeshnick, 0, 3),
+            createUnitObject(newId(), 99, biom, UnitTypes.Prominkor, 0, 1),
+            createUnitObject(newId(), 99, biom, UnitTypes.Prominkor, 0, 2),
+            createUnitObject(newId(), 99, biom, UnitTypes.Prominkor, 0, 3),
+            createUnitObject(newId(), 99, biom, UnitTypes.Vestnick, 0, 1),
+            createUnitObject(newId(), 99, biom, UnitTypes.Vestnick, 0, 2),
+            createUnitObject(newId(), 99, biom, UnitTypes.Vestnick, 0, 3)
           ]
         })
     } else return []
   }
 
-  const availableUnitsList = getAssignedUnits()
-  const starHandler = [
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
+  const getAvailableIdols = () => {
+    const idols = availableUnitsList.filter(u => u.type === UnitTypes.Idol)
+    let availableIdols = []
+    if (player.houses.find(h => h.name === Buildings.Kapushe.name) === undefined) {
+      availableIdols.push(idols[randIndex])
+    } else availableIdols.push(...idols)
+    return availableIdols
+  }
 
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-    useState(1),
-  ]
-  // const [selectedStars, setSelectedStars] = useState(1);
-  // Define the state for the list of created unit instances
-  const [createdUnits, setCreatedUnits] = useState([]);
+  const availableUnitsList = getAssignedUnits()
+  const availableIdols = getAvailableIdols()
 
   // Handle the creation of a new unit instance
-  const handleCreateUnit = (id) => {
+  const handleCreateUnit = (id, price) => {
     const chosenUnit = availableUnitsList.find(unit => unit.id === id)
     if (chosenUnit !== undefined) {
-      const index = availableUnitsList.filter(u => u.type !== UnitTypes.Idol).indexOf(chosenUnit);
-      const [selectedStars] = index !== -1 ? starHandler[index] : [1];
-      const newUnit = createUnitObject(newId(), player.id, chosenUnit.biom, chosenUnit.type, chosenUnit.unitState.createPosition, selectedStars)
-      data.data.moves.summonUnit(newUnit)
-      setCreatedUnits([...createdUnits, newUnit])
+      const newUnit = createUnitObject(newId(), player.id, chosenUnit.biom, chosenUnit.type, chosenUnit.unitState.createPosition, chosenUnit.level)
+      data.data.moves.summonUnit(newUnit, price)
     }
   };
 
@@ -71,66 +72,39 @@ const UnitList = (data) => {
   // Render the list of unit levels for a given type
   const renderAvailableUnits = (type) => {
     return availableUnitsList.filter(unit => unit.type === type)
+      .filter(unit => unit.type === UnitTypes.Idol ? !!availableIdols.find(u => u.id === unit.id) : true)
+      .filter(unit => {
+        if (type === UnitTypes.Prispeshnick) {
+          if (unit.level === 1) return !!player.houses.find(h => h.name === Buildings.VivtarPoplichnukiv.name)
+          if (unit.level === 2) return !!player.houses.find(h => h.name === Buildings.VivtarPoplichnukiv2.name)
+          if (unit.level === 3) return !!player.houses.find(h => h.name === Buildings.VivtarPoplichnukiv3.name)
+        } else if (type === UnitTypes.Prominkor) {
+          if (unit.level === 1) return !!player.houses.find(h => h.name === Buildings.VivtarProminkoriv.name)
+          if (unit.level === 2) return !!player.houses.find(h => h.name === Buildings.VivtarProminkoriv2.name)
+          if (unit.level === 3) return !!player.houses.find(h => h.name === Buildings.VivtarProminkoriv3.name)
+        } else if (type === UnitTypes.Vestnick) {
+          if (unit.level === 1) return !!player.houses.find(h => h.name === Buildings.VivtarVisnukiv.name)
+          if (unit.level === 2) return !!player.houses.find(h => h.name === Buildings.VivtarVisnukiv2.name)
+          if (unit.level === 3) return !!player.houses.find(h => h.name === Buildings.VivtarVisnukiv3.name)
+        } else return true
+      })
       .map((unit, i) => {
       return (
         <div key={unit.id} className="unit-row">
           <h3 style={{color: playerColors[+player.id]}}>{unit.name} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", cursor: "pointer", fontSize: 20}}>&#9432;</span></h3>
-          <span>[{unit.biom}]</span>
-          <div className="unit-stars">
-            {unit.level !== undefined ? renderStars(unit.level, unit) : ""}
+          <div className="unit-details">
+            <span>[{unit.biom}]</span>
+            <div className="unit-stars">
+              {unit.level !== undefined ? renderStars(unit.level) : ""}
+            </div>
           </div>
-          <button
-            className="unit-create-button"
-            onClick={() => handleCreateUnit(unit.id)}
-          >
-            Призвати
-          </button>
+          {handleSummonButton(unit)}
         </div>
       );
     });
   };
 
-  const handleStarClick = (e) => {
-    const currentStar = e.target;
-    const stars = currentStar.parentNode.children;
-
-    // Get the index of the current star in the list of stars
-    const index = Array.from(stars).indexOf(currentStar);
-
-    // Update the selected stars state
-
-    const setSelectedStars = starHandler[+currentStar.getAttribute('handler')][1];
-    setSelectedStars(index + 1);
-
-    // Update the class of the previous siblings to make them active
-    for (let i = 0; i <= index; i++) {
-      stars[i].classList.remove("star-sad");
-      stars[i].classList.add("star-active");
-    }
-
-    // Update the class of the following siblings to make them inactive
-    for (let i = index + 1; i < stars.length; i++) {
-      stars[i].classList.remove("star-active");
-      stars[i].classList.add("star-sad");
-    }
-  };
-
-  // Render the star icons for a given level
-  const renderStars = (count, unit) => {
-    const stars = [];
-    const index = availableUnitsList.filter(u => u.type !== UnitTypes.Idol).indexOf(unit);
-    const [selectedStars] = starHandler[index];
-    for (let i = 0; i < 3; i++) {
-      if (selectedStars-1 >= i) {
-        stars.push(<i key={i} handler={index} className="star star-active" onClick={handleStarClick}></i>);
-      } else {
-        stars.push(<i key={i} handler={index} className="star star-sad" onClick={handleStarClick}></i>);
-      }
-    }
-    return stars;
-  };
-
-  const renderStarsCreated = (count) => {
+  const renderStars = (count) => {
     const stars = [];
     for (let i = 0; i < 3; i++) {
       if (count-1 >= i) {
@@ -154,13 +128,14 @@ const UnitList = (data) => {
       <div className="created-wrapper">
         <h2>Призвані істоти:</h2>
         <ul className="unit-instance-list">
-          {createdUnits.filter(unit => unit.unitState.playerId === player.id).map((unit) => {
+          {player.units.map((unit) => {
             return (
               <li className="unit-instance" key={unit.id} onClick={() => data.data.moves.selectNewUnit(unit)}>
                 <h3 style={{color: playerColors[+player.id]}} >{unit.name} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", fontSize: 20}}>&#9432;</span></h3>
                 <div className="unit-stars">
-                  {unit.level !== undefined ? renderStarsCreated(unit.level) : ""}
+                  {unit.level !== undefined ? renderStars(unit.level) : ""}
                 </div>
+                <div className="unit-removal" onClick={() => data.data.moves.sellUnit(unit)} dangerouslySetInnerHTML={{ __html: `${unit.price}✾` }}></div>
               </li>
             );
           })}
@@ -169,9 +144,33 @@ const UnitList = (data) => {
     );
   };
 
+  const handleSummonButton = (unit) => {
+    let isDisable
+    let price = 0
+    if (unit.type === UnitTypes.Idol) {
+      isDisable = !!player.units.find(u => u.type === unit.type)
+      if (player.essence < unit.price) isDisable = true
+      price = unit.price
+    }
+    else {
+      isDisable = player.units.filter(u => u.type !== UnitTypes.Idol).length >= 6
+      price = unit.price + player.units.filter(u => u.type === unit.type).length + unit.level-1
+      if (hasKeyword(unit, UnitKeywords.LowCost)) price--;
+      if (player.essence < price) isDisable = true
+    }
+    return (
+      isDisable ?
+          <button className="unit-create-button disabled">
+            Викликати
+          </button> :
+          <button className="unit-create-button" onClick={() => handleCreateUnit(unit.id, price)} dangerouslySetInnerHTML={{ __html: `<span style="font-weight: bold">${price}✾</span></br>Викликати` }}>
+          </button>
+    )
+  }
+
   return (
     <div className="unit-list">
-      {ctx.phase === 'Setup' ?
+      {ctx.phase === 'Setup' || ctx.phase === 'Building' ?
         <div className="unit-types">
           <h2>Доступні істоти</h2>
           {renderUnitTypes()}

@@ -13,6 +13,9 @@ import {BoardUser} from "./BoardUser";
 import {BoardLogs} from "./BoardLogs";
 import UnitInfoPopup from "./UnitInfoPopup";
 import {UnstablePointsUI} from "./UnstablePointsUI";
+import {BoardBuildings} from "./BoardBuildings";
+import {BattleResults} from "./BattleResults";
+import {playerColors} from "../helpers/Constants";
 
 const style = {
   display: 'flex',
@@ -207,33 +210,44 @@ export function Board (props) {
   return (
       <div style={style}>
         <BoardUser props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
-        <HexGrid
-          levels={props.G.grid.levels}
-          style={hexStyle}
-          colorMap={colorMapSecret}
-          onClick={cellClicked}>
-          {
-            getInGameUnits(props.G, (unit) => (props.ctx.phase === "Setup") ? props.playerID && (unit.unitState.playerId === +props.playerID) : true).map((unit, i) => {
-              const { x, y, z } = unit.unitState.point;
-              return <Token x={x} y={y} z={z} key={i}>
-                <UnitUI
-                  unit={unit}
-                  highlight={(props.G.currentUnit && props.G.currentUnit.unitState.point && isSame(props.G.currentUnit.unitState.point)(unit.unitState.point))}
-                  markEnemy={setEnemyMarks(props, unit)}
-                  fightQueue={props.G.fightQueue}
-                  info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]}
-                />
-              </Token>
-            })
-          }
-          {
-            props.G.grid.unstablePoints.map((point, i) => {
-              return <Token x={point.x} y={point.y} z={point.z} key={i+10000}>
-                <UnstablePointsUI />
-              </Token>
-            })
-          }
-        </HexGrid>
+        {props.ctx.phase === 'Building' ?
+          <BoardBuildings style={hexStyle} props={props} />
+          : <></>
+        }
+        {props.ctx.phase === 'FinishBattle' ?
+          <BattleResults style={hexStyle} props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
+          : <></>
+        }
+        {(props.ctx.phase === 'Setup' || props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight') ?
+          <HexGrid
+            levels={props.G.grid.levels}
+            style={hexStyle}
+            colorMap={colorMapSecret}
+            onClick={cellClicked}>
+            {
+              getInGameUnits(props.G, (unit) => (props.ctx.phase === "Setup") ? props.playerID && (unit.unitState.playerId === +props.playerID) : true).map((unit, i) => {
+                const { x, y, z } = unit.unitState.point;
+                return <Token x={x} y={y} z={z} key={i}>
+                  <UnitUI
+                    unit={unit}
+                    highlight={(props.G.currentUnit && props.G.currentUnit.unitState.point && isSame(props.G.currentUnit.unitState.point)(unit.unitState.point))}
+                    markEnemy={setEnemyMarks(props, unit)}
+                    fightQueue={props.G.fightQueue}
+                    info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]}
+                  />
+                </Token>
+              })
+            }
+            {
+              props.G.grid.unstablePoints.map((point, i) => {
+                return <Token x={point.x} y={point.y} z={point.z} key={i+10000}>
+                  <UnstablePointsUI />
+                </Token>
+              })
+            }
+          </HexGrid>
+          : <></>
+        }
         <BoardLogs props={props} info={isPopupOpen}></BoardLogs>
         {
           props.G.winner !== undefined ?
@@ -244,11 +258,11 @@ export function Board (props) {
               transition={{ duration: 0.5 }}
             >
               <div className="winner-popup">
-                <h2>Congratulations {props.G.winner === -1 ? "it's a draw" : props.G.players.find(p => p.id === props.G.winner).name}!</h2>
-                <p>You are the winner!</p>
+                <h2>Вітаємо {props.G.winner === -1 ? "це нічия" : <span style={{color: playerColors[props.G.winner.id]}}>{props.G.players.find(p => p.id === props.G.winner.id).name}</span>}!</h2>
+                <p>Ти переміг!</p>
                 {props.isMultiplayer ?
-                  <div className="btn btn-primary"><Link to={"/"}>Restart</Link></div> :
-                  <div className="btn btn-primary" onClick={() => props.reset()}>Restart</div>
+                  <div className="btn btn-primary"><Link to={"/"}>Нова Гра</Link></div> :
+                  <div className="btn btn-primary" onClick={() => props.reset()}>Нова Гра</div>
                 }
               </div>
             </motion.div> :

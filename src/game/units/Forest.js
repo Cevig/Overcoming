@@ -8,7 +8,7 @@ export class UForest {
   static sirinName = "Сірін"
   static abasuName = "Абаси"
   static chygaysterName = "Чугайстер"
-  static getLesavka = (id, playerId, level, createPosition) => {
+  static getLesavka = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 3]
       if (level === 2) return [2, 6, 4]
@@ -18,12 +18,12 @@ export class UForest {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.afterHitActions.push({name: UnitSkills.Lesavka, qty: 99})
 
-    return getCreature(UForest.lesavkaName, UnitTypes.Prispeshnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UForest.lesavkaName, UnitTypes.Prispeshnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
-  static getBereginya = (id, playerId, level, createPosition) => {
+  static getBereginya = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [1, 3, 5]
-      if (level === 2) return [1, 4, 6]
+      if (level === 2) return [2, 4, 6]
       if (level === 3) return [3, 4, 6]
     }
 
@@ -38,10 +38,10 @@ export class UForest {
       }
     }
 
-    return getCreature(UForest.bereginyaName, UnitTypes.Ispolin, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UForest.bereginyaName, UnitTypes.Prominkor, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getSirin = (id, playerId, level, createPosition) => {
+  static getSirin = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 5]
       if (level === 2) return [3, 5, 5]
@@ -59,10 +59,10 @@ export class UForest {
       }
     }
 
-    return getCreature(UForest.sirinName, UnitTypes.Vestnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UForest.sirinName, UnitTypes.Vestnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getAbasu = (id, playerId, _, createPosition) => {
+  static getAbasu = (id, playerId, _, createPosition, __) => {
     const stat = [2, 8, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -72,7 +72,7 @@ export class UForest {
     return getIdol(UForest.abasuName, Biom.Forest, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
-  static getChygayster = (id, playerId, _, createPosition) => {
+  static getChygayster = (id, playerId, _, createPosition, __) => {
     const stat = [2, 7, 5]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

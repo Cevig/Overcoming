@@ -12,6 +12,7 @@ import {
   sortFightOrder
 } from '../helpers/Utils';
 import {
+  Buildings,
   DamageType,
   playerColors,
   UnitKeywords,
@@ -48,6 +49,16 @@ const setColorMap = (G, ctx, playerID) => {
     G.grid.colorMap['#dd666f'] = G.availablePoints
   }
 };
+
+export const onBuildingBegin = (G, ctx, events) => {
+  G.players.filter(p => p.isPlayerInGame).forEach(p => {
+    p.houses.forEach(h => {
+      if (h.name === Buildings.Svjatulushe.name) {
+        p.essence += 6 * h.qty;
+      }
+    })
+  })
+}
 
 export const onPositioningStart = (G, ctx, events) => {
   G.grid.unstablePoints = []
@@ -96,21 +107,17 @@ export const onPositioningStart = (G, ctx, events) => {
       result.push([a, G.grid.levels-1, b])
       result.push([b, G.grid.levels-1, a])
     }
-    for (let i = -1; i > -G.grid.levels+1; i--) {
+    for (let i = -1; i >= -G.grid.levels+1; i--) {
       const a = -i
       const b = G.grid.levels+i
       result.push([a, b, -G.grid.levels+1])
       result.push([b, a, -G.grid.levels+1])
     }
 
-    G.grid.unstablePoints = result.filter(arr => arr[1] !== G.grid.levels)
+    G.grid.unstablePoints = [...new Set(result)].filter(arr => arr[1] !== G.grid.levels)
       .filter(arr => arr[2] !== -G.grid.levels)
       .map(arr => createPoint(...arr))
   }
-
-  G.players.forEach(p => {
-    if (p.units.every(unit => unit.unitState.isInGame === false)) p.isInGame = false
-  })
 
   units.forEach(unit => {
     if (hasStatus(unit, UnitStatus.Poison)) {
@@ -172,14 +179,20 @@ export const onPositioningStart = (G, ctx, events) => {
     unit.unitState.isMovedLastPhase = false
     unit.unitState.initiatorFor = []
   })
+  G.players.filter(p => p.isPlayerInGame).forEach(p => {
+    if (p.units.every(unit => unit.unitState.isInGame === false)) p.isPlayerInBattle = false
+  })
+  if (G.players.filter(p => p.isPlayerInBattle).length <= 1) {
+    events.endPhase()
+  }
   return G
 }
 
 export const handleGameOver = (G, ctx) =>
-  (G.setupComplete === G.players.length) && ([...new Set(getInGameUnits(G).map(unit => unit.unitState.playerId))].length <= 1)
+  G.players.filter(p => p.isPlayerInGame).length <= 1 || G.players.filter(p => p.heals > 0).length <= 1
 
 export const onGameOver = (G, ctx) => {
-  const remainPlayers = [...new Set(getInGameUnits(G).map(unit => unit.unitState.playerId))]
+  const remainPlayers = G.players.filter(p => p.isPlayerInGame && p.heals > 0)
   G.winner = remainPlayers.length === 0 ? -1 : remainPlayers[0]
   return G
 }
@@ -213,10 +226,31 @@ export const onEndPositioningTurn = (G, ctx) => {
   return G
 }
 
+export const endPositioningPhase = (G) =>
+  (getInGameUnits(G, (unit) => unit.unitState.isClickable).length === 0)
+
+export const nextPhaseCondition = (G) =>
+  (G.players.filter(p => p.isPlayerInBattle).length <= 1) ? 'FinishBattle' : 'Fight'
+
 export const endFightPhase = (G, ctx) =>
   G.endFightPhase
 
-export const setInFightUnits = (G, ctx) => {
+export const setInFightUnits = (G, ctx, events) => {
+  if ((G.setupComplete === G.players.filter(p => p.isPlayerInGame).length) && (G.players.filter(p => p.isPlayerInBattle).length <= 1)) {
+    const remainPlayer = G.players.find(p => p.isPlayerInBattle)
+    if(remainPlayer) {
+      remainPlayer.wins++;
+      remainPlayer.essence += 5;
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${remainPlayer.name} перемагає у раунді та отримує 5✾`,
+      })
+    }
+    return G
+  }
   getInGameUnits(G).forEach(unit => {
     unit.unitState.isInFight = getNearestEnemies(G, unit.unitState).length > 0;
   });
@@ -261,7 +295,7 @@ export const setFightOrder = (G, events, ctx) => {
 export const postProcess = ({ G, ctx, events, playerID }) => {
   setColorMap(G, ctx, playerID);
 
-  if (ctx.phase !== 'Setup') {
+  if (ctx.phase === 'Positioning' || ctx.phase === 'Fight') {
     handleOnMoveActions({ G, ctx, events, playerID })
   }
   return G;

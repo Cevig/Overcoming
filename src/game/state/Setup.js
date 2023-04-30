@@ -1,12 +1,13 @@
 import {createPoint, shuffledBioms} from "../helpers/Utils";
-import {playerColors} from "../helpers/Constants";
+import {Buildings, playerColors} from "../helpers/Constants";
 
 const createPlayer = (id, name, bioms) => ({
   id,
   name,
   units: [],
   bioms: bioms,
-  isInGame: true,
+  isPlayerInBattle: false,
+  isPlayerInGame: true,
   availablePoints: [],
   currentUnit: null,
   grid: {
@@ -16,7 +17,13 @@ const createPlayer = (id, name, bioms) => ({
       [playerColors[2]]: startPositions[2],//green
       [playerColors[3]]: startPositions[3]//yellow
     }
-  }
+  },
+  heals: 10,
+  essence: 9,
+  killedUnits: 0,
+  wins: 0,
+  dealtDamage: false,
+  houses: [{...Buildings.Kapitoliy}, {...Buildings.Svjatulushe, qty: 1 }]
 });
 
 export const startPositions = [
@@ -28,7 +35,7 @@ export const startPositions = [
 
 export const setup = ({ ctx }) => ({
   currentUnit: null,
-  players: [...Array(ctx.numPlayers).keys()].map(num => createPlayer(num, `Player ${num+1}`, shuffledBioms[num])),
+  players: [...Array(ctx.numPlayers).keys()].map(num => createPlayer(num, `Гравець ${num+1}`, shuffledBioms[num])),
   grid: {
     levels: 4,
     colorMap: {
@@ -41,10 +48,13 @@ export const setup = ({ ctx }) => ({
   },
   availablePoints: [],
   setupComplete: 0,
+  buildingComplete: 0,
+  battleResultComplete: 0,
   moveOrder: 0,
   fightQueue: [],
   endFightTurn: false,
   endFightPhase: false,
+  endBattle: false,
   winner: undefined,
   currentActionUnitId: undefined,
   currentEnemySelectedId: undefined

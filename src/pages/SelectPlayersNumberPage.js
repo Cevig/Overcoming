@@ -5,9 +5,9 @@ import TemplatePage from "./TemplatePage";
 import {setPlayerNumber} from "../game/helpers/Utils";
 
 const info_texts = {
-  start2: "Create a new room for 2 players",
-  start3: "Create a new room for 3 players",
-  start4: "Create a new room for 4 players",
+  start2: "Створити нову кімнату для 2 гравців",
+  start3: "Створити нову кімнату для 3 гравців",
+  start4: "Створити нову кімнату для 4 гравців",
 };
 const api = new LobbyAPI();
 class SelectPlayersNumberPage extends Component {
@@ -68,7 +68,7 @@ class SelectPlayersNumberPage extends Component {
                 onClick={() => this.createGame(2)}
               >
                 <div className="card-inside">
-                  <h1>2 players</h1>
+                  <h1>2 гравця</h1>
                 </div>
               </div>
               <div
@@ -78,7 +78,7 @@ class SelectPlayersNumberPage extends Component {
                 onClick={() => this.createGame(3)}
               >
                 <div className="card-inside">
-                  <h1>3 players</h1>
+                  <h1>3 гравця</h1>
                 </div>
               </div>
               <div
@@ -88,7 +88,7 @@ class SelectPlayersNumberPage extends Component {
                 onClick={() => this.createGame(4)}
               >
                 <div className="card-inside">
-                  <h1>4 players</h1>
+                  <h1>4 гравця</h1>
                 </div>
               </div>
             </div>

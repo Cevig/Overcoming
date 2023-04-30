@@ -10,7 +10,7 @@ export class USteppe {
   static letavicaName = "Летавиця"
   static urkaName = "Ирка"
   static viyName = "Вій"
-  static getPolydnica = (id, playerId, level, createPosition) => {
+  static getPolydnica = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 4]
       if (level === 2) return [2, 6, 4]
@@ -28,9 +28,9 @@ export class USteppe {
       }
     }
 
-    return getCreature(USteppe.polydnicaName, UnitTypes.Prispeshnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(USteppe.polydnicaName, UnitTypes.Prispeshnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
-  static getMara = (id, playerId, level, createPosition) => {
+  static getMara = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 3, 5]
       if (level === 2) return [2, 4, 6]
@@ -43,10 +43,10 @@ export class USteppe {
       abilities.onMove.push({name: UnitSkills.MaraAura})
     }
 
-    return getCreature(USteppe.maraName, UnitTypes.Ispolin, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(USteppe.maraName, UnitTypes.Prominkor, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getLetavica = (id, playerId, level, createPosition) => {
+  static getLetavica = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 3, 4]
       if (level === 2) return [2, 4, 4]
@@ -62,10 +62,10 @@ export class USteppe {
       }
     }
 
-    return getCreature(USteppe.letavicaName, UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(USteppe.letavicaName, UnitTypes.Vestnick, Biom.Steppe, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getUrka = (id, playerId, _, createPosition) => {
+  static getUrka = (id, playerId, _, createPosition, __) => {
     const stat = [3, 7, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -76,7 +76,7 @@ export class USteppe {
     return getIdol(USteppe.urkaName, Biom.Steppe, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
-  static getViy = (id, playerId, _, createPosition) => {
+  static getViy = (id, playerId, _, createPosition, __) => {
     const stat = [2, 10, 2]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

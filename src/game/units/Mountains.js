@@ -8,7 +8,7 @@ export class UMountains {
   static veshizaSorokaName = "Вещіця-сорока"
   static psoglavName = "Псоглав"
   static halaName = "Хала"
-  static getBeytir = (id, playerId, level, createPosition) => {
+  static getBeytir = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 3]
       if (level === 2) return [2, 6, 4]
@@ -18,9 +18,9 @@ export class UMountains {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.statUpdates.attack.push(UnitSkills.chainDamage)
 
-    return getCreature(UMountains.beytirName, UnitTypes.Prispeshnick, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UMountains.beytirName, UnitTypes.Prispeshnick, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
-  static getGarzyk = (id, playerId, level, createPosition) => {
+  static getGarzyk = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 3, 5]
       if (level === 2) return [2, 4, 6]
@@ -36,10 +36,10 @@ export class UMountains {
       }
     }
 
-    return getCreature(UMountains.garzykName, UnitTypes.Ispolin, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UMountains.garzykName, UnitTypes.Prominkor, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getVeshizaSoroka = (id, playerId, level, createPosition) => {
+  static getVeshizaSoroka = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
       if (level === 2) return [3, 5, 3]
@@ -56,10 +56,10 @@ export class UMountains {
       }
     }
 
-    return getCreature(UMountains.veshizaSorokaName, UnitTypes.Vestnick, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UMountains.veshizaSorokaName, UnitTypes.Vestnick, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getPsoglav = (id, playerId, _, createPosition) => {
+  static getPsoglav = (id, playerId, _, createPosition, __) => {
     const stat = [3, 7, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -67,7 +67,7 @@ export class UMountains {
     return getIdol(UMountains.psoglavName, Biom.Mountains, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
-  static getHala = (id, playerId, _, createPosition) => {
+  static getHala = (id, playerId, _, createPosition, __) => {
     const stat = [3, 7, 5]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

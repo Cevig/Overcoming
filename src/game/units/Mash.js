@@ -8,7 +8,7 @@ export class UMash {
   static mavkaName = "Мавка"
   static begemotName = "Бегемот"
   static fekstName = "Фекст"
-  static getMohovik = (id, playerId, level, createPosition) => {
+  static getMohovik = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 4]
       if (level === 2) return [2, 5, 4]
@@ -26,9 +26,9 @@ export class UMash {
       }
     }
 
-    return getCreature(UMash.mohovikName, UnitTypes.Prispeshnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UMash.mohovikName, UnitTypes.Prispeshnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
-  static getDrekavaz = (id, playerId, level, createPosition) => {
+  static getDrekavaz = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 3, 5]
       if (level === 2) return [2, 4, 6]
@@ -44,10 +44,10 @@ export class UMash {
       }
     }
 
-    return getCreature(UMash.drekavazName, UnitTypes.Ispolin, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UMash.drekavazName, UnitTypes.Prominkor, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getMavka = (id, playerId, level, createPosition) => {
+  static getMavka = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
       if (level === 2) return [2, 5, 3]
@@ -64,10 +64,10 @@ export class UMash {
       }
     }
 
-    return getCreature(UMash.mavkaName, UnitTypes.Vestnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UMash.mavkaName, UnitTypes.Vestnick, Biom.Mash, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getBegemot = (id, playerId, _, createPosition) => {
+  static getBegemot = (id, playerId, _, createPosition, __) => {
     const stat = [3, 8, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -76,7 +76,7 @@ export class UMash {
     return getIdol(UMash.begemotName, Biom.Mash, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
-  static getFekst = (id, playerId, _, createPosition) => {
+  static getFekst = (id, playerId, _, createPosition, __) => {
     const stat = [2, 7, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

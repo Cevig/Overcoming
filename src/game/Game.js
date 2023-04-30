@@ -3,7 +3,10 @@ import {setup} from './state/Setup';
 import {
   cleanFightPhase,
   endFightPhase,
+  endPositioningPhase,
   handleGameOver,
+  nextPhaseCondition,
+  onBuildingBegin,
   onEndPositioningTurn,
   onGameOver,
   onPositioningStart,
@@ -12,8 +15,8 @@ import {
   setInFightUnits
 } from './state/PostProcess';
 import {
+  cleanRound,
   endFightTurnCondition,
-  getInGameUnits,
   onEndFightTurn,
   skipTurnIfNotActive
 } from "./helpers/Utils";
@@ -24,6 +27,33 @@ export const Overcoming = {
   setup: setup,
   moves,
   phases: {
+    Building: {
+      onBegin: ({ G, ctx, events }) => { onBuildingBegin(G, ctx, events) },
+      turn: {
+        activePlayers: {
+          all: { stage: 'purchase' }
+        },
+        stages: {
+          purchase: {
+            moves: {
+              buyHouse: { move: moves.buyHouseMove, noLimit: true },
+              sellHouse: { move: moves.sellHouseMove, noLimit: true },
+              summonUnit: { move: moves.summonUnit, noLimit: true },
+              sellUnit: { move: moves.sellUnitMove, noLimit: true },
+              complete: { move: moves.completeBuilding, noLimit: true },
+              surrender: moves.leaveGame,
+            }
+          },
+
+          finishBuildingStage: {
+            moves: {}
+          }
+        }
+      },
+      endIf: ({ G }) => (G.buildingComplete === G.players.filter(p => p.isPlayerInGame).length),
+      start: true,
+      next: "Setup"
+    },
     Setup: {
       turn: {
         activePlayers: {
@@ -35,7 +65,7 @@ export const Overcoming = {
               selectNewUnit: moves.selectNewUnit,
               selectOldUnit: moves.selectOldUnit,
               complete: { move: moves.complete, noLimit: true },
-              summonUnit: { move: moves.summonUnit, noLimit: true }
+              surrender: moves.leaveGame,
             },
             next: 'placeUnit'
           },
@@ -44,7 +74,6 @@ export const Overcoming = {
               moveUnit: moves.moveUnit,
               removeUnit: moves.removeUnit,
               complete: { move: moves.complete, noLimit: true },
-              summonUnit: { move: moves.summonUnit, noLimit: true },
               chooseBlockSideAction: { move: moves.chooseBlockSideActionMove, noLimit: true }
             },
             next: 'pickUnit'
@@ -62,25 +91,23 @@ export const Overcoming = {
         },
         onMove: (data) => postProcess(data)
       },
-      endIf: ({ G }) => (G.setupComplete === G.players.length),
-      start: true,
+      endIf: ({ G }) => (G.setupComplete === G.players.filter(p => p.isPlayerInGame).length),
       next: "Positioning"
     },
-
     Positioning: {
-      onBegin: ({ G, ctx }) => { onPositioningStart(G, ctx) },
-      next: "Fight",
-      endIf: ({ G }) => (getInGameUnits(G, (unit) => unit.unitState.isClickable).length === 0),
-      onEnd: ({ G, ctx }) => { setInFightUnits(G, ctx) },
+      onBegin: ({ G, ctx, events }) => { onPositioningStart(G, ctx, events) },
+      next: ({G}) => (nextPhaseCondition(G)),
+      endIf: ({ G }) => (endPositioningPhase(G)),
+      onEnd: ({ G, ctx, events }) => { setInFightUnits(G, ctx, events) },
       turn: {
         onBegin: ({ G, ctx, events }) => { skipTurnIfNotActive(G, ctx, events) },
         activePlayers: {
           currentPlayer: { stage: 'pickUnitOnBoard' }
         },
         order: {
-          first: ({ G, ctx }) => G.moveOrder % G.players.filter(p => p.isInGame).length,
-          next: ({ G, ctx }) => (ctx.playOrderPos + 1) % G.players.filter(p => p.isInGame).length,
-          playOrder: ({ G, ctx }) => G.players.filter(p => p.isInGame).map(p => p.id)
+          first: ({ G, ctx }) => G.moveOrder % G.players.filter(p => p.isPlayerInBattle).length,
+          next: ({ G, ctx }) => (ctx.playOrderPos + 1) % G.players.filter(p => p.isPlayerInBattle).length,
+          playOrder: ({ G, ctx }) => G.players.filter(p => p.isPlayerInBattle).map(p => p.id)
         },
         onMove: (data) => postProcess(data),
         onEnd: ({ G, ctx }) => { onEndPositioningTurn(G, ctx) },
@@ -175,7 +202,6 @@ export const Overcoming = {
         }
       }
     },
-
     Fight: {
       onBegin: ({ G, events, ctx }) => { setFightOrder(G, events, ctx) },
       next: "Positioning",
@@ -253,6 +279,28 @@ export const Overcoming = {
           },
         }
       }
+    },
+    FinishBattle: {
+      turn: {
+        activePlayers: {
+          all: { stage: 'resultsStage' }
+        },
+        stages: {
+          resultsStage: {
+            moves: {
+              nextRound: { move: moves.nextRoundMove, noLimit: true },
+              damagePlayer: { move: moves.damagePlayerMove, noLimit: true }
+            }
+          },
+
+          finishBattleResultStage: {
+            moves: {}
+          }
+        }
+      },
+      endIf: ({ G }) => (G.battleResultComplete === G.players.filter(p => p.isPlayerInGame).length),
+      next: "Building",
+      onEnd: ({ G, ctx, events }) => { cleanRound(G, ctx, events) }
     }
   },
   endIf: ({ G, ctx }) => (handleGameOver(G, ctx)),

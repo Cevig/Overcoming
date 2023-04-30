@@ -809,7 +809,7 @@ const handleLethalGrab = ({G, ctx}, {killerId, target, thisUnit}) => {
     thisUnit.initiative++
   } else if (target.type === UnitTypes.Prispeshnick) {
     thisUnit.heals++
-  } else if (target.type === UnitTypes.Ispolin) {
+  } else if (target.type === UnitTypes.Prominkor) {
     thisUnit.power++
   } else if (target.type === UnitTypes.Vestnick) {
     thisUnit.initiative++

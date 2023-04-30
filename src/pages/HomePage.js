@@ -3,8 +3,8 @@ import "./styles/homePage.css";
 import TemplatePage from "./TemplatePage";
 
 const info_texts = {
-  start: "Start new game",
-  join: "Join a room using the room code",
+  start: "Почати нову гру",
+  join: "Приєднатися використовуючи код запрошення",
 };
 class HomePage extends Component {
   state = {
@@ -42,7 +42,7 @@ class HomePage extends Component {
                 onClick={() => { history.push("/new") }}
               >
                 <div className="card-inside">
-                  <h1>new game</h1>
+                  <h1>нова гра</h1>
                 </div>
               </div>
               <div
@@ -52,7 +52,7 @@ class HomePage extends Component {
                 onClick={() => { history.push("/join"); }}
               >
                 <div className="card-inside">
-                  <h1>join game</h1>
+                  <h1>зайти до</h1>
                 </div>
               </div>
             </div>

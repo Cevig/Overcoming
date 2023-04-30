@@ -8,7 +8,7 @@ export const playerColors = [
 export const UnitTypes = Object.freeze({
   Idol: "Ідол",
   Prispeshnick: "Поплічник",
-  Ispolin: "Промінькор",
+  Prominkor: "Промінькор",
   Vestnick: "Вісник"
 })
 
@@ -72,6 +72,8 @@ export const UnitKeywords = Object.freeze({
   AlwaysCounterDamage: "Нескінченна відповідь",
   FullDeathDamage: "Повна відповідь",
   RestrictedRoundDamage: "Обмежена Конусна атака",
+  LowCost: "Знижка на виклик",
+  AdditionalEssence: "Додадткова нагорода",
 })
 
 export const UnitSkills = Object.freeze({
@@ -122,4 +124,141 @@ export const UnitSkills = Object.freeze({
   SetElokoCurse: "Зачарувати істоту",
   SetItOnFire: "Вижигаюче полум'я",
   ReturnDamage: "Повернути урон"
+})
+
+export const BuildingsType = Object.freeze({
+  Peace: "Мирні Споруди",
+  Vivtar1: "Вівтари Поплічників",
+  Vivtar2: "Вівтари Промінькорів",
+  Vivtar3: "Вівтари Вісників",
+})
+export const Buildings = Object.freeze({
+  Kapitoliy: {
+    name: "Капітолій",
+    description: "Головний об'єкт гравця. Має 20 життя на старті. Гравець вибуває з гри якщо Капітолій буде зруйнован",
+    price: 0,
+    qty: 1,
+    type: BuildingsType.Peace,
+    sellPrice: 0
+  },
+  Svjatulushe: {
+    name: "Святилище",
+    description: "Приносить 6✾ на початку раунда",
+    price: 15,
+    qty: 2,
+    type: BuildingsType.Peace,
+    sellPrice: 10
+  },
+  Veja: {
+    name: "Вежа",
+    description: "Подвоює урон по Капітолію ворога",
+    price: 10,
+    qty: 1,
+    type: BuildingsType.Peace,
+    sellPrice: 5
+  },
+  Pamjatnuk: {
+    name: "Пам'ятник",
+    description: "Блокує ворожі вилазки. Противник не отримує ніякого доходу при вилазці",
+    price: 15,
+    qty: 1,
+    type: BuildingsType.Peace,
+    sellPrice: 7
+  },
+  Zmicnenja: {
+    name: "Зміцнення",
+    description: "Віднімає 2 життя у кожної істоти після атаки на Ваш Капітолій",
+    price: 6,
+    qty: 1,
+    type: BuildingsType.Peace,
+    sellPrice: 3
+  },
+  NebesnaBrama: {
+    name: "Небесна брама",
+    description: "Підвищує дохід з вилазок - +2 ✾ за кожну істоту у вилазці",
+    price: 10,
+    qty: 1,
+    type: BuildingsType.Peace,
+    sellPrice: 5
+  },
+  VivtarPoplichnukiv: {
+    name: `Вівтар "${UnitTypes.Prispeshnick}" &#9733;`,
+    description: `Дозволяє призивати істот типу ${UnitTypes.Prispeshnick} першого рівня`,
+    price: 5,
+    qty: 1,
+    type: BuildingsType.Vivtar1,
+    sellPrice: 2
+  },
+  VivtarPoplichnukiv2: {
+    name: `Вівтар "${UnitTypes.Prispeshnick}" &#9733; &#9733;`,
+    description: `Дозволяє призивати істот типу ${UnitTypes.Prispeshnick} другого рівня`,
+    price: 10,
+    qty: 1,
+    type: BuildingsType.Vivtar1,
+    sellPrice: 5
+  },
+  VivtarPoplichnukiv3: {
+    name: `Вівтар "${UnitTypes.Prispeshnick}" &#9733; &#9733; &#9733;`,
+    description: `Дозволяє призивати істот типу ${UnitTypes.Prispeshnick} третього рівня`,
+    price: 15,
+    qty: 1,
+    type: BuildingsType.Vivtar1,
+    sellPrice: 7
+  },
+  VivtarProminkoriv: {
+    name: `Вівтар "${UnitTypes.Prominkor}" &#9733;`,
+    description: `Дозволяє призивати істот типу ${UnitTypes.Prominkor} першого рівня`,
+    price: 5,
+    qty: 1,
+    type: BuildingsType.Vivtar2,
+    sellPrice: 2
+  },
+  VivtarProminkoriv2: {
+    name: `Вівтар "${UnitTypes.Prominkor}" &#9733; &#9733;`,
+    description: `Дозволяє призивати істот типу ${UnitTypes.Prominkor} другого рівня`,
+    price: 10,
+    qty: 1,
+    type: BuildingsType.Vivtar2,
+    sellPrice: 5
+  },
+  VivtarProminkoriv3: {
+    name: `Вівтар "${UnitTypes.Prominkor}" &#9733; &#9733; &#9733;`,
+    description: `Дозволяє призивати істот типу ${UnitTypes.Prominkor} третього рівня`,
+    price: 15,
+    qty: 1,
+    type: BuildingsType.Vivtar2,
+    sellPrice: 7
+  },
+  VivtarVisnukiv: {
+    name: `Вівтар "${UnitTypes.Vestnick}" &#9733;`,
+    description: `Дозволяє призивати істот типу ${UnitTypes.Vestnick} першого рівня`,
+    price: 5,
+    qty: 1,
+    type: BuildingsType.Vivtar3,
+    sellPrice: 2
+  },
+  VivtarVisnukiv2: {
+    name: `Вівтар "${UnitTypes.Vestnick}" &#9733; &#9733;`,
+    description: `Дозволяє призивати істот типу ${UnitTypes.Vestnick} другого рівня`,
+    price: 10,
+    qty: 1,
+    type: BuildingsType.Vivtar3,
+    sellPrice: 5
+  },
+  VivtarVisnukiv3: {
+    name: `Вівтар "${UnitTypes.Vestnick}" &#9733; &#9733; &#9733;`,
+    description: `Дозволяє призивати істот типу ${UnitTypes.Vestnick} третього рівня`,
+    price: 15,
+    qty: 1,
+    type: BuildingsType.Vivtar3,
+    sellPrice: 7
+  },
+  Kapushe: {
+    name: "Капище",
+    description: "Дозволяє призивати будь-якого Ідола, що належить до контрольованих біомів",
+    price: 4,
+    qty: 1,
+    type: BuildingsType.Peace,
+    sellPrice: 0
+  },
 })

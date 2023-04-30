@@ -1,5 +1,5 @@
 import {PLAYER_NUMBER} from "../../config";
-import {Biom} from "./Constants";
+import {Biom, UnitKeywords, UnitTypes} from "./Constants";
 import {
   handleUnitStatsUpdateInAttack,
   handleUnitStatsUpdateInDefence
@@ -7,6 +7,7 @@ import {
 import {handleAbility} from "../state/UnitSkills";
 import {gameLog} from "./Log";
 import {biomComparison} from "./UnitPriority";
+import {createUnitObject} from "../units/Unit";
 
 export const createPoint = (...pos) => {
   const [x, y, z] = pos;
@@ -162,6 +163,9 @@ export const shuffledBioms = getPlayersBioms()
 
 export const endFightTurnCondition = (G, ctx) => {
   if (G.endFightTurn) {
+    if (G.fightQueue.length === 0) {
+      return {next: ctx.currentPlayer}
+    }
     const unit = getUnitById(G, G.fightQueue[0].unitId)
     if ((G.fightQueue.length > 1) && (unit !== undefined) && (unit.unitState.isClickable === false)) {
       return {next: (G.fightQueue[1].playerId).toString()}
@@ -197,6 +201,37 @@ export const onEndFightTurn = (G, ctx) => {
   G.endFightPhase = G.fightQueue.length === 0
   G.currentActionUnitId = undefined
   G.currentEnemySelectedId = undefined
+  return G
+}
+
+export const cleanRound = (G, ctx, events) => {
+  G.availablePoints = [];
+  G.currentUnit = null;
+  G.setupComplete = 0;
+  G.buildingComplete = 0;
+  G.battleResultComplete = 0;
+  G.moveOrder = 0;
+  G.fightQueue = [];
+  G.endFightTurn = false;
+  G.endFightPhase = false;
+  G.endBattle = false;
+  G.winner = undefined;
+  G.currentActionUnitId = undefined;
+  G.currentEnemySelectedId = undefined;
+  G.grid.levels = 4;
+  G.grid.unstablePoints = [];
+
+  G.players.forEach(p => {
+    if (p.isPlayerInGame) {
+      p.isPlayerInBattle = false
+      p.availablePoints = []
+      p.currentUnit = null
+      p.dealtDamage = false
+      p.units = p.units.filter(u => u.unitState.isInGame).map(u =>
+        createUnitObject(Math.random().toString(10).slice(2), p.id, u.biom, u.type, u.unitState.createPosition, u.level, u.price)
+      )
+    }
+  })
   return G
 }
 
@@ -325,6 +360,19 @@ export const handleUnitDeath = (data, target, killer = null) => {
     handleAbility(data, skill.name, {unitId: target.id})
   })
   target.unitState.point = null
+  if (killer) {
+    let essence = hasKeyword(killer, UnitKeywords.AdditionalEssence) ? 4 : 2
+    if (target.type === UnitTypes.Idol) essence += 2;
+    G.players[killer.unitState.playerId].essence += 2;
+    G.players[killer.unitState.playerId].killedUnits++;
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${G.players[killer.unitState.playerId].name} отримує ${essence}✾`,
+    })
+  }
 }
 
 export const setEnemyMarks = (props, unit) =>
@@ -341,4 +389,15 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
 
   if (ctx.phase === 'Positioning') thisUnit.unitState.isMovedLastPhase = true
   thisUnit.unitState.initiatorFor = initiatorFor
+}
+
+export const cleanPlayer = (player) => {
+  player.isPlayerInBattle = false
+  player.isPlayerInGame = false
+  player.availablePoints = []
+  player.currentUnit = null
+  player.heals = 0
+  player.essence = 0
+  player.houses = []
+  player.units = []
 }

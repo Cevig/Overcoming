@@ -8,17 +8,18 @@ export class UWater {
   static aidaharName = "Айдахар"
   static balorName = "Балор"
   static vodyanoiName = "Водяний"
-  static getLerneyskiyRak = (id, playerId, level, createPosition) => {
+  static getLerneyskiyRak = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 2, 4]
       if (level === 2) return [2, 4, 4]
       if (level === 3) return [3, 5, 4]
     }
-    //TODO: add low cost ability
+    const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.keywords.push(UnitKeywords.LowCost)
 
-    return getCreature(UWater.lerneyskiyRakName, UnitTypes.Prispeshnick, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition))
+    return getCreature(UWater.lerneyskiyRakName, UnitTypes.Prispeshnick, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
-  static getBykavaz = (id, playerId, level, createPosition) => {
+  static getBykavaz = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 3, 4]
       if (level === 2) return [2, 4, 5]
@@ -34,10 +35,10 @@ export class UWater {
       }
     }
 
-    return getCreature(UWater.bykavazName, UnitTypes.Ispolin, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UWater.bykavazName, UnitTypes.Prominkor, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getAidahar = (id, playerId, level, createPosition) => {
+  static getAidahar = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
       if (level === 2) return [3, 5, 4]
@@ -54,10 +55,10 @@ export class UWater {
       }
     }
 
-    return getCreature(UWater.aidaharName, UnitTypes.Vestnick, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities)
+    return getCreature(UWater.aidaharName, UnitTypes.Vestnick, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
 
-  static getBalor = (id, playerId, _, createPosition) => {
+  static getBalor = (id, playerId, _, createPosition, __) => {
     const stat = [3, 7, 1]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -66,7 +67,7 @@ export class UWater {
     return getIdol(UWater.balorName, Biom.Water, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 
-  static getVodyanoi = (id, playerId, _, createPosition) => {
+  static getVodyanoi = (id, playerId, _, createPosition, __) => {
     const stat = [2, 7, 5]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

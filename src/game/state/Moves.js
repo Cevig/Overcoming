@@ -1,4 +1,5 @@
 import {
+  cleanPlayer,
   createPoint,
   getInGameUnits,
   getNearestAllies,
@@ -19,6 +20,7 @@ import {
 } from '../helpers/Utils';
 import {startPositions} from "./Setup";
 import {
+  Buildings,
   DamageType,
   UnitKeywords,
   UnitSkills,
@@ -30,9 +32,17 @@ import {gameLog} from "../helpers/Log";
 
 export const moves = {
 
-  summonUnit: ({G, ctx, events, playerID}, currentUnit) => {
+  summonUnit: ({G, ctx, events, playerID}, currentUnit, price) => {
+    currentUnit.price = price
     G.players[+playerID].units.push(currentUnit)
+    G.players[+playerID].essence = G.players[+playerID].essence - price
   },
+
+  sellUnitMove: ({G, ctx, events, playerID}, currentUnit) => {
+    G.players[+playerID].units = G.players[+playerID].units.filter(u => u.id !== currentUnit.id)
+    G.players[+playerID].essence = G.players[+playerID].essence + currentUnit.price
+  },
+
   selectNewUnit: ({G, ctx, events, playerID}, currentUnit) => {
     const player = G.players[+playerID]
     if (player.units.filter(unit => unit.unitState.isInGame === false).length > 0) {
@@ -476,10 +486,34 @@ export const moves = {
     events.endTurn()
   },
 
+  completeBuilding: ({G, ctx, events, playerID}) => {
+    const player = G.players.find(p => p.id === +playerID);
+    if (player.units.filter(u => u.type === UnitTypes.Idol).length > 0 && player.units.filter(u => u.type !== UnitTypes.Idol).length > 0) {
+      G.buildingComplete++
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +playerID,
+        phase: ctx.phase,
+        text: `Гравець ${+playerID+1} завершив будування`,
+      })
+      events.setStage('finishBuildingStage')
+    } else {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +playerID,
+        phase: ctx.phase,
+        text: `Гравцю ${+playerID+1} необхідно викликати Ідола та хоч одну істоту`,
+      })
+    }
+  },
+
   complete: ({G, ctx, events, playerID}) => {
     if (getInGameUnits(G, (unit) => (unit.unitState.playerId === +playerID) && (unit.type === UnitTypes.Idol)).length > 0) {
       G.setupComplete++
       G.players[+playerID].availablePoints = []
+      G.players[+playerID].isPlayerInBattle = true
       gameLog.addLog({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
@@ -497,6 +531,18 @@ export const moves = {
         text: `Гравцю ${+playerID+1} необхідно розмістити Ідола на полі`,
       })
     }
+  },
+
+  nextRoundMove: ({G, ctx, events, playerID}) => {
+    G.battleResultComplete++
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +playerID,
+      phase: ctx.phase,
+      text: `Гравець ${+playerID+1} готов перйти до наступного раунду`,
+    })
+    events.setStage('finishBattleResultStage')
   },
 
   skipTurn: ({ G, events, ctx }) => {
@@ -980,4 +1026,74 @@ export const moves = {
     G.availablePoints = []
     events.endTurn()
   },
+
+  ///////////////////////////////////////////////////////////
+
+  buyHouseMove: ({ G, ctx, events, playerID }, house) => {
+    const player = G.players.find(p => p.id === +playerID);
+    player.essence = player.essence - house.price
+    const playerHouse = player.houses.find(h => h.name === house.name)
+    if (playerHouse) playerHouse.qty++;
+    else player.houses.push({...house, qty: 1})
+  },
+
+  sellHouseMove: ({ G, ctx, events, playerID }, house) => {
+    const player = G.players.find(p => p.id === +playerID);
+    player.essence = player.essence + house.sellPrice
+    const playerHouse = player.houses.find(h => h.name === house.name)
+    if (playerHouse.qty > 1) playerHouse.qty--;
+    else player.houses = player.houses.filter(h => h.name !== house.name)
+  },
+
+  leaveGame: ({ G, ctx, events, playerID }) => {
+    const player = G.players.find(p => p.id === +playerID);
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${player.name} не подолав цей виклик та покинув гру`,
+    })
+
+    cleanPlayer(player)
+  },
+
+  damagePlayerMove: ({ G, ctx, events, playerID }, pId) => {
+    const enemyPlayer = G.players.find(p => p.id === pId);
+    const thisPlayer = G.players.find(p => p.id === +playerID);
+
+    let dmg = thisPlayer.units.filter(u => u.unitState.isInGame).reduce((val, unit) => val + unit.power, 0)
+    if(thisPlayer.houses.find(h => h.name === Buildings.Veja.name)) dmg *=2;
+    enemyPlayer.heals -= dmg
+    thisPlayer.dealtDamage = true
+
+    gameLog.addLog({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${thisPlayer.name} завдає ${dmg} урону по Гравцю ${enemyPlayer.id+1}`,
+    })
+
+    if (enemyPlayer.houses.find(h => h.name === Buildings.Zmicnenja.name)) {
+      thisPlayer.units.filter(u => u.unitState.isInGame).forEach(u => {
+        u.heals -= 2;
+        if (u.heals <= 0) {
+          handleUnitDeath({G: G, ctx: ctx, events: events}, u)
+        }
+      })
+    }
+
+    if (enemyPlayer.heals <= 0) {
+      gameLog.addLog({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${enemyPlayer.name} не подолав цей виклик та був знищений`,
+      })
+
+      cleanPlayer(enemyPlayer)
+    }
+  }
 };

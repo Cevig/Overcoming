@@ -22,14 +22,22 @@
 
 .unit-row {
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 10px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  margin-bottom: 12px;
+  position: relative;
 }
 
 .unit-row h3{
-  margin: 0 7px 0 0;
+  margin: 0 0 5px 0;
   font-size: 1.25em;
+}
+
+.unit-details {
+  display: flex;
+  align-self: normal;
+  align-items: center;
 }
 
 .unit-name {
@@ -41,7 +49,7 @@
 
 .unit-stars {
   display: flex;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 }
 
@@ -82,11 +90,23 @@
 .unit-create-button {
   background-color: #4b4b4b;
   color: #fff;
-  padding: 10px 20px;
+  padding: 5px 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   margin-left: auto;
+  font-size: 16px;
+  position: absolute;
+  right: 0;
+}
+
+.unit-create-button.disabled{
+  cursor: not-allowed;
+  background-color: #ababab;
+}
+
+.unit-create-button.disabled:hover {
+  background-color: #ababab;
 }
 
 .unit-create-button:hover {
@@ -110,6 +130,9 @@
   margin-bottom: 10px;
   width: fit-content;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  margin-right: 10px;
 }
 
 .unit-instance:hover{
@@ -127,6 +150,10 @@
   color: #666;
 }
 
+.unit-instance > .unit-stars {
+  margin-bottom: 10px;
+}
+
 .unit-types > h2 {
   margin: 0 0 10px 0;
   text-align: center;
@@ -134,4 +161,21 @@
 
 .created-wrapper h2 {
   text-align: center;
+}
+
+.unit-removal {
+  padding: 3px 5px;
+  border: 1px solid #999999;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 35px;
+  text-align: center;
+  color: black;
+  margin: auto auto 0 auto;
+}
+
+.unit-removal:hover {
+  background-color: black;
+  color: white;
 }
