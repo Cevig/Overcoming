@@ -47,6 +47,7 @@ export const getUnitState = (unitId, playerId, power, heals, initiative, createP
   isClickable: true,
   isInGame: false,
   isInFight: false,
+  isInSortie: false,
   skippedTurn: false,
   isCounterAttacked: false,
   isMovedLastPhase: false,

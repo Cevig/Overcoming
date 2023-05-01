@@ -262,3 +262,11 @@ export const Buildings = Object.freeze({
     sellPrice: 0
   },
 })
+
+export const SortieTypes = Object.freeze({
+  A: "Неперевершена перевага - +4✾ +3✾ від потерпілого",
+  B: "Чисельне придушення - +4✾",
+  C: "Сили рівні - +0✾",
+  D: "Чисельна меншість - -0✾",
+  E: "Повний розгром - -3✾",
+})

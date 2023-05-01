@@ -60,7 +60,11 @@ export class BoardBuildings extends React.Component {
     }
     return (
       <div className="buildings-type">
-        <div className="buildings-type-name">{type}</div>
+        <div className="buildings-type-name">{type} {
+          type !== BuildingsType.Peace ?
+            <div style={{fontSize: 18, marginTop: 5}}>[{player.bioms[0]}, {player.bioms[1]}]</div> :
+            <></>
+        }</div>
         <div className="buildings-type-content">
           {availableBuildings.map((house, i) => {
             return (

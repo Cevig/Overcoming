@@ -23,7 +23,8 @@ const createPlayer = (id, name, bioms) => ({
   killedUnits: 0,
   wins: 0,
   dealtDamage: false,
-  houses: [{...Buildings.Kapitoliy}, {...Buildings.Svjatulushe, qty: 1 }]
+  houses: [{...Buildings.Kapitoliy}, {...Buildings.Svjatulushe, qty: 1 }],
+  sortie: []
 });
 
 export const startPositions = [
@@ -57,5 +58,6 @@ export const setup = ({ ctx }) => ({
   endBattle: false,
   winner: undefined,
   currentActionUnitId: undefined,
-  currentEnemySelectedId: undefined
+  currentEnemySelectedId: undefined,
+  serverMsgLog: []
 });

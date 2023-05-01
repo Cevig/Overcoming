@@ -927,14 +927,13 @@ const handleThrowOver = ({G, events, ctx}, {unitId, enemyId}) => {
   const vector = {x: thisUnitPoint.x - enemyPoint.x, y: thisUnitPoint.y - enemyPoint.y, z: thisUnitPoint.z - enemyPoint.z}
   const newEnemyPoint = createPoint(...[thisUnitPoint.x + vector.x, thisUnitPoint.y + vector.y, thisUnitPoint.z + vector.z])
 
-  if (getInGameUnits(G).find(unit => isSame(unit.unitState.point)(newEnemyPoint)) === undefined) G.availablePoints = [newEnemyPoint]
+  getInGameUnits(G).find(unit => isSame(unit.unitState.point)(newEnemyPoint)) === undefined ? G.availablePoints = [newEnemyPoint] : G.availablePoints = []
 
   if (G.availablePoints.length > 0) {
     G.currentUnit = enemy
     events.setActivePlayers({ currentPlayer: 'throwOverAction' });
   } else {
     thisUnit.unitState.isClickable = false
-    G.availablePoints = []
     G.currentUnit = null
     G.endFightTurn = true
   }

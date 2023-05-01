@@ -63,7 +63,7 @@ export class UForest {
   }
 
   static getAbasu = (id, playerId, _, createPosition, __) => {
-    const stat = [2, 8, 4]
+    const stat = [2, 6, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.onDeath.push({name: UnitSkills.UtilizeDeath})

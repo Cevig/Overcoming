@@ -130,7 +130,7 @@ const UnitList = (data) => {
         <ul className="unit-instance-list">
           {player.units.map((unit) => {
             return (
-              <li className="unit-instance" key={unit.id} onClick={() => data.data.moves.selectNewUnit(unit)}>
+              <li className={getSummonedUnitClass(unit)} key={unit.id} onClick={() => data.data.moves.selectNewUnit(unit)}>
                 <h3 style={{color: playerColors[+player.id]}} >{unit.name} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", fontSize: 20}}>&#9432;</span></h3>
                 <div className="unit-stars">
                   {unit.level !== undefined ? renderStars(unit.level) : ""}
@@ -143,6 +143,14 @@ const UnitList = (data) => {
       </div>
     );
   };
+
+  const getSummonedUnitClass = (u) => {
+    let className = 'unit-instance';
+    if (u.unitState.isInGame && u.heals > 0) className += ' in-battle'
+    if (u.heals <= 0) className += ' already-dead'
+    if (u.unitState.isInSortie) className += ' in-sortie'
+    return className
+  }
 
   const handleSummonButton = (unit) => {
     let isDisable

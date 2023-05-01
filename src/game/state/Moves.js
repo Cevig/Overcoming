@@ -45,14 +45,17 @@ export const moves = {
 
   selectNewUnit: ({G, ctx, events, playerID}, currentUnit) => {
     const player = G.players[+playerID]
-    if (player.units.filter(unit => unit.unitState.isInGame === false).length > 0) {
+    if (currentUnit.unitState.isInSortie) {
+      player.availablePoints = []
+    } else {
       if (currentUnit.type === UnitTypes.Idol)
         player.availablePoints = [startPositions[+playerID][0]]
       else
         player.availablePoints = startPositions[+playerID].slice(1, startPositions[+playerID].length)
-      player.currentUnit = currentUnit
-      events.endStage();
     }
+    player.currentUnit = currentUnit
+    events.endStage();
+
   },
   selectOldUnit: ({ G, ctx, events, playerID }, currentUnit) => {
     const player = G.players[+playerID]
@@ -226,7 +229,10 @@ export const moves = {
     const unit = player.units.find(unit => unit.id === player.currentUnit.id)
     unit.unitState.point = null
     unit.unitState.isInGame = false
+    unit.unitState.isInSortie = false
+    player.sortie = player.sortie.filter(su => su.unitId !== unit.id)
     player.availablePoints = []
+    player.currentUnit = null
     events.endStage();
   },
 
@@ -510,7 +516,9 @@ export const moves = {
   },
 
   complete: ({G, ctx, events, playerID}) => {
-    if (getInGameUnits(G, (unit) => (unit.unitState.playerId === +playerID) && (unit.type === UnitTypes.Idol)).length > 0) {
+    const player = G.players.find(p => p.id === +playerID);
+    if (player.units.filter(u => u.type === UnitTypes.Idol && u.unitState.isInGame).length > 0 &&
+      player.units.filter(u => u.type !== UnitTypes.Idol && u.unitState.isInGame).length > 0) {
       G.setupComplete++
       G.players[+playerID].availablePoints = []
       G.players[+playerID].isPlayerInBattle = true
@@ -1025,6 +1033,23 @@ export const moves = {
     thisUnit.unitState.isClickable = false
     G.availablePoints = []
     events.endTurn()
+  },
+
+  unitToSortie: ({ G, ctx, events, playerID }, pId) => {
+    const player = G.players[+playerID]
+    const unit = player.units.find(unit => unit.id === player.currentUnit.id)
+    const unitInSortie = player.sortie.find(su => unit.id === su.unitId)
+    if (!unitInSortie) {
+      player.sortie.push({unitId: unit.id, unitName: unit.name, playerId: pId})
+      unit.unitState.isInSortie = true
+    } else {
+      if (unitInSortie.playerId !== pId) {
+        unitInSortie.playerId = pId
+      }
+    }
+    player.currentUnit = null
+    player.availablePoints = []
+    events.endStage();
   },
 
   ///////////////////////////////////////////////////////////

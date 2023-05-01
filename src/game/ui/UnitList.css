@@ -139,6 +139,18 @@
   background-color: #e5e5e5;
 }
 
+.unit-instance.in-battle {
+  background-color: #fddede;
+}
+
+.unit-instance.already-dead {
+  background-color: #705a5b;
+}
+
+.unit-instance.in-sortie {
+  background-color: #89c5b2;
+}
+
 .unit-instance h3 {
   font-size: 1.25em;
   margin: 0;
@@ -178,4 +190,30 @@
 .unit-removal:hover {
   background-color: black;
   color: white;
+}
+
+.sortie-add {
+  cursor: pointer;
+  border: 1px solid darkgray;
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 50%;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  text-align: center;
+  font-size: 22px;
+}
+
+.sortie-add:hover {
+  background-color: white;
+}
+
+.sortie-title {
+  font-size: 24px;
+  text-align: center;
+  font-weight: bold;
+  border-bottom: 1px solid darkgrey;
+  margin-bottom: 10px
 }

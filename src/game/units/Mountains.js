@@ -60,7 +60,7 @@ export class UMountains {
   }
 
   static getPsoglav = (id, playerId, _, createPosition, __) => {
-    const stat = [3, 7, 4]
+    const stat = [3, 6, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.allTimeActions.push({name: UnitSkills.pauseToRecover, qty: 2})

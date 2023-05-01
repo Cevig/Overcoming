@@ -1,4 +1,5 @@
 import {
+  calculateSortie,
   createPoint,
   getInGameUnits,
   getNearestAllies,
@@ -15,13 +16,13 @@ import {
   Buildings,
   DamageType,
   playerColors,
+  SortieTypes,
   UnitKeywords,
   UnitStatus,
   UnitTypes
 } from '../helpers/Constants';
 import {startPositions} from "./Setup";
 import {handleOnMoveActions} from "./GameActions";
-import {gameLog} from "../helpers/Log";
 
 const setColorMap = (G, ctx, playerID) => {
   if (ctx.phase === 'Setup') {
@@ -55,6 +56,13 @@ export const onBuildingBegin = (G, ctx, events) => {
     p.houses.forEach(h => {
       if (h.name === Buildings.Svjatulushe.name) {
         p.essence += 6 * h.qty;
+        G.serverMsgLog.push({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `${p.name} отримав ${6 * h.qty}✾ завдяки ${Buildings.Svjatulushe.name}`,
+        })
       }
     })
   })
@@ -65,7 +73,7 @@ export const onPositioningStart = (G, ctx, events) => {
   G.endFightPhase = false
   const units = getInGameUnits(G)
   if((G.moveOrder >= 2) && (G.moveOrder % 2 === 0)) {
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -121,7 +129,7 @@ export const onPositioningStart = (G, ctx, events) => {
 
   units.forEach(unit => {
     if (hasStatus(unit, UnitStatus.Poison)) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -160,7 +168,7 @@ export const onPositioningStart = (G, ctx, events) => {
       })
     }
     if (hasStatus(unit, UnitStatus.Stun)) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -241,7 +249,7 @@ export const setInFightUnits = (G, ctx, events) => {
     if(remainPlayer) {
       remainPlayer.wins++;
       remainPlayer.essence += 5;
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -276,7 +284,7 @@ export const setFightOrder = (G, events, ctx) => {
           }
         });
       } else {
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -290,6 +298,33 @@ export const setFightOrder = (G, events, ctx) => {
     .sort((u1, u2) => sortFightOrder(u1, u2))
     .reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
   G.endFightPhase = G.fightQueue.length === 0
+}
+
+export const handleSortieRewards = (G, events, ctx) => {
+  G.players.filter(p => p.isPlayerInGame).forEach(p => {
+    let essence = 0
+    const result = calculateSortie(G, p)
+    result.forEach(res => {
+      if (res.type === SortieTypes.A) {
+        essence += 7;
+      } else if (res.type === SortieTypes.B) {
+        essence += 4;
+      } else if (res.type === SortieTypes.E) {
+        essence -= 3
+      }
+
+      if (essence !== 0) {
+        p.essence += essence
+        G.serverMsgLog.push({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `${p.name} отримує ${essence}✾ від вилазок!`,
+        })
+      }
+    })
+  })
 }
 
 export const postProcess = ({ G, ctx, events, playerID }) => {

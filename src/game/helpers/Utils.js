@@ -1,5 +1,5 @@
 import {PLAYER_NUMBER} from "../../config";
-import {Biom, UnitKeywords, UnitTypes} from "./Constants";
+import {Biom, SortieTypes, UnitKeywords, UnitTypes} from "./Constants";
 import {
   handleUnitStatsUpdateInAttack,
   handleUnitStatsUpdateInDefence
@@ -227,7 +227,7 @@ export const cleanRound = (G, ctx, events) => {
       p.availablePoints = []
       p.currentUnit = null
       p.dealtDamage = false
-      p.units = p.units.filter(u => u.unitState.isInGame).map(u =>
+      p.units = p.units.filter(u => u.heals > 0).map(u =>
         createUnitObject(Math.random().toString(10).slice(2), p.id, u.biom, u.type, u.unitState.createPosition, u.level, u.price)
       )
     }
@@ -345,7 +345,7 @@ export const handleUnitDeath = (data, target, killer = null) => {
     turn: ctx.turn,
     player: +ctx.currentPlayer,
     phase: ctx.phase,
-    text: `Було вбито ${target.name} гравця ${target.unitState.playerId+1}`,
+    text: `Було вбито ${target.name} Гравця ${target.unitState.playerId+1}`,
   })
 
   const unitsWithOnDeath = getInGameUnits(G, unit => unit.abilities.onDeath.length)
@@ -360,6 +360,7 @@ export const handleUnitDeath = (data, target, killer = null) => {
     handleAbility(data, skill.name, {unitId: target.id})
   })
   target.unitState.point = null
+  if (target.heals > 0) target.heals = 0;
   if (killer) {
     let essence = hasKeyword(killer, UnitKeywords.AdditionalEssence) ? 4 : 2
     if (target.type === UnitTypes.Idol) essence += 2;
@@ -399,5 +400,26 @@ export const cleanPlayer = (player) => {
   player.heals = 0
   player.essence = 0
   player.houses = []
+  player.sortie = []
   player.units = []
+}
+
+export const calculateSortie = (G, p1) => {
+  const results = []
+  G.players.filter(eP => eP.id !== p1.id && eP.isPlayerInGame).map(ep => {
+    const pUnits = p1.sortie.filter(su => su.playerId === ep.id)
+    const epUnits = ep.sortie.filter(su => su.playerId === p1.id)
+    if (pUnits.length - epUnits.length >= 2) {
+      results.push({playerId: ep.id, type: SortieTypes.A})
+    } else if (pUnits.length - epUnits.length > 0) {
+      results.push({playerId: ep.id, type: SortieTypes.B})
+    } else if (pUnits.length - epUnits.length === 0) {
+      results.push({playerId: ep.id, type: SortieTypes.C})
+    } else if (epUnits.length - pUnits.length >= 2) {
+      results.push({playerId: ep.id, type: SortieTypes.E})
+    } else if (epUnits.length - pUnits.length > 0) {
+      results.push({playerId: ep.id, type: SortieTypes.D})
+    }
+  })
+  return results
 }

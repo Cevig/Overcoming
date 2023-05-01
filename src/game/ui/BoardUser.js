@@ -3,6 +3,7 @@ import {playerColors, UnitSkills} from "../helpers/Constants";
 import UnitList from "./UnitList";
 import "./BoardUser.css";
 import {getNearestEnemies, getUnitById} from "../helpers/Utils";
+import UnitSortie from "./UnitSortie";
 
 const styles = {
   moves: {
@@ -58,6 +59,10 @@ export class BoardUser extends React.Component {
     return (
       <div style={styles.mainStyles}>
         <UnitList data={props} info={this.props.info}/>
+        {props.ctx.phase === 'Setup' ?
+          <UnitSortie data={props} info={this.props.info}/>
+          : <></>
+        }
         {(props.ctx.phase !== 'Setup' && props.ctx.phase !== 'Building') ?
           <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24, marginTop: 15}}>
             <span style={{color: "#444444"}}>Хід:</span> Гравець {player ? player.id + 1 : "Невідомий"}

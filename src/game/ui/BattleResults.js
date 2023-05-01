@@ -1,5 +1,6 @@
 import React from 'react';
 import {playerColors} from "../helpers/Constants";
+import {calculateSortie} from "../helpers/Utils";
 
 export const BattleResults = (props) => {
   const data = props.props
@@ -34,6 +35,25 @@ export const BattleResults = (props) => {
     )
   }
 
+  const showSortieUnits = (p) => {
+    return (
+      <div style={{textAlign: "center", marginTop: 10, borderTop: "1px solid darkgrey"}}>
+        <div style={{fontSize: 20}}>Результати Вилазки</div>
+        <div>
+          {calculateSortie(data.G, p).map((res, i) => {
+            return (
+              <div style={{marginBottom: 10}}>
+                <div style={{color: playerColors[res.playerId], fontSize: 16}}>{data.G.players[res.playerId].name}:</div>
+                <div style={{fontSize: 16}}>{res.type}</div>
+              </div>
+            )
+          })
+          }
+        </div>
+      </div>
+    )
+  }
+
   const addDamageButton = (p) => {
     if (p.id !== player.id && player.isPlayerInBattle && !player.dealtDamage) {
       return (
@@ -56,6 +76,7 @@ export const BattleResults = (props) => {
                 <div>Здобуто перемог: {p.wins}</div>
                 <div>Вбито істот: {p.killedUnits}</div>
                 {showRemainUnits(p)}
+                {showSortieUnits(p)}
               </div>
               {addDamageButton(p)}
             </div>

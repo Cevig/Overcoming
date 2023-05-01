@@ -20,6 +20,13 @@ export class BoardLogs extends React.Component {
       props.sendChatMessage(message)
       sentChatMessages.push(message.id)
     })
+    if (+props.playerID === 0) {
+      const serverMsg = props.G.serverMsgLog.filter(log => sentChatMessages.find(mes => mes === log.id) === undefined)
+      serverMsg.forEach(message => {
+        props.sendChatMessage(message)
+        sentChatMessages.push(message.id)
+      })
+    }
     return (
       <div style={style}>
         {props.ctx.phase === 'Building' || props.ctx.phase === 'Setup' ?

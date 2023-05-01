@@ -5,6 +5,7 @@ import {
   endFightPhase,
   endPositioningPhase,
   handleGameOver,
+  handleSortieRewards,
   nextPhaseCondition,
   onBuildingBegin,
   onEndPositioningTurn,
@@ -21,6 +22,7 @@ import {
   skipTurnIfNotActive
 } from "./helpers/Utils";
 import {GAME_NAME} from "../config";
+import {TurnOrder} from "boardgame.io/core";
 
 export const Overcoming = {
   name: GAME_NAME,
@@ -73,6 +75,7 @@ export const Overcoming = {
             moves: {
               moveUnit: moves.moveUnit,
               removeUnit: moves.removeUnit,
+              unitToSortie: moves.unitToSortie,
               complete: { move: moves.complete, noLimit: true },
               chooseBlockSideAction: { move: moves.chooseBlockSideActionMove, noLimit: true }
             },
@@ -281,10 +284,12 @@ export const Overcoming = {
       }
     },
     FinishBattle: {
+      onBegin: ({ G, events, ctx }) => { handleSortieRewards(G, events, ctx) },
       turn: {
         activePlayers: {
           all: { stage: 'resultsStage' }
         },
+        order: TurnOrder.RESET,
         stages: {
           resultsStage: {
             moves: {
