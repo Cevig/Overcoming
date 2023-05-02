@@ -71,12 +71,17 @@ export class BoardLogs extends React.Component {
           </div>
           : <></>
         }
-        <div className="log-container" dangerouslySetInnerHTML={
-          { __html: props.chatMessages.map(note => `<div>> <span style="color: ${playerColors[note.payload.player]}">(${note.payload.turn})</span> - <span>${note.payload.text}</span></div>`).join('')}
-        } />
-        {/*<div className="log-container" dangerouslySetInnerHTML={*/}
-        {/*  { __html: gameLog.log.map(note => `<div>> <span style="color: ${playerColors[note.player]}">(${note.turn})</span> - <span>${note.text}</span></div>`).join('')}*/}
-        {/*} />*/}
+        <div className="log-container">
+          <div style={{display: "flex", flexDirection: "column"}} dangerouslySetInnerHTML={
+            { __html: props.chatMessages.map(note => `<div>> <span style="color: ${playerColors[note.payload.player]}">(${note.payload.turn})</span> - <span>${note.payload.text}</span></div>`).join('')}
+          } />
+        </div>
+        {/*<div className="log-container">*/}
+        {/*  <div style={{display: "flex", flexDirection: "column"}} dangerouslySetInnerHTML={*/}
+        {/*    { __html: props.G.serverMsgLog.map(note => `<div>> <span style="color: ${playerColors[note.player]}">(${note.turn})</span> - <span>${note.text}</span></div>`).join('')}*/}
+        {/*  } />*/}
+        {/*</div>*/}
+
       </div>
     )
   }

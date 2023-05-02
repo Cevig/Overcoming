@@ -73,7 +73,7 @@ export const BattleResults = (props) => {
       <div className="results-p-container">
         {data.G.players.filter(p => p.isPlayerInGame).map((p, i) => {
           return (
-            <div key={i+data.playerID}>
+            <div key={Math.random().toString(10).slice(2)}>
               <div style={{color: playerColors[p.id]}} className="results-p-name">{p.name}</div>
               <div className="player-info" style={{fontSize: 24}}>
                 <div><span style={{color: "red"}}>{p.heals}&hearts;</span> [<span style={{color: "black", fontWeight: "bold"}}>{p.essence}✾</span>]</div>

@@ -3,6 +3,8 @@
   font-size: 18px;
   max-height: 700px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 .log-container > div {

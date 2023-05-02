@@ -71,6 +71,15 @@ export const onBuildingBegin = (G, ctx, events) => {
 export const onPositioningStart = (G, ctx, events) => {
   G.grid.unstablePoints = []
   G.endFightPhase = false
+
+  G.players.filter(p => p.isPlayerInGame).forEach(p => {
+    if (p.units.every(unit => unit.unitState.isInGame === false)) p.isPlayerInBattle = false
+  })
+  if (G.players.filter(p => p.isPlayerInBattle).length <= 1) {
+    events.endPhase()
+    return G;
+  }
+
   const units = getInGameUnits(G)
   if((G.moveOrder >= 2) && (G.moveOrder % 2 === 0)) {
     G.serverMsgLog.push({

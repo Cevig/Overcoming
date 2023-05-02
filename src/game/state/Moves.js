@@ -884,6 +884,10 @@ export const moves = {
       }
     })
 
+    if (enemy.heals <= 0) {
+      handleUnitDeath({G: G, ctx: ctx, events: events}, enemy, thisUnit)
+    }
+
     G.currentUnit = null
     thisUnit.unitState.isClickable = false
     G.availablePoints = []
