@@ -15,6 +15,7 @@ import {
   hasStatus,
   isNotSame,
   isSame,
+  onEndFightTurn,
   resolveUnitsInteraction
 } from "../helpers/Utils";
 import {USteppe} from "../units/Steppe";
@@ -27,7 +28,6 @@ import {
   UnitStatus,
   UnitTypes
 } from "../helpers/Constants";
-import {gameLog} from "../helpers/Log";
 
 export const handleAbility = (data, skill, eventData) => {
   const abilitiesMap = {
@@ -82,7 +82,7 @@ const handlePolydnicaSurroundings = ({G, ctx, events}, {unitId}) => {
     enemyUnits.forEach(enemy => {
       const enemiesForEnemy = getNearestEnemies(G, enemy.unitState).filter(unit => unit.name === USteppe.polydnicaName)
       if (enemiesForEnemy.length >= 3) {
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -195,7 +195,7 @@ const handleHalaAura = ({G, ctx, events}, {unitId}) => {
     if (nearHalas.length > 0 && allyAbility === undefined) {
       ally.abilities.statUpdates.defence.push({name: UnitSkills.RaidBlock, origin: false})
 
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -206,7 +206,7 @@ const handleHalaAura = ({G, ctx, events}, {unitId}) => {
     if (nearHalas.length === 0 && allyAbility && allyAbility.origin === false) {
       ally.abilities.statUpdates.defence = ally.abilities.statUpdates.defence.filter(skill => skill.name !== UnitSkills.RaidBlock)
 
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -258,7 +258,7 @@ const handleWholenessOnDefence = ({G, ctx}, {unitId, updates}) => {
       const decreasingStatusPower = updates.status.find(status => status.name === UnitStatus.PowerDown)
       if(decreasingStatusPower !== undefined) {
         decreasingStatusPower.qty = -1
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -274,7 +274,7 @@ const handleWholenessOnDefence = ({G, ctx}, {unitId, updates}) => {
       const decreasingStatusInit = updates.status.find(status => status.name === UnitStatus.InitiativeDown || status.name === UnitStatus.InitiativeDownAura)
       if(decreasingStatusInit !== undefined) {
         decreasingStatusInit.qty = -1
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -293,7 +293,7 @@ const handleBlockStatusesOnDefence = ({G, ctx}, {unitId, updates}) => {
   if (updates.status) {
     updates.status.forEach(status => {
       if (NegativeStatues.find(ns => ns === status.name) && status.qty > 0) {
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -322,7 +322,7 @@ const handleRaidBlockOnDefence = ({G, ctx}, {unitId, updates}) => {
     updates.damage = 0
     if (updates.status) updates.status = []
 
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -339,7 +339,7 @@ const handleAntiVestnickOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
     const thisUnit = getUnitById(G, unitId)
     updates.damage = Math.max(updates.damage - 1, 0)
 
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -355,7 +355,7 @@ const handleReduceDamageOnDefence = ({G, ctx}, {unitId, updates}) => {
     const thisUnit = getUnitById(G, unitId)
     updates.damage = updates.damage - 1
 
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -372,7 +372,7 @@ const handleDeadlyDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
     if (thisUnit.unitState.baseStats.heals > thisUnit.heals) {
       updates.damage = 99
 
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -392,7 +392,7 @@ const handleDoubleDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
     if (enemy.heals > thisUnit.heals) {
       updates.damage = updates.damage * 2
 
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -412,7 +412,7 @@ const handleDoubleDamageInDefenceOnDefence = ({G, ctx}, {unitId, enemyId, update
     if (enemy.type !== UnitTypes.Idol && enemy.unitState.initiatorFor.find(id => thisUnit.id === id)) {
       updates.damage = updates.damage * 2
 
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -433,7 +433,7 @@ const handleReturnDamageOnDefence = ({G, ctx, events}, {unitId, enemyId, updates
     if (dmg > 0) {
       const enemy = getUnitById(G, enemyId)
 
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -465,7 +465,7 @@ const handleBlockDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
       if (isSame(enemy.unitState.point)(newPoint) || isSame(enemy.unitState.point)(newPoint2)) {
         updates.damage = 0
 
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -490,7 +490,7 @@ const handleInjuredDamageOnDefence = ({G, ctx, events}, {unitId, updates}) => {
         power: -1
       }
     })
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -561,7 +561,7 @@ const handleAddStunEffectOnAttack = ({G, ctx, events}, {unitId, enemyId, updates
 const handleDecreaseInitiativeOnAttack = ({G, ctx}, {unitId, updates}) => {
   if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Chained || updates.damageType === DamageType.Raid) {
     updates.initiative = 1
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -597,7 +597,7 @@ const handleRoundDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates})
       .filter(ally => getNearestEnemies(G, ally.unitState).find(u => u.id === unitId))
     if (getNearEnemiesToBoth.length > 0) {
       getNearEnemiesToBoth.forEach(enemyAlly => {
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -638,7 +638,7 @@ const handleThroughDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates
       .find(unit => isSame(newEnemyPoint)(unit.unitState.point))
 
     if (newEnemy) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -700,7 +700,7 @@ const handleChainDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates})
       processChainedEnemies(enemy, thisUnit.unitState.playerId, enemyId)
       impactedUnits.forEach(id => {
         const currentEnemy = getUnitById(G, id)
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -735,7 +735,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
     G.currentUnit = null
     unit.unitState.isClickable = false
     events.endTurn()
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -771,7 +771,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
       if (vengeanceTarget) {
         if (raidEnemies.find(enemy => enemy.id === vengeanceTarget.id)) {
           raidEnemies = [vengeanceTarget]
-          gameLog.addLog({
+          G.serverMsgLog.push({
             id: Math.random().toString(10).slice(2),
             turn: ctx.turn,
             player: +ctx.currentPlayer,
@@ -780,7 +780,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
           })
         } else {
           raidEnemies = []
-          gameLog.addLog({
+          G.serverMsgLog.push({
             id: Math.random().toString(10).slice(2),
             turn: ctx.turn,
             player: +ctx.currentPlayer,
@@ -814,7 +814,7 @@ const handleLethalGrab = ({G, ctx}, {killerId, target, thisUnit}) => {
   } else if (target.type === UnitTypes.Vestnick) {
     thisUnit.initiative++
   }
-  gameLog.addLog({
+  G.serverMsgLog.push({
     id: Math.random().toString(10).slice(2),
     turn: ctx.turn,
     player: +ctx.currentPlayer,
@@ -828,7 +828,7 @@ const handleLethalBlow = ({G, ctx, events}, {thisUnit, target}) => {
 
   const nearEnemies = getNearestEnemies(G, thisUnit.unitState)
   if (nearEnemies.length > 0) {
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -887,7 +887,7 @@ const handleInstantKillOnCounterOnAttack = ({G, ctx, events}, {unitId, enemyId, 
     const enemy = getUnitById(G, enemyId)
     if (enemy.type !== UnitTypes.Idol) {
       updates.damage = 99;
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -914,7 +914,7 @@ const handleLesavka = ({G, events, ctx}, {unitId, enemyId}) => {
     thisUnit.unitState.isClickable = false
     G.availablePoints = []
     G.currentUnit = null
-    G.endFightTurn = true
+    onEndFightTurn(G, ctx)
   }
 }
 
@@ -935,7 +935,7 @@ const handleThrowOver = ({G, events, ctx}, {unitId, enemyId}) => {
   } else {
     thisUnit.unitState.isClickable = false
     G.currentUnit = null
-    G.endFightTurn = true
+    onEndFightTurn(G, ctx)
   }
 }
 
@@ -945,7 +945,7 @@ const handleUtilizeDeath = ({G, ctx, events}, {thisUnit, target}) => {
     if (action) {
       action.qty++
 
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,

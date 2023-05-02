@@ -53,9 +53,10 @@ export const UnitStatus = Object.freeze({
   VengeanceTarget: "Ціль для мстивих",
   Unarmed: "Від'ємно озброєний",
   Fired: "Згорілий",
+  Cursed: "Проклятий",
 })
 
-export const NegativeStatues = [UnitStatus.Freeze, UnitStatus.Stun, UnitStatus.InitiativeDown, UnitStatus.InitiativeDownAura, UnitStatus.HealsDownAura, UnitStatus.PowerDown, UnitStatus.Poison, UnitStatus.Unfocused, UnitStatus.Vengeance, UnitStatus.Unarmed, UnitStatus.Fired]
+export const NegativeStatues = [UnitStatus.Freeze, UnitStatus.Stun, UnitStatus.InitiativeDown, UnitStatus.InitiativeDownAura, UnitStatus.HealsDownAura, UnitStatus.PowerDown, UnitStatus.Poison, UnitStatus.Unfocused, UnitStatus.Vengeance, UnitStatus.Unarmed, UnitStatus.Fired, UnitStatus.Cursed]
 
 export const UnitKeywords = Object.freeze({
   Sneaky: "Спритність",
@@ -269,4 +270,6 @@ export const SortieTypes = Object.freeze({
   C: "Сили рівні - +0✾",
   D: "Чисельна меншість - -0✾",
   E: "Повний розгром - -3✾",
+  X: `Ворожа вилазка не має ефекту через ${Buildings.Pamjatnuk.name} - +0✾`,
+  Y: `Вилазка була невдалою через ${Buildings.Pamjatnuk.name} - +0✾`
 })

@@ -15,6 +15,7 @@ import {
   hasStatus,
   isNotSame,
   isSame,
+  onEndFightTurn,
   removeStatus,
   resolveUnitsInteraction
 } from '../helpers/Utils';
@@ -291,7 +292,7 @@ export const moves = {
     thisUnit.unitState.isClickable = false
     G.availablePoints = []
     G.currentUnit = null
-    G.endFightTurn = true
+    onEndFightTurn(G, ctx)
   },
 
   throwOverActionMove: ({G, ctx, events}, point) => {
@@ -308,7 +309,7 @@ export const moves = {
     thisUnit.unitState.isClickable = false
     G.availablePoints = []
     G.currentUnit = null
-    G.endFightTurn = true
+    onEndFightTurn(G, ctx)
   },
 
   moveAgain: ({G, ctx, events}, point) => {
@@ -390,14 +391,14 @@ export const moves = {
       unit.unitState.isClickable = false
       G.currentUnit = null
       G.availablePoints = []
-      G.endFightTurn = true
+      onEndFightTurn(G, ctx)
     }
   },
 
   raidAttack: ({G, events, ctx}, point) => {
     const enemy = getInGameUnits(G).find((unit) => isSame(unit.unitState.point)(point))
     const thisUnit = getUnitById(G, G.currentUnit.id)
-    let raidDmg = G.currentUnit.power > 0 ? Math.trunc(G.currentUnit.power / 2) : 0
+    let raidDmg = G.currentUnit.power > 0 ? Math.max(Math.trunc(G.currentUnit.power / 2), 1) : 0
     if (hasKeyword(thisUnit, UnitKeywords.AdditionalSacrificeRaid)) raidDmg = raidDmg + 1;
 
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -536,7 +537,7 @@ export const moves = {
         turn: ctx.turn,
         player: +playerID,
         phase: ctx.phase,
-        text: `Гравцю ${+playerID+1} необхідно розмістити Ідола на полі`,
+        text: `Гравцю ${+playerID+1} необхідно розмістити Ідола та хоч одну істоту на полі`,
       })
     }
   },
@@ -581,7 +582,7 @@ export const moves = {
     }
     G.currentUnit = null
     G.availablePoints = []
-    G.endFightTurn = true
+    onEndFightTurn(G, ctx)
   },
 
   skipHook: ({ G, ctx }) => {
@@ -589,7 +590,7 @@ export const moves = {
     unit.unitState.isClickable = false
     G.availablePoints = []
     G.currentUnit = null
-    G.endFightTurn = true
+    onEndFightTurn(G, ctx)
   },
 
   healAllyActionMove: ({ G, ctx, events }) => {
@@ -643,12 +644,13 @@ export const moves = {
     G.currentUnit = null
     unit.unitState.isClickable = false
     G.availablePoints = []
-    ctx.phase === 'Positioning' ? events.endTurn() : G.endFightTurn = true
+    ctx.phase === 'Positioning' ? events.endTurn() : onEndFightTurn(G, ctx)
   },
 
   curseActionMove:  ({ G, ctx, events }) => {
     G.availablePoints = getInGameUnits(G, unit => unit.unitState.playerId !== G.currentUnit.unitState.playerId)
       .filter(unit => unit.type !== UnitTypes.Idol)
+      .filter(unit => !hasStatus(unit, UnitStatus.Cursed))
       .map(unit => unit.unitState.point)
     G.availablePoints.push(G.currentUnit.unitState.point)
     G.currentActionUnitId = G.currentUnit.id
@@ -692,7 +694,7 @@ export const moves = {
         updates: {
           initiative: 1,
           power: 1,
-          status: [{name: UnitStatus.InitiativeDown, qty: 1}, {name: UnitStatus.PowerDown, qty: 1}]
+          status: [{name: UnitStatus.InitiativeDown, qty: 1}, {name: UnitStatus.PowerDown, qty: 1}, {name: UnitStatus.Cursed, qty: 99}]
         }
       });
       gameLog.addLog({
@@ -702,6 +704,7 @@ export const moves = {
         phase: ctx.phase,
         text: `${unit.name} викорстовує здібність та насилає прокляття. Залишилось ${actionQty} заряди`,
       })
+      G.availablePoints = G.availablePoints.filter(isNotSame(enemy.unitState.point))
     }
 
     if (actionQty <= 0) {
@@ -884,7 +887,7 @@ export const moves = {
     G.currentUnit = null
     thisUnit.unitState.isClickable = false
     G.availablePoints = []
-    ctx.phase === 'Positioning' ? events.endTurn() : G.endFightTurn = true
+    ctx.phase === 'Positioning' ? events.endTurn() : onEndFightTurn(G, ctx)
   },
 
   replaceUnitsActionMove: ({ G, ctx, events }) => {
@@ -941,7 +944,7 @@ export const moves = {
     G.currentUnit = null
     thisUnit.unitState.isClickable = false
     G.availablePoints = []
-    ctx.phase === 'Positioning' ? events.endTurn() : G.endFightTurn = true
+    ctx.phase === 'Positioning' ? events.endTurn() : onEndFightTurn(G, ctx)
   },
 
   pauseToRecoverActionMove: ({ G, ctx, events }) => {

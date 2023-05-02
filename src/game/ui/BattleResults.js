@@ -1,5 +1,5 @@
 import React from 'react';
-import {playerColors} from "../helpers/Constants";
+import {Buildings, playerColors} from "../helpers/Constants";
 import {calculateSortie} from "../helpers/Utils";
 
 export const BattleResults = (props) => {
@@ -24,7 +24,7 @@ export const BattleResults = (props) => {
         <div>
           {units.map((u, i) => {
             return (
-              <div className="unit-instance" key={i} style={{border: "none", padding: 0, margin: "0 auto"}}>
+              <div className="unit-instance" key={u.id} style={{border: "none", padding: 0, margin: "0 auto"}}>
                 <h3 style={{color: playerColors[+p.id], fontSize: 18}} >{u.name} <span onClick={togglePopup.bind(this, u)} style={{color: "grey", fontSize: 19}}>&#9432;</span></h3>
               </div>
             )
@@ -50,6 +50,10 @@ export const BattleResults = (props) => {
           })
           }
         </div>
+        {p.houses.find(h => h.name === Buildings.NebesnaBrama.name) !== undefined ?
+          <div style={{fontSize: 20}}>Дохід "{Buildings.NebesnaBrama.name}": <span style={{fontWeight: "bold"}}>+{2 * p.units.filter(u => u.unitState.isInSortie).length}✾</span></div>
+          : <></>
+        }
       </div>
     )
   }
@@ -69,7 +73,7 @@ export const BattleResults = (props) => {
       <div className="results-p-container">
         {data.G.players.filter(p => p.isPlayerInGame).map((p, i) => {
           return (
-            <div key={i}>
+            <div key={i+data.playerID}>
               <div style={{color: playerColors[p.id]}} className="results-p-name">{p.name}</div>
               <div className="player-info" style={{fontSize: 24}}>
                 <div><span style={{color: "red"}}>{p.heals}&hearts;</span> [<span style={{color: "black", fontWeight: "bold"}}>{p.essence}✾</span>]</div>

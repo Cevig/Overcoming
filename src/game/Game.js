@@ -18,7 +18,7 @@ import {
 import {
   cleanRound,
   endFightTurnCondition,
-  onEndFightTurn,
+  onEndFightTurnAfter,
   skipTurnIfNotActive
 } from "./helpers/Utils";
 import {GAME_NAME} from "../config";
@@ -220,7 +220,7 @@ export const Overcoming = {
         },
         onMove: (data) => postProcess(data),
         endIf: ({ G, ctx }) => (endFightTurnCondition(G, ctx)),
-        onEnd: ({ G, ctx }) => { onEndFightTurn(G, ctx) },
+        onEnd: ({ G, ctx }) => { onEndFightTurnAfter(G, ctx) },
         stages: {
           pickUnitForAttack: {
             moves: {

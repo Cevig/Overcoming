@@ -9,7 +9,7 @@ const UnitSortie = (props) => {
     return (
       <div className="sortie-info">
         {player.sortie.filter(su => su.playerId === p.id).map((su, i) => {
-          return (<span key={i} style={{fontSize: 16, marginRight: 10}}>{su.unitName}</span>)
+          return (<span key={su.unitId} style={{fontSize: 16, marginRight: 10}}>{su.unitName}</span>)
         })}
         {player.currentUnit && !player.currentUnit.unitState.isInGame && player.currentUnit.type !== UnitTypes.Idol ?
           <span className='sortie-add' onClick={() => data.moves.unitToSortie(p.id)}>+</span>
@@ -25,7 +25,7 @@ const UnitSortie = (props) => {
       {data.G.players.filter(p => p.isPlayerInGame).map((p, i) => {
         if (p.id === player.id) return (<></>)
         return (
-          <div key={i} style={{position: "relative", height: 40}}>
+          <div key={player.id+i} style={{position: "relative", height: 40}}>
             <div style={{color: playerColors[p.id], fontSize: 18, margin: 0}} className="results-p-name">{p.name}</div>
             {getSortieUnits(p)}
           </div>

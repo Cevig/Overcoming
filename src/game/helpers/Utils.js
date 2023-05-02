@@ -1,11 +1,16 @@
 import {PLAYER_NUMBER} from "../../config";
-import {Biom, SortieTypes, UnitKeywords, UnitTypes} from "./Constants";
+import {
+  Biom,
+  Buildings,
+  SortieTypes,
+  UnitKeywords,
+  UnitTypes
+} from "./Constants";
 import {
   handleUnitStatsUpdateInAttack,
   handleUnitStatsUpdateInDefence
 } from "../state/GameActions";
 import {handleAbility} from "../state/UnitSkills";
-import {gameLog} from "./Log";
 import {biomComparison} from "./UnitPriority";
 import {createUnitObject} from "../units/Unit";
 
@@ -166,13 +171,14 @@ export const endFightTurnCondition = (G, ctx) => {
     if (G.fightQueue.length === 0) {
       return {next: ctx.currentPlayer}
     }
-    const unit = getUnitById(G, G.fightQueue[0].unitId)
-    if ((G.fightQueue.length > 1) && (unit !== undefined) && (unit.unitState.isClickable === false)) {
-      return {next: (G.fightQueue[1].playerId).toString()}
-    } else {
-      return {next: (G.fightQueue[0].playerId).toString()}
-    }
+    return {next: (G.fightQueue[0].playerId).toString()}
   } else return false
+}
+
+export const onEndFightTurnAfter = (G, ctx) => {
+  G.endFightTurn = false
+  G.endFightPhase = G.fightQueue.length === 0
+  return G;
 }
 
 export const onEndFightTurn = (G, ctx) => {
@@ -197,11 +203,9 @@ export const onEndFightTurn = (G, ctx) => {
     .reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
   G.fightQueue = notMovedUnits.concat(skippedTurnUnits)
 
-  G.endFightTurn = false
-  G.endFightPhase = G.fightQueue.length === 0
   G.currentActionUnitId = undefined
   G.currentEnemySelectedId = undefined
-  return G
+  G.endFightTurn = true
 }
 
 export const cleanRound = (G, ctx, events) => {
@@ -227,9 +231,15 @@ export const cleanRound = (G, ctx, events) => {
       p.availablePoints = []
       p.currentUnit = null
       p.dealtDamage = false
-      p.units = p.units.filter(u => u.heals > 0).map(u =>
+      const sortieUnits = p.units.filter(u => u.unitState.isInSortie)
+      if (sortieUnits.length > 0) {
+        const savedUnit = sortieUnits[Math.floor(Math.random()*sortieUnits.length)]
+        savedUnit.unitState.isInSortie = false
+      }
+      p.units = p.units.filter(u => u.heals > 0 && !u.unitState.isInSortie).map(u =>
         createUnitObject(Math.random().toString(10).slice(2), p.id, u.biom, u.type, u.unitState.createPosition, u.level, u.price)
       )
+      p.sortie = []
     }
   })
   return G
@@ -245,7 +255,7 @@ export const sortFightOrder = (u1, u2) => {
 
 export const resolveUnitsInteraction = (data, fightData) => {
   const {currentUnit, enemy, updates} = fightData
-  const {ctx} = data
+  const {G, ctx} = data
   const onAttackMods = handleUnitStatsUpdateInAttack(data, {
     unitId: currentUnit.id,
     enemyId: enemy.id,
@@ -263,7 +273,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
       if (enemyStatus !== undefined) {
         if ((enemyStatus.qty + status.qty) > 0) {
           enemyStatus.qty = enemyStatus.qty + status.qty
-          gameLog.addLog({
+          G.serverMsgLog.push({
             id: Math.random().toString(10).slice(2),
             turn: ctx.turn,
             player: +ctx.currentPlayer,
@@ -272,7 +282,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
           })
         } else {
           removeStatus(enemy, status.name)
-          gameLog.addLog({
+          G.serverMsgLog.push({
             id: Math.random().toString(10).slice(2),
             turn: ctx.turn,
             player: +ctx.currentPlayer,
@@ -282,7 +292,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
         }
       } else if(status.qty > 0) {
         enemy.status.push(status)
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -294,7 +304,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
   }
   if(resultMods.damage !== undefined) {
     enemy.heals = (enemy.heals - resultMods.damage)
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -304,7 +314,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
   }
   if(resultMods.power !== undefined) {
     enemy.power = (enemy.power - resultMods.power)
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -314,7 +324,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
   }
   if(resultMods.initiative !== undefined) {
     enemy.initiative = (enemy.initiative - resultMods.initiative)
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -340,7 +350,7 @@ export const hasKeyword = (unit, keyword) =>
 export const handleUnitDeath = (data, target, killer = null) => {
   const {G, ctx} = data
 
-  gameLog.addLog({
+  G.serverMsgLog.push({
     id: Math.random().toString(10).slice(2),
     turn: ctx.turn,
     player: +ctx.currentPlayer,
@@ -364,9 +374,9 @@ export const handleUnitDeath = (data, target, killer = null) => {
   if (killer) {
     let essence = hasKeyword(killer, UnitKeywords.AdditionalEssence) ? 4 : 2
     if (target.type === UnitTypes.Idol) essence += 2;
-    G.players[killer.unitState.playerId].essence += 2;
+    G.players[killer.unitState.playerId].essence += essence;
     G.players[killer.unitState.playerId].killedUnits++;
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -409,12 +419,23 @@ export const calculateSortie = (G, p1) => {
   G.players.filter(eP => eP.id !== p1.id && eP.isPlayerInGame).map(ep => {
     const pUnits = p1.sortie.filter(su => su.playerId === ep.id)
     const epUnits = ep.sortie.filter(su => su.playerId === p1.id)
+    const pamyatnickEp = ep.houses.find(h => h.name === Buildings.Pamjatnuk.name)
     if (pUnits.length - epUnits.length >= 2) {
-      results.push({playerId: ep.id, type: SortieTypes.A})
+      if (pamyatnickEp) {
+        results.push({playerId: ep.id, type: SortieTypes.Y})
+      } else {
+        results.push({playerId: ep.id, type: SortieTypes.A})
+      }
     } else if (pUnits.length - epUnits.length > 0) {
-      results.push({playerId: ep.id, type: SortieTypes.B})
+      if (pamyatnickEp) {
+        results.push({playerId: ep.id, type: SortieTypes.Y})
+      } else {
+        results.push({playerId: ep.id, type: SortieTypes.B})
+      }
     } else if (pUnits.length - epUnits.length === 0) {
       results.push({playerId: ep.id, type: SortieTypes.C})
+    } else if (p1.houses.find(h => h.name === Buildings.Pamjatnuk.name) !== undefined) {
+      results.push({playerId: ep.id, type: SortieTypes.X})
     } else if (epUnits.length - pUnits.length >= 2) {
       results.push({playerId: ep.id, type: SortieTypes.E})
     } else if (epUnits.length - pUnits.length > 0) {

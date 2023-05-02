@@ -312,18 +312,21 @@ export const handleSortieRewards = (G, events, ctx) => {
       } else if (res.type === SortieTypes.E) {
         essence -= 3
       }
-
-      if (essence !== 0) {
-        p.essence += essence
-        G.serverMsgLog.push({
-          id: Math.random().toString(10).slice(2),
-          turn: ctx.turn,
-          player: +ctx.currentPlayer,
-          phase: ctx.phase,
-          text: `${p.name} отримує ${essence}✾ від вилазок!`,
-        })
-      }
     })
+    if (p.houses.find(h => h.name === Buildings.NebesnaBrama.name) !== undefined) {
+      essence += 2 * p.units.filter(u => u.unitState.isInSortie).length
+    }
+
+    if (essence !== 0) {
+      p.essence += essence
+      G.serverMsgLog.push({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `${p.name} отримує ${essence}✾ від вилазок!`,
+      })
+    }
   })
 }
 
