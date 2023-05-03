@@ -427,6 +427,13 @@ export const moves = {
       }
     }
 
+    G.players.filter(p => p.isPlayerInGame).forEach(p => {
+      if (p.units.every(unit => unit.unitState.isInGame === false)) p.isPlayerInBattle = false
+    })
+    if (G.players.filter(p => p.isPlayerInBattle).length <= 1) {
+      events.endPhase()
+    }
+
     const nearAllies = enemy.unitState.point ? getNearestAllies(G, enemy.unitState) : []
     if (enemy.heals > 0 && thisUnit.heals > 0 && nearAllies.length > 0 && hasKeyword(thisUnit, UnitKeywords.ReplaceHealsRaid)) {
       G.availablePoints = nearAllies.map(u => u.unitState.point)

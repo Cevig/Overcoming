@@ -407,17 +407,27 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
 
     const essenceIndex = playersEssenceOrder.findIndex(p => p.id === thisPlayer.id) +1
     const powerIndex = playersPowerOrder.findIndex(p => p.id === thisPlayer.id) +1
+    const playerValue = essenceIndex+powerIndex
 
-    const playerValue = (essenceIndex+powerIndex) / inGamePlayers.length * 10
     let essence = 1;
-    if (playerValue > 15) {
-      essence = 5
-    } else if (playerValue > 13) {
-      essence = 4
-    } else if (playerValue >= 10) {
-      essence = 3
-    } else if (playerValue > 5) {
-      essence = 2
+    if (inGamePlayers.length === 4) {
+      if (playerValue >= 7) {
+        essence = 5
+      } else if (playerValue >= 6) {
+        essence = 4
+      } else if (playerValue >= 4) {
+        essence = 3
+      } else if (playerValue >= 3) {
+        essence = 2
+      }
+    } else if (inGamePlayers.length === 3) {
+      essence = playerValue - 1
+    } else if (inGamePlayers.length === 2) {
+      if (playerValue === 4) {
+        essence = 5
+      } else if (playerValue > 2) {
+        essence = 3
+      }
     }
 
     G.serverMsgLog.push({
@@ -425,7 +435,7 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
       turn: ctx.turn,
       player: thisUnit.unitState.playerId,
       phase: ctx.phase,
-      text: `${thisPlayer.name} отримує дар богів: +${essence}✾ -- ${essenceIndex}, ${powerIndex}`,
+      text: `${thisPlayer.name} отримує дар богів: +${essence}✾`,
     })
     thisPlayer.essence += essence;
     G.grid.essencePoints = G.grid.essencePoints.filter(isNotSame(thisUnit.unitState.point))
@@ -433,8 +443,10 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
 }
 
 export const sortPlayersPowerOrder = (p1, p2) => {
-  if (p1.units.length > p2.units.length) return 1;
-  if (p1.units.length < p2.units.length) return -1;
+  if (p1.units.filter(u => u.type !== UnitTypes.Idol).reduce((val, unit) => val + unit.level, 0) >
+    p2.units.filter(u => u.type !== UnitTypes.Idol).reduce((val, unit) => val + unit.level, 0)) return 1;
+  if (p1.units.filter(u => u.type !== UnitTypes.Idol).reduce((val, unit) => val + unit.level, 0) <
+    p2.units.filter(u => u.type !== UnitTypes.Idol).reduce((val, unit) => val + unit.level, 0)) return -1;
   if (p1.houses.length > p2.houses.length) return 1;
   if (p1.houses.length < p2.houses.length) return -1;
   if (p1.essence > p2.essence) return 1;
@@ -443,10 +455,12 @@ export const sortPlayersPowerOrder = (p1, p2) => {
 }
 
 export const sortPlayersEssenceOrder = (p1, p2) => {
+  if ((p1.killedUnits + p1.wins*3) > (p2.killedUnits + p2.wins*3)) return 1;
+  if ((p1.killedUnits + p1.wins*3) < (p2.killedUnits + p2.wins*3)) return -1;
+  if (p1.heals > p2.heals) return 1;
+  if (p1.heals < p2.heals) return -1;
   if (p1.essence > p2.essence) return 1;
   if (p1.essence < p2.essence) return -1;
-  if (p1.units.length > p2.units.length) return 1;
-  if (p1.units.length < p2.units.length) return -1;
   return Math.random() - 0.5
 }
 
