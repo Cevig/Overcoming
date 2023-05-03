@@ -24,7 +24,7 @@ export const BattleResults = (props) => {
         <div>
           {units.map((u, i) => {
             return (
-              <div className="unit-instance" key={u.id} style={{border: "none", padding: 0, margin: "0 auto"}}>
+              <div className="unit-instance" key={Math.random().toString(10).slice(2)} style={{border: "none", padding: 0, margin: "0 auto"}}>
                 <h3 style={{color: playerColors[+p.id], fontSize: 18}} >{u.name} <span onClick={togglePopup.bind(this, u)} style={{color: "grey", fontSize: 19}}>&#9432;</span></h3>
               </div>
             )

@@ -1,5 +1,10 @@
-import {createPoint, shuffledBioms} from "../helpers/Utils";
-import {Buildings, playerColors} from "../helpers/Constants";
+import {shuffledBioms} from "../helpers/Utils";
+import {
+  Buildings,
+  createPoint,
+  essencePoints,
+  playerColors
+} from "../helpers/Constants";
 
 const createPlayer = (id, name, bioms) => ({
   id,
@@ -19,7 +24,7 @@ const createPlayer = (id, name, bioms) => ({
     }
   },
   heals: 10,
-  essence: 9,
+  essence: 16,
   killedUnits: 0,
   wins: 0,
   dealtDamage: false,
@@ -45,7 +50,8 @@ export const setup = ({ ctx }) => ({
       [playerColors[2]]: startPositions[2],//green
       [playerColors[3]]: startPositions[3]//yellow
     },
-    unstablePoints: []
+    unstablePoints: [],
+    essencePoints: essencePoints
   },
   availablePoints: [],
   setupComplete: 0,

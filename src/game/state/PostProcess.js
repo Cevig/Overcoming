@@ -1,6 +1,5 @@
 import {
   calculateSortie,
-  createPoint,
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
@@ -14,6 +13,7 @@ import {
 } from '../helpers/Utils';
 import {
   Buildings,
+  createPoint,
   DamageType,
   playerColors,
   SortieTypes,
@@ -55,13 +55,23 @@ export const onBuildingBegin = (G, ctx, events) => {
   G.players.filter(p => p.isPlayerInGame).forEach(p => {
     p.houses.forEach(h => {
       if (h.name === Buildings.Svjatulushe.name) {
-        p.essence += 6 * h.qty;
+        p.essence += 8;
         G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `${p.name} отримав ${6 * h.qty}✾ завдяки ${Buildings.Svjatulushe.name}`,
+          text: `${p.name} отримав 8✾ завдяки ${Buildings.Svjatulushe.name}`,
+        })
+      }
+      if (h.name === Buildings.Sobor.name) {
+        p.essence += 10;
+        G.serverMsgLog.push({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `${p.name} отримав 10✾ завдяки ${Buildings.Svjatulushe.name}`,
         })
       }
     })

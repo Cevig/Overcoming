@@ -45,16 +45,8 @@ export class BoardBuildings extends React.Component {
     for (const [key, value] of Object.entries(Buildings)) {
       if (value.type === type) {
         const playersHouse = player.houses.find(house => house.name === value.name)
-        if (playersHouse) {
-          if (playersHouse.qty < value.qty){
-            for (let i=0; i < value.qty - playersHouse.qty; i++) {
-              availableBuildings.push(value)
-            }
-          }
-        } else {
-          for (let i=0; i < value.qty; i++) {
-            availableBuildings.push(value)
-          }
+        if (playersHouse === undefined) {
+          availableBuildings.push(value)
         }
       }
     }
@@ -116,7 +108,9 @@ export class BoardBuildings extends React.Component {
   getBuildingSellPrice(house) {
     const props = this.props.props
     if (house.sellPrice > 0) {
-      return (<div className='building-info-buy' onClick={() => props.moves.sellHouse(house)}>Продати за {house.sellPrice}✾</div>)
+      return (<div className='building-info-buy' onClick={() => props.moves.sellHouse(house)}>Продати за {
+        props.ctx.turn === house.turn ? <span><span style={{textDecoration: "line-through", color: "black"}}>{house.sellPrice}✾</span> {house.price}</span> : house.sellPrice
+      }✾</div>)
     } else {
       return (<div className='building-info-buy disabled'>Не продається</div>)
     }

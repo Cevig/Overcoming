@@ -9,7 +9,7 @@ import {UWater} from "./Water";
 import {UMash} from "./Mash";
 import {UGeysers} from "./Geysers";
 
-export const getCreature = (name, type, biom, id, power, heals, initiative, level, unitState, abilities = JSON.parse(JSON.stringify(UnitAbilities)), price = 2, status = []) => ({
+export const getCreature = (name, type, biom, id, power, heals, initiative, level, unitState, abilities = JSON.parse(JSON.stringify(UnitAbilities)), price = 3, status = []) => ({
   id: id,
   name: name,
   type: type,
@@ -35,7 +35,7 @@ export const getIdol = (name, biom, id, power, heals, initiative, unitState, abi
   unitState: unitState,
   abilities: abilities,
   status: status,
-  price: 4
+  price: 5
 })
 
 export const getUnitState = (unitId, playerId, power, heals, initiative, createPosition, point = null) => ({
@@ -55,7 +55,7 @@ export const getUnitState = (unitId, playerId, power, heals, initiative, createP
 })
 
 export const createUnitObject = (...data) => {
-  const [id, playerId, biom, type = UnitTypes.Idol, pos = 0, level = 1, price = 2] = data
+  const [id, playerId, biom, type = UnitTypes.Idol, pos = 0, level = 1, price = 3] = data
   const unitsTree = {
     [Biom.Steppe]: {
       [UnitTypes.Prispeshnick]: [USteppe.getPolydnica],

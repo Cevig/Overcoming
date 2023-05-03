@@ -1,11 +1,6 @@
 import React, {useState} from 'react';
 import {HexGrid, Token} from './HexGrid';
-import {
-  createPoint,
-  getInGameUnits,
-  isSame,
-  setEnemyMarks
-} from '../helpers/Utils';
+import {getInGameUnits, isSame, setEnemyMarks} from '../helpers/Utils';
 import {UnitUI} from './UnitUI';
 import {motion} from 'framer-motion';
 import {Link} from "react-router-dom";
@@ -15,7 +10,8 @@ import UnitInfoPopup from "./UnitInfoPopup";
 import {UnstablePointsUI} from "./UnstablePointsUI";
 import {BoardBuildings} from "./BoardBuildings";
 import {BattleResults} from "./BattleResults";
-import {playerColors} from "../helpers/Constants";
+import {createPoint, playerColors} from "../helpers/Constants";
+import {EssenceGiftsUI} from "./EssenceGiftsUI";
 
 const style = {
   display: 'flex',
@@ -242,6 +238,13 @@ export function Board (props) {
               props.G.grid.unstablePoints.map((point, i) => {
                 return <Token x={point.x} y={point.y} z={point.z} key={i+10000}>
                   <UnstablePointsUI />
+                </Token>
+              })
+            }
+            {
+              props.G.grid.essencePoints.map((point, i) => {
+                return <Token x={point.x} y={point.y} z={point.z} key={i+20000}>
+                  <EssenceGiftsUI />
                 </Token>
               })
             }

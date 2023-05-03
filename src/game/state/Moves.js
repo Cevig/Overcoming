@@ -1,6 +1,5 @@
 import {
   cleanPlayer,
-  createPoint,
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
@@ -22,6 +21,7 @@ import {
 import {startPositions} from "./Setup";
 import {
   Buildings,
+  createPoint,
   DamageType,
   UnitKeywords,
   UnitSkills,
@@ -1066,15 +1066,13 @@ export const moves = {
     player.essence = player.essence - house.price
     const playerHouse = player.houses.find(h => h.name === house.name)
     if (playerHouse) playerHouse.qty++;
-    else player.houses.push({...house, qty: 1})
+    else player.houses.push({...house, turn: ctx.turn })
   },
 
   sellHouseMove: ({ G, ctx, events, playerID }, house) => {
     const player = G.players.find(p => p.id === +playerID);
-    player.essence = player.essence + house.sellPrice
-    const playerHouse = player.houses.find(h => h.name === house.name)
-    if (playerHouse.qty > 1) playerHouse.qty--;
-    else player.houses = player.houses.filter(h => h.name !== house.name)
+    player.essence = player.essence + (house.turn === ctx.turn ? house.price : house.sellPrice)
+    player.houses = player.houses.filter(h => h.name !== house.name)
   },
 
   leaveGame: ({ G, ctx, events, playerID }) => {

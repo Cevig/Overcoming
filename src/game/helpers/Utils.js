@@ -2,6 +2,8 @@ import {PLAYER_NUMBER} from "../../config";
 import {
   Biom,
   Buildings,
+  createPoint,
+  essencePoints,
   SortieTypes,
   UnitKeywords,
   UnitTypes
@@ -13,11 +15,6 @@ import {
 import {handleAbility} from "../state/UnitSkills";
 import {biomComparison} from "./UnitPriority";
 import {createUnitObject} from "../units/Unit";
-
-export const createPoint = (...pos) => {
-  const [x, y, z] = pos;
-  return { x, y, z, coord: `${x},${y},${z}` };
-}
 
 export const isSame = p1 => p2 => p1.coord === p2.coord;
 
@@ -224,6 +221,7 @@ export const cleanRound = (G, ctx, events) => {
   G.currentEnemySelectedId = undefined;
   G.grid.levels = 4;
   G.grid.unstablePoints = [];
+  G.grid.essencePoints = essencePoints;
 
   G.players.forEach(p => {
     if (p.isPlayerInGame) {
@@ -400,6 +398,56 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
 
   if (ctx.phase === 'Positioning') thisUnit.unitState.isMovedLastPhase = true
   thisUnit.unitState.initiatorFor = initiatorFor
+
+  if (G.grid.essencePoints.find(isSame(thisUnit.unitState.point))) {
+    const thisPlayer = G.players[thisUnit.unitState.playerId]
+    const inGamePlayers = [...G.players.filter(p => p.isPlayerInGame)]
+    const playersEssenceOrder = [...inGamePlayers].sort((p1, p2) => sortPlayersEssenceOrder(p1, p2)).reverse()
+    const playersPowerOrder = [...inGamePlayers].sort((p1, p2) => sortPlayersPowerOrder(p1, p2)).reverse()
+
+    const essenceIndex = playersEssenceOrder.findIndex(p => p.id === thisPlayer.id) +1
+    const powerIndex = playersPowerOrder.findIndex(p => p.id === thisPlayer.id) +1
+
+    const playerValue = (essenceIndex+powerIndex) / inGamePlayers.length * 10
+    let essence = 1;
+    if (playerValue > 15) {
+      essence = 5
+    } else if (playerValue > 13) {
+      essence = 4
+    } else if (playerValue >= 10) {
+      essence = 3
+    } else if (playerValue > 5) {
+      essence = 2
+    }
+
+    G.serverMsgLog.push({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: thisUnit.unitState.playerId,
+      phase: ctx.phase,
+      text: `${thisPlayer.name} отримує дар богів: +${essence}✾ -- ${essenceIndex}, ${powerIndex}`,
+    })
+    thisPlayer.essence += essence;
+    G.grid.essencePoints = G.grid.essencePoints.filter(isNotSame(thisUnit.unitState.point))
+  }
+}
+
+export const sortPlayersPowerOrder = (p1, p2) => {
+  if (p1.units.length > p2.units.length) return 1;
+  if (p1.units.length < p2.units.length) return -1;
+  if (p1.houses.length > p2.houses.length) return 1;
+  if (p1.houses.length < p2.houses.length) return -1;
+  if (p1.essence > p2.essence) return 1;
+  if (p1.essence < p2.essence) return -1;
+  return Math.random() - 0.5
+}
+
+export const sortPlayersEssenceOrder = (p1, p2) => {
+  if (p1.essence > p2.essence) return 1;
+  if (p1.essence < p2.essence) return -1;
+  if (p1.units.length > p2.units.length) return 1;
+  if (p1.units.length < p2.units.length) return -1;
+  return Math.random() - 0.5
 }
 
 export const cleanPlayer = (player) => {

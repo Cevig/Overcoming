@@ -1,5 +1,4 @@
 import {
-  createPoint,
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
@@ -20,6 +19,7 @@ import {
 } from "../helpers/Utils";
 import {USteppe} from "../units/Steppe";
 import {
+  createPoint,
   DamageType,
   DamageTypes,
   NegativeStatues,
