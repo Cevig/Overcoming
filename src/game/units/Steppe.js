@@ -48,9 +48,9 @@ export class USteppe {
 
   static getLetavica = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [2, 3, 4]
-      if (level === 2) return [2, 4, 4]
-      if (level === 3) return [3, 4, 5]
+      if (level === 1) return [2, 3, 3]
+      if (level === 2) return [2, 4, 3]
+      if (level === 3) return [3, 4, 4]
     }
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {

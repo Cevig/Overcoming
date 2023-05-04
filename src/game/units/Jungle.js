@@ -53,7 +53,7 @@ export class UJungle {
   }
 
   static getEloko = (id, playerId, _, createPosition, __) => {
-    const stat = [2, 7, 4]
+    const stat = [2, 8, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.allTimeActions.push({name: UnitSkills.SetElokoCurse, qty: 1})

@@ -43,9 +43,9 @@ export class UForest {
 
   static getSirin = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [2, 5, 5]
-      if (level === 2) return [3, 5, 5]
-      if (level === 3) return [3, 6, 5]
+      if (level === 1) return [2, 5, 4]
+      if (level === 2) return [3, 5, 4]
+      if (level === 3) return [3, 6, 4]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

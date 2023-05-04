@@ -12,6 +12,7 @@ import {
   sortFightOrder
 } from '../helpers/Utils';
 import {
+  Biom,
   Buildings,
   createPoint,
   DamageType,
@@ -75,6 +76,18 @@ export const onBuildingBegin = (G, ctx, events) => {
         })
       }
     })
+  })
+  let availableBioms = {...Biom}
+  const getRandomBiom = () => {
+    const biomKeys = Object.keys(availableBioms)
+    const randKey = biomKeys[Math.floor(Math.random()*biomKeys.length)]
+    const biom = availableBioms[randKey]
+    delete availableBioms[randKey];
+    return biom
+  }
+
+  G.players.forEach(p => {
+    p.bioms = [getRandomBiom(), getRandomBiom()]
   })
 }
 

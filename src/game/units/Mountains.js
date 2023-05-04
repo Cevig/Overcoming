@@ -43,7 +43,7 @@ export class UMountains {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
       if (level === 2) return [3, 5, 3]
-      if (level === 3) return [3, 5, 5]
+      if (level === 3) return [3, 5, 4]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -68,7 +68,7 @@ export class UMountains {
   }
 
   static getHala = (id, playerId, _, createPosition, __) => {
-    const stat = [3, 7, 5]
+    const stat = [2, 8, 5]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.onMove.push({name: UnitSkills.HalaAura})

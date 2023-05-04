@@ -46,9 +46,9 @@ export class UGeysers {
 
   static getRarog = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [2, 4, 4]
-      if (level === 2) return [3, 5, 4]
-      if (level === 3) return [3, 5, 5]
+      if (level === 1) return [2, 4, 3]
+      if (level === 2) return [3, 4, 3]
+      if (level === 3) return [3, 4, 4]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -81,6 +81,7 @@ export class UGeysers {
     abilities.keywords.push(UnitKeywords.AdditionalEssence)
     abilities.statUpdates.defence.push({name: UnitSkills.BlockStatuses, unitId: id})
     abilities.allTimeActions.push({name: UnitSkills.healAlly, qty: 3})
+    abilities.statUpdates.attack.push(UnitSkills.ThroughDamage)
     return getIdol(UGeysers.jarPtizaName, Biom.Geysers, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }

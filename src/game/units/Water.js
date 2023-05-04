@@ -10,9 +10,9 @@ export class UWater {
   static vodyanoiName = "Водяний"
   static getLerneyskiyRak = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [2, 2, 4]
-      if (level === 2) return [2, 4, 4]
-      if (level === 3) return [3, 5, 4]
+      if (level === 1) return [2, 3, 4]
+      if (level === 2) return [2, 5, 4]
+      if (level === 3) return [3, 6, 4]
     }
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.keywords.push(UnitKeywords.LowCost)
@@ -41,8 +41,8 @@ export class UWater {
   static getAidahar = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
-      if (level === 2) return [3, 5, 4]
-      if (level === 3) return [3, 5, 5]
+      if (level === 2) return [3, 5, 3]
+      if (level === 3) return [3, 5, 3]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -59,9 +59,10 @@ export class UWater {
   }
 
   static getBalor = (id, playerId, _, createPosition, __) => {
-    const stat = [3, 7, 1]
+    const stat = [3, 8, 1]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
+    abilities.keywords.push(UnitKeywords.ExtendedMove)
     abilities.statUpdates.attack.push(UnitSkills.InstantKillOnCounter)
     abilities.statUpdates.defence.push({name: UnitSkills.DoubleDamageInDefence})
     return getIdol(UWater.balorName, Biom.Water, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)

@@ -51,7 +51,7 @@ export class UMash {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
       if (level === 2) return [2, 5, 3]
-      if (level === 3) return [3, 5, 4]
+      if (level === 3) return [2, 5, 4]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -82,6 +82,7 @@ export class UMash {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.allTimeActions.push({name: UnitSkills.NotMovedRecover, qty: 99})
     abilities.statUpdates.defence.push({name: UnitSkills.BlockStatuses, unitId: id})
+    abilities.statUpdates.attack.push(UnitSkills.HealOnAttack)
     return getIdol(UMash.fekstName, Biom.Mash, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }

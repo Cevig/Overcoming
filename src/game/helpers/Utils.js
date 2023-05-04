@@ -1,6 +1,5 @@
 import {PLAYER_NUMBER} from "../../config";
 import {
-  Biom,
   Buildings,
   createPoint,
   essencePoints,
@@ -136,14 +135,6 @@ export const setPlayerNumber = (num) => {
   PLAYER_NUMBER.find(qty => qty.num === num).isActive = true
 }
 
-export const getRandomFromObject = (obj, excluded) => {
-  const keys = Object.keys(Biom).filter(key => !excluded.some(rmv => obj[key] === rmv))
-  return Biom[keys[keys.length * Math.random() << 0]]
-}
-const getPlayersBioms = () => {
-  const shuffledList = shuffleArray(Object.values(Biom));
-  return [...Array(getPlayersNumber()).keys()].map(() => [shuffledList.pop(), shuffledList.pop()])
-}
 export const shuffleArray = (array) => {
   let currentIndex = array.length, randomIndex;
 
@@ -161,7 +152,6 @@ export const shuffleArray = (array) => {
 
   return array;
 }
-export const shuffledBioms = getPlayersBioms()
 
 export const endFightTurnCondition = (G, ctx) => {
   if (G.endFightTurn) {
@@ -370,7 +360,7 @@ export const handleUnitDeath = (data, target, killer = null) => {
   target.unitState.point = null
   if (target.heals > 0) target.heals = 0;
   if (killer) {
-    let essence = hasKeyword(killer, UnitKeywords.AdditionalEssence) ? 4 : 2
+    let essence = hasKeyword(killer, UnitKeywords.AdditionalEssence) ? 5 : 2
     if (target.type === UnitTypes.Idol) essence += 2;
     G.players[killer.unitState.playerId].essence += essence;
     G.players[killer.unitState.playerId].killedUnits++;

@@ -1,4 +1,3 @@
-import {shuffledBioms} from "../helpers/Utils";
 import {
   Buildings,
   createPoint,
@@ -6,11 +5,11 @@ import {
   playerColors
 } from "../helpers/Constants";
 
-const createPlayer = (id, name, bioms) => ({
+const createPlayer = (id, name) => ({
   id,
   name,
   units: [],
-  bioms: bioms,
+  bioms: [],
   isPlayerInBattle: false,
   isPlayerInGame: true,
   availablePoints: [],
@@ -41,7 +40,7 @@ export const startPositions = [
 
 export const setup = ({ ctx }) => ({
   currentUnit: null,
-  players: [...Array(ctx.numPlayers).keys()].map(num => createPlayer(num, `Гравець ${num+1}`, shuffledBioms[num])),
+  players: [...Array(ctx.numPlayers).keys()].map(num => createPlayer(num, `Гравець ${num+1}`)),
   grid: {
     levels: 4,
     colorMap: {
