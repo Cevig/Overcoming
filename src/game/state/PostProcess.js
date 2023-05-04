@@ -86,7 +86,7 @@ export const onBuildingBegin = (G, ctx, events) => {
     return biom
   }
 
-  G.players.forEach(p => {
+  G.players.filter(p => p.bioms.length === 0).forEach(p => {
     p.bioms = [getRandomBiom(), getRandomBiom()]
   })
 }
