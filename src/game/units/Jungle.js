@@ -56,7 +56,7 @@ export class UJungle {
     const stat = [2, 8, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.allTimeActions.push({name: UnitSkills.SetElokoCurse, qty: 1})
+    abilities.allTimeActions.push({name: UnitSkills.SetElokoCurse, qty: 2})
     return getIdol(UJungle.elokoName, Biom.Jungle, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 

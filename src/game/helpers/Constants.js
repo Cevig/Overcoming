@@ -147,13 +147,6 @@ export const Buildings = Object.freeze({
     type: BuildingsType.Peace,
     sellPrice: 0
   },
-  Kapushe: {
-    name: "Капище",
-    description: "Дозволяє призивати будь-якого Ідола, що належить до контрольованих біомів",
-    price: 5,
-    type: BuildingsType.Peace,
-    sellPrice: 0
-  },
   Zmicnenja: {
     name: "Зміцнення",
     description: "Віднімає 2 життя у кожної істоти після атаки на Ваш Капітолій",

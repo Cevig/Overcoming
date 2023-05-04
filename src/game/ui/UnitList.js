@@ -8,7 +8,6 @@ import {
 } from "../helpers/Constants";
 import {hasKeyword} from "../helpers/Utils";
 
-const randIndex = Math.floor(Math.random()*4)
 const UnitList = (data) => {
 
   const player = data.data.G.players.find(p => p.id === +data.data.playerID)
@@ -37,12 +36,7 @@ const UnitList = (data) => {
   }
 
   const getAvailableIdols = () => {
-    const idols = availableUnitsList.filter(u => u.type === UnitTypes.Idol)
-    let availableIdols = []
-    if (player.houses.find(h => h.name === Buildings.Kapushe.name) === undefined) {
-      availableIdols.push(idols[randIndex])
-    } else availableIdols.push(...idols)
-    return availableIdols
+    return availableUnitsList.filter(u => u.type === UnitTypes.Idol)
   }
 
   const availableUnitsList = getAssignedUnits()
