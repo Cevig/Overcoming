@@ -9,7 +9,15 @@ export const createPoint = (...pos) => {
   const [x, y, z] = pos;
   return {x, y, z, coord: `${x},${y},${z}`};
 }
-export const essencePoints = [createPoint(0, 0, 0), createPoint(-1, 0, 1), createPoint(0, -1, 1), createPoint(1, -1, 0)]
+export const essencePoints = (allPlayersNum) => {
+  if (allPlayersNum === 3) {
+    return [createPoint(0, 0, 0), createPoint(-1, 0, 1), createPoint(0, -1, 1)]
+  } else if (allPlayersNum === 2) {
+    return [createPoint(0, 0, 0), createPoint(0, 1, -1), createPoint(0, -1, 1)]
+  } else {
+    return [createPoint(0, 0, 0), createPoint(-1, 0, 1), createPoint(0, -1, 1), createPoint(1, -1, 0)]
+  }
+}
 
 export const UnitTypes = Object.freeze({
   Idol: "Ідол",

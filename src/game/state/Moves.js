@@ -50,9 +50,9 @@ export const moves = {
       player.availablePoints = []
     } else {
       if (currentUnit.type === UnitTypes.Idol)
-        player.availablePoints = [startPositions[+playerID][0]]
+        player.availablePoints = [startPositions(ctx.numPlayers)[+playerID][0]]
       else
-        player.availablePoints = startPositions[+playerID].slice(1, startPositions[+playerID].length)
+        player.availablePoints = startPositions(ctx.numPlayers)[+playerID].slice(1, startPositions(ctx.numPlayers)[+playerID].length)
     }
     player.currentUnit = currentUnit
     events.endStage();
@@ -61,9 +61,9 @@ export const moves = {
   selectOldUnit: ({ G, ctx, events, playerID }, currentUnit) => {
     const player = G.players[+playerID]
     if (currentUnit.type === UnitTypes.Idol)
-      player.availablePoints = [startPositions[+playerID][0]]
+      player.availablePoints = [startPositions(ctx.numPlayers)[+playerID][0]]
     else
-      player.availablePoints = startPositions[+playerID].slice(1, startPositions[+playerID].length)
+      player.availablePoints = startPositions(ctx.numPlayers)[+playerID].slice(1, startPositions(ctx.numPlayers)[+playerID].length)
     player.currentUnit = currentUnit
     events.endStage();
   },

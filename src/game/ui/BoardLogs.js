@@ -41,7 +41,12 @@ export class BoardLogs extends React.Component {
               <div className="enemy-info" dangerouslySetInnerHTML={
                 { __html: props.G.players.filter(p => p.id !== player.id)
                     .map(p => `<div>
-                                    <div><span style="color: ${playerColors[p.id]}">${p.name}</span> - <span style="color: red">${p.heals}&hearts;</span></div>
+                                    <div>
+                                        <span style="color: ${playerColors[p.id]}">${p.name}</span>
+                                        <span style="font-size: 12px">[${p.bioms[0]}, ${p.bioms[1]}]</span> -
+                                        <span style="color: red">${p.heals}&hearts;</span>
+                                        [<span style="color: black; font-weight: bold">${p.essenceFreeze}✾</span>]
+                                    </div>
                                   </div>`).join('')}
               } />
             </div>
@@ -60,7 +65,8 @@ export class BoardLogs extends React.Component {
                 { __html: props.G.players.filter(p => p.id !== player.id)
                     .map(p => `<div>
                                     <div>
-                                      <span style="color: ${playerColors[p.id]}">${p.name}</span> -
+                                      <span style="color: ${playerColors[p.id]}">${p.name}</span>
+                                      <span style="font-size: 12px">[${p.bioms[0]}, ${p.bioms[1]}]</span> -
                                       <span style="color: red">${p.heals}&hearts;</span>
                                       [<span style="color: black; font-weight: bold">${p.essence}✾</span>] -
                                       <span style="font-size: 14px;">${p.houses.map(h => h.name).join(', ')}</span>

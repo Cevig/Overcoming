@@ -217,6 +217,7 @@ export function Board (props) {
         {(props.ctx.phase === 'Setup' || props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight') ?
           <HexGrid
             levels={props.G.grid.levels}
+            players={props.ctx.numPlayers}
             style={hexStyle}
             colorMap={colorMapSecret}
             onClick={cellClicked}>

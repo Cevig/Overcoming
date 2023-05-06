@@ -3,10 +3,12 @@ import {
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
+  getUnstablePoints,
   handleUnitDeath,
   hasKeyword,
   hasStatus,
   isNotSame,
+  isSame,
   resolveUnitsInteraction,
   shuffleArray,
   sortFightOrder
@@ -14,37 +16,25 @@ import {
 import {
   Biom,
   Buildings,
-  createPoint,
   DamageType,
-  playerColors,
   SortieTypes,
   UnitKeywords,
   UnitStatus,
   UnitTypes
 } from '../helpers/Constants';
-import {startPositions} from "./Setup";
+import {getColorMap} from "./Setup";
 import {handleOnMoveActions} from "./GameActions";
 
 const setColorMap = (G, ctx, playerID) => {
   if (ctx.phase === 'Setup') {
-    G.players[+playerID].grid.colorMap = {
-      [playerColors[0]]: startPositions[0],//red
-      [playerColors[1]]: startPositions[1],//blue
-      [playerColors[2]]: startPositions[2],//green
-      [playerColors[3]]: startPositions[3]//yellow
-    }
+    G.players[+playerID].grid.colorMap = getColorMap(ctx.numPlayers)
 
     Object.entries(G.grid.colorMap).forEach(([color, points]) => {
       G.players[+playerID].grid.colorMap[color] = points.filter(mapPoint => G.players[+playerID].availablePoints.every(availablePoint => isNotSame(mapPoint)(availablePoint)))
     })
     G.players[+playerID].grid.colorMap['#dd666f'] = G.players[+playerID].availablePoints
   } else {
-    G.grid.colorMap = {
-      [playerColors[0]]: startPositions[0],//red
-      [playerColors[1]]: startPositions[1],//blue
-      [playerColors[2]]: startPositions[2],//green
-      [playerColors[3]]: startPositions[3]//yellow
-    }
+    G.grid.colorMap = getColorMap(ctx.numPlayers)
     Object.entries(G.grid.colorMap).forEach(([color, points]) => {
       G.grid.colorMap[color] = points.filter(mapPoint => G.availablePoints.every(availablePoint => isNotSame(mapPoint)(availablePoint)))
     })
@@ -76,6 +66,7 @@ export const onBuildingBegin = (G, ctx, events) => {
         })
       }
     })
+    p.essenceFreeze = p.essence
   })
   let availableBioms = {...Biom}
   const getRandomBiom = () => {
@@ -104,7 +95,7 @@ export const onPositioningStart = (G, ctx, events) => {
   }
 
   const units = getInGameUnits(G)
-  if((G.moveOrder >= 2) && (G.moveOrder % 2 === 0)) {
+  if((G.shrinkZone >= 2) && (G.shrinkZone % 2 === 0)) {
     G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
@@ -112,51 +103,13 @@ export const onPositioningStart = (G, ctx, events) => {
       phase: ctx.phase,
       text: `Руйнування простору - поле зменшилося!!!`,
     })
-    units.filter(unit => {
-      const point = unit.unitState.point
-      const level = G.grid.levels
-      return (Math.max(Math.abs(point.x), Math.abs(point.y), Math.abs(point.z)) === level) || (point.y === level-1) || (point.z === -(level-1))
-    }).forEach(unit => handleUnitDeath({G: G, ctx: ctx, events: events}, unit))
+    const unstablePoints = getUnstablePoints(G, ctx)
+    units.filter(unit => unstablePoints.find(isSame(unit.unitState.point)))
+      .forEach(unit => handleUnitDeath({G: G, ctx: ctx, events: events}, unit))
     G.grid.levels--;
   }
-  if ((G.moveOrder >= 1) && (G.moveOrder % 2 === 1)) {
-    const result = []
-    for (let i = 0; i <= G.grid.levels; i++) {
-      const a = -i+0
-      const b = -(G.grid.levels-i)+0
-      result.push([G.grid.levels, a, b])
-      result.push([G.grid.levels, b, a])
-      result.push([a, G.grid.levels, b])
-      result.push([b, G.grid.levels, a])
-      result.push([a, b, G.grid.levels])
-      result.push([b, a, G.grid.levels])
-    }
-    for (let i = -1; i > -G.grid.levels; i--) {
-      const a = -i
-      const b = G.grid.levels+i
-      result.push([-G.grid.levels, a, b])
-      result.push([-G.grid.levels, b, a])
-      result.push([a, -G.grid.levels, b])
-      result.push([b, -G.grid.levels, a])
-      result.push([a, b, -G.grid.levels])
-      result.push([b, a, -G.grid.levels])
-    }
-    for (let i = 0; i <= G.grid.levels-1; i++) {
-      const a = -i+0
-      const b = -(G.grid.levels-1-i)+0
-      result.push([a, G.grid.levels-1, b])
-      result.push([b, G.grid.levels-1, a])
-    }
-    for (let i = -1; i >= -G.grid.levels+1; i--) {
-      const a = -i
-      const b = G.grid.levels+i
-      result.push([a, b, -G.grid.levels+1])
-      result.push([b, a, -G.grid.levels+1])
-    }
-
-    G.grid.unstablePoints = [...new Set(result)].filter(arr => arr[1] !== G.grid.levels)
-      .filter(arr => arr[2] !== -G.grid.levels)
-      .map(arr => createPoint(...arr))
+  if ((G.shrinkZone >= 1) && (G.shrinkZone % 2 === 1)) {
+    G.grid.unstablePoints = getUnstablePoints(G, ctx)
   }
 
   units.forEach(unit => {
@@ -255,6 +208,7 @@ export const cleanFightPhase = (G, ctx, events) => {
     }
   });
   G.moveOrder++;
+  G.shrinkZone++;
   G.fightQueue = []
   return G
 }
@@ -280,14 +234,6 @@ export const setInFightUnits = (G, ctx, events) => {
     const remainPlayer = G.players.find(p => p.isPlayerInBattle)
     if(remainPlayer) {
       remainPlayer.wins++;
-      remainPlayer.essence += 5;
-      G.serverMsgLog.push({
-        id: Math.random().toString(10).slice(2),
-        turn: ctx.turn,
-        player: +ctx.currentPlayer,
-        phase: ctx.phase,
-        text: `${remainPlayer.name} перемагає у раунді та отримує 5✾`,
-      })
     }
     return G
   }

@@ -656,22 +656,63 @@
 
         var hexes = [];
         var r = this.props.levels;
-        for (var x = -r; x <= r; x++) {
-          for (var y = -r; y <= r-1; y++) {
-            var z = -x - y;
-            if (Math.abs(z) > r) continue;
-            if (z === -r) continue;
-            hexes.push(React.createElement(Hex, {
-              key: x + ':' + y + ':' + z,
-              style: { fill: this._getCellColor(x, y, z) },
-              x: x,
-              y: y,
-              z: z,
-              size: this.props.cellSize,
-              onClick: this.onClick,
-              onMouseOver: this.onMouseOver,
-              onMouseOut: this.onMouseOut
-            }));
+
+        if (this.props.players === 3) {
+          for (let x = -r; x <= r-1; x++) {
+            for (let y = -r; y <= r-1; y++) {
+              let z = -x - y;
+              if (Math.abs(z) > r) continue;
+              if (z === -r) continue;
+              hexes.push(React.createElement(Hex, {
+                key: x + ':' + y + ':' + z,
+                style: { fill: this._getCellColor(x, y, z) },
+                x: x,
+                y: y,
+                z: z,
+                size: this.props.cellSize,
+                onClick: this.onClick,
+                onMouseOver: this.onMouseOver,
+                onMouseOut: this.onMouseOut
+              }));
+            }
+          }
+        } else if (this.props.players === 2) {
+          for (let x = -r; x <= r; x++) {
+            for (let y = -r; y <= r; y++) {
+              let z = -x - y;
+              if (Math.abs(z) > r) continue;
+              if (z === -r-1) continue;
+              hexes.push(React.createElement(Hex, {
+                key: x + ':' + y + ':' + z,
+                style: { fill: this._getCellColor(x, y, z) },
+                x: x,
+                y: y,
+                z: z,
+                size: this.props.cellSize,
+                onClick: this.onClick,
+                onMouseOver: this.onMouseOver,
+                onMouseOut: this.onMouseOut
+              }));
+            }
+          }
+        } else {
+          for (let x = -r; x <= r; x++) {
+            for (let y = -r; y <= r-1; y++) {
+              let z = -x - y;
+              if (Math.abs(z) > r) continue;
+              if (z === -r) continue;
+              hexes.push(React.createElement(Hex, {
+                key: x + ':' + y + ':' + z,
+                style: { fill: this._getCellColor(x, y, z) },
+                x: x,
+                y: y,
+                z: z,
+                size: this.props.cellSize,
+                onClick: this.onClick,
+                onMouseOver: this.onMouseOver,
+                onMouseOut: this.onMouseOut
+              }));
+            }
           }
         }
         return hexes;
@@ -694,7 +735,7 @@
         return React.createElement(
           'svg',
           {
-            viewBox: (-t+1) + ' ' + (-t+0.9) + ' ' + 2 * (t-1) + ' ' + 2 * (t-1),
+            viewBox: this.props.players === 2 ? (-t+0.8) + ' ' + (-t-0.2) + ' ' + (2 * t - 1.5) + ' ' + (2 * t -1.5) : (this.props.players === 3 ? (-t+0.3) + ' ' + (-t+0.8) + ' ' + 2 * (t-0.9) + ' ' + 2 * (t-0.9) : (-t+1) + ' ' + (-t+0.9) + ' ' + 2 * (t-1) + ' ' + 2 * (t-1)),
             style: this.props.style
           },
           React.createElement(
@@ -729,6 +770,7 @@
    */
   HexGrid.propTypes = {
     levels: PropTypes.number.isRequired,
+    players: PropTypes.number,
     outline: PropTypes.bool,
     style: PropTypes.object,
     colorMap: PropTypes.object,
@@ -740,6 +782,7 @@
   };
   HexGrid.defaultProps = {
     levels: 5,
+    players: 4,
     colorMap: {},
     outline: true,
     cellSize: 1

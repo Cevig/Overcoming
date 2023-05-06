@@ -196,12 +196,14 @@ export const onEndFightTurn = (G, ctx) => {
 }
 
 export const cleanRound = (G, ctx, events) => {
+  G.finishedRounds++;
   G.availablePoints = [];
   G.currentUnit = null;
   G.setupComplete = 0;
   G.buildingComplete = 0;
   G.battleResultComplete = 0;
-  G.moveOrder = 0;
+  G.moveOrder = G.finishedRounds;
+  G.shrinkZone = 0;
   G.fightQueue = [];
   G.endFightTurn = false;
   G.endFightPhase = false;
@@ -209,9 +211,9 @@ export const cleanRound = (G, ctx, events) => {
   G.winner = undefined;
   G.currentActionUnitId = undefined;
   G.currentEnemySelectedId = undefined;
-  G.grid.levels = 4;
+  G.grid.levels = ctx.numPlayers === 2 ? 3 : 4;
   G.grid.unstablePoints = [];
-  G.grid.essencePoints = essencePoints;
+  G.grid.essencePoints = essencePoints(ctx.numPlayers);
 
   G.players.forEach(p => {
     if (p.isPlayerInGame) {
@@ -495,4 +497,121 @@ export const calculateSortie = (G, p1) => {
     }
   })
   return results
+}
+
+export const getUnstablePoints = (G, ctx) => {
+  const result = []
+  if (ctx.numPlayers === 3) {
+    for (let i = 0; i <= G.grid.levels; i++) {
+      const a = -i+0
+      const b = -(G.grid.levels-i)+0
+      result.push([G.grid.levels, a, b])
+      result.push([G.grid.levels, b, a])
+      result.push([a, G.grid.levels, b])
+      result.push([b, G.grid.levels, a])
+      result.push([a, b, G.grid.levels])
+      result.push([b, a, G.grid.levels])
+    }
+    for (let i = -1; i > -G.grid.levels; i--) {
+      const a = -i
+      const b = G.grid.levels+i
+      result.push([-G.grid.levels, a, b])
+      result.push([-G.grid.levels, b, a])
+      result.push([a, -G.grid.levels, b])
+      result.push([b, -G.grid.levels, a])
+      result.push([a, b, -G.grid.levels])
+      result.push([b, a, -G.grid.levels])
+    }
+    for (let i = 0; i <= G.grid.levels-1; i++) {
+      const a = -i+0
+      const b = -(G.grid.levels-1-i)+0
+      result.push([a, G.grid.levels-1, b])
+      result.push([b, G.grid.levels-1, a])
+      result.push([G.grid.levels-1, a, b])
+      result.push([G.grid.levels-1, b, a])
+    }
+    for (let i = -1; i >= -G.grid.levels+1; i--) {
+      const a = -i
+      const b = (G.grid.levels-1)+i
+      result.push([a, b, -G.grid.levels+1])
+      result.push([b, a, -G.grid.levels+1])
+    }
+
+    return [...new Set(result)].filter(arr => arr[1] !== G.grid.levels)
+      .filter(arr => arr[2] !== -G.grid.levels)
+      .filter(arr => arr[0] !== G.grid.levels)
+      .map(arr => createPoint(...arr))
+  } else if(ctx.numPlayers === 2) {
+    for (let i = 0; i <= G.grid.levels; i++) {
+      const a = -i+0
+      const b = -(G.grid.levels-i)+0
+      result.push([G.grid.levels, a, b])
+      result.push([G.grid.levels, b, a])
+      result.push([a, G.grid.levels, b])
+      result.push([b, G.grid.levels, a])
+      result.push([a, b, G.grid.levels])
+      result.push([b, a, G.grid.levels])
+    }
+    for (let i = -1; i > -G.grid.levels; i--) {
+      const a = -i
+      const b = G.grid.levels+i
+      result.push([-G.grid.levels, a, b])
+      result.push([-G.grid.levels, b, a])
+      result.push([a, -G.grid.levels, b])
+      result.push([b, -G.grid.levels, a])
+      result.push([a, b, -G.grid.levels])
+      result.push([b, a, -G.grid.levels])
+    }
+    // for (let i = 0; i <= G.grid.levels-1; i++) {
+    //   const a = -i+0
+    //   const b = -(G.grid.levels-1-i)+0
+    //   result.push([a, G.grid.levels-1, b])
+    //   result.push([b, G.grid.levels-1, a])
+    // }
+    // for (let i = -1; i >= -G.grid.levels+1; i--) {
+    //   const a = -i
+    //   const b = (G.grid.levels-1)+i
+    //   result.push([a, b, -G.grid.levels+1])
+    //   result.push([b, a, -G.grid.levels+1])
+    // }
+
+    return [...new Set(result)].map(arr => createPoint(...arr))
+  } else {
+    for (let i = 0; i <= G.grid.levels; i++) {
+      const a = -i+0
+      const b = -(G.grid.levels-i)+0
+      result.push([G.grid.levels, a, b])
+      result.push([G.grid.levels, b, a])
+      result.push([a, G.grid.levels, b])
+      result.push([b, G.grid.levels, a])
+      result.push([a, b, G.grid.levels])
+      result.push([b, a, G.grid.levels])
+    }
+    for (let i = -1; i > -G.grid.levels; i--) {
+      const a = -i
+      const b = G.grid.levels+i
+      result.push([-G.grid.levels, a, b])
+      result.push([-G.grid.levels, b, a])
+      result.push([a, -G.grid.levels, b])
+      result.push([b, -G.grid.levels, a])
+      result.push([a, b, -G.grid.levels])
+      result.push([b, a, -G.grid.levels])
+    }
+    for (let i = 0; i <= G.grid.levels-1; i++) {
+      const a = -i+0
+      const b = -(G.grid.levels-1-i)+0
+      result.push([a, G.grid.levels-1, b])
+      result.push([b, G.grid.levels-1, a])
+    }
+    for (let i = -1; i >= -G.grid.levels+1; i--) {
+      const a = -i
+      const b = (G.grid.levels-1)+i
+      result.push([a, b, -G.grid.levels+1])
+      result.push([b, a, -G.grid.levels+1])
+    }
+
+    return [...new Set(result)].filter(arr => arr[1] !== G.grid.levels)
+      .filter(arr => arr[2] !== -G.grid.levels)
+      .map(arr => createPoint(...arr))
+  }
 }
