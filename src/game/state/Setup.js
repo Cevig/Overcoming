@@ -18,7 +18,7 @@ const createPlayer = (id, name, allPlayersNum) => ({
     colorMap: getColorMap(allPlayersNum)
   },
   heals: 10,
-  essence: 16,
+  essence: 10,
   essenceFreeze: 16,
   killedUnits: 0,
   wins: 0,

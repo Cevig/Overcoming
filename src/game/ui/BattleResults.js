@@ -51,7 +51,7 @@ export const BattleResults = (props) => {
           }
         </div>
         {p.houses.find(h => h.name === Buildings.NebesnaBrama.name) !== undefined ?
-          <div style={{fontSize: 20}}>Дохід "{Buildings.NebesnaBrama.name}": <span style={{fontWeight: "bold"}}>+{2 * p.units.filter(u => u.unitState.isInSortie).length}✾</span></div>
+          <div style={{fontSize: 20}}>Дохід "{Buildings.NebesnaBrama.name}": <span style={{fontWeight: "bold"}}>+{3 * p.units.filter(u => u.unitState.isInSortie).length}✾</span></div>
           : <></>
         }
       </div>

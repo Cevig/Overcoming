@@ -284,15 +284,15 @@ export const handleSortieRewards = (G, events, ctx) => {
     const result = calculateSortie(G, p)
     result.forEach(res => {
       if (res.type === SortieTypes.A) {
-        essence += 7;
+        essence += 12;
       } else if (res.type === SortieTypes.B) {
-        essence += 4;
+        essence += 7;
       } else if (res.type === SortieTypes.E) {
-        essence -= 3
+        essence -= 5
       }
     })
     if (p.houses.find(h => h.name === Buildings.NebesnaBrama.name) !== undefined) {
-      essence += 2 * p.units.filter(u => u.unitState.isInSortie).length
+      essence += 3 * p.units.filter(u => u.unitState.isInSortie).length
     }
 
     if (essence !== 0) {

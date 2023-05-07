@@ -152,123 +152,107 @@ export const Buildings = Object.freeze({
     name: "Капітолій",
     description: "Головний об'єкт гравця. Має 10 життя на старті. Гравець вибуває з гри якщо Капітолій буде зруйнован",
     price: 0,
-    type: BuildingsType.Peace,
-    sellPrice: 0
+    type: BuildingsType.Peace
   },
   Zmicnenja: {
     name: "Зміцнення",
     description: "Віднімає 2 життя у кожної істоти після атаки на Ваш Капітолій",
-    price: 8,
-    type: BuildingsType.Peace,
-    sellPrice: 4
+    price: 5,
+    type: BuildingsType.Peace
+  },
+  NebesnaBrama: {
+    name: "Небесна брама",
+    description: "Підвищує дохід з вилазок - +3 ✾ за кожну істоту у вилазці",
+    price: 6,
+    type: BuildingsType.Peace
   },
   Veja: {
     name: "Вежа",
     description: "Подвоює урон по Капітолію ворога",
-    price: 12,
-    type: BuildingsType.Peace,
-    sellPrice: 6
-  },
-  NebesnaBrama: {
-    name: "Небесна брама",
-    description: "Підвищує дохід з вилазок - +2 ✾ за кожну істоту у вилазці",
-    price: 12,
-    type: BuildingsType.Peace,
-    sellPrice: 6
+    price: 8,
+    type: BuildingsType.Peace
   },
   Pamjatnuk: {
     name: "Пам'ятник",
     description: "Блокує ворожі вилазки. Противник не отримує ніякого доходу при вилазці",
-    price: 15,
-    type: BuildingsType.Peace,
-    sellPrice: 7
+    price: 10,
+    type: BuildingsType.Peace
   },
   Sobor: {
     name: "Собор",
     description: "Приносить 10✾ на початку раунда",
-    price: 19,
+    price: 10,
     qty: 2,
-    type: BuildingsType.Peace,
-    sellPrice: 5
+    type: BuildingsType.Peace
   },
   Svjatulushe: {
     name: "Святилище",
     description: "Приносить 8✾ на початку раунда",
-    price: 15,
-    type: BuildingsType.Peace,
-    sellPrice: 13
+    price: 0,
+    type: BuildingsType.Peace
   },
   VivtarPoplichnukiv: {
     name: `Вівтар "${UnitTypes.Prispeshnick}" &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prispeshnick} першого рівня`,
-    price: 10,
-    type: BuildingsType.Vivtar1,
-    sellPrice: 5
+    price: 4,
+    type: BuildingsType.Vivtar1
   },
   VivtarPoplichnukiv2: {
     name: `Вівтар "${UnitTypes.Prispeshnick}" &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prispeshnick} другого рівня`,
-    price: 18,
-    type: BuildingsType.Vivtar1,
-    sellPrice: 9
+    price: 10,
+    type: BuildingsType.Vivtar1
   },
   VivtarPoplichnukiv3: {
     name: `Вівтар "${UnitTypes.Prispeshnick}" &#9733; &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prispeshnick} третього рівня`,
-    price: 24,
-    type: BuildingsType.Vivtar1,
-    sellPrice: 12
+    price: 15,
+    type: BuildingsType.Vivtar1
   },
   VivtarProminkoriv: {
     name: `Вівтар "${UnitTypes.Prominkor}" &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prominkor} першого рівня`,
-    price: 10,
-    type: BuildingsType.Vivtar2,
-    sellPrice: 5
+    price: 4,
+    type: BuildingsType.Vivtar2
   },
   VivtarProminkoriv2: {
     name: `Вівтар "${UnitTypes.Prominkor}" &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prominkor} другого рівня`,
-    price: 18,
-    type: BuildingsType.Vivtar2,
-    sellPrice: 9
+    price: 10,
+    type: BuildingsType.Vivtar2
   },
   VivtarProminkoriv3: {
     name: `Вівтар "${UnitTypes.Prominkor}" &#9733; &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prominkor} третього рівня`,
-    price: 24,
-    type: BuildingsType.Vivtar2,
-    sellPrice: 12
+    price: 15,
+    type: BuildingsType.Vivtar2
   },
   VivtarVisnukiv: {
     name: `Вівтар "${UnitTypes.Vestnick}" &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Vestnick} першого рівня`,
-    price: 10,
-    type: BuildingsType.Vivtar3,
-    sellPrice: 5
+    price: 4,
+    type: BuildingsType.Vivtar3
   },
   VivtarVisnukiv2: {
     name: `Вівтар "${UnitTypes.Vestnick}" &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Vestnick} другого рівня`,
-    price: 18,
-    type: BuildingsType.Vivtar3,
-    sellPrice: 9
+    price: 10,
+    type: BuildingsType.Vivtar3
   },
   VivtarVisnukiv3: {
     name: `Вівтар "${UnitTypes.Vestnick}" &#9733; &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Vestnick} третього рівня`,
-    price: 24,
-    type: BuildingsType.Vivtar3,
-    sellPrice: 12
+    price: 15,
+    type: BuildingsType.Vivtar3
   }
 })
 
 export const SortieTypes = Object.freeze({
-  A: "Неперевершена перевага - +4✾ +3✾ від потерпілого",
-  B: "Чисельне придушення - +4✾",
+  A: "Неперевершена перевага - +7✾ +5✾ від потерпілого",
+  B: "Чисельне придушення - +7✾",
   C: "Сили рівні - +0✾",
   D: "Чисельна меншість - -0✾",
-  E: "Повний розгром - -3✾",
+  E: "Повний розгром - -5✾",
   X: `Ворожа вилазка не має ефекту через ${Buildings.Pamjatnuk.name} - +0✾`,
   Y: `Вилазка була невдалою через ${Buildings.Pamjatnuk.name} - +0✾`
 })

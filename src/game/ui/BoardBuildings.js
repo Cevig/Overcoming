@@ -107,12 +107,10 @@ export class BoardBuildings extends React.Component {
 
   getBuildingSellPrice(house) {
     const props = this.props.props
-    if (house.sellPrice > 0) {
-      return (<div className='building-info-buy' onClick={() => props.moves.sellHouse(house)}>Продати за {
-        props.ctx.turn === house.turn ? <span><span style={{textDecoration: "line-through", color: "black"}}>{house.sellPrice}✾</span> {house.price}</span> : house.sellPrice
-      }✾</div>)
+    if (props.ctx.turn === house.turn) {
+      return (<div className='building-info-buy' onClick={() => props.moves.sellHouse(house)}>Повернути</div>)
     } else {
-      return (<div className='building-info-buy disabled'>Не продається</div>)
+      return (<></>)
     }
   }
 

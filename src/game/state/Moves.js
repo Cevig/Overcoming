@@ -1077,7 +1077,7 @@ export const moves = {
 
   sellHouseMove: ({ G, ctx, events, playerID }, house) => {
     const player = G.players.find(p => p.id === +playerID);
-    player.essence = player.essence + (house.turn === ctx.turn ? house.price : house.sellPrice)
+    player.essence = player.essence + house.price
     player.houses = player.houses.filter(h => h.name !== house.name)
   },
 
