@@ -29,7 +29,6 @@ import {
   UnitTypes
 } from "../helpers/Constants";
 import {handleAbility} from "./UnitSkills";
-import {gameLog} from "../helpers/Log";
 
 export const moves = {
 
@@ -129,7 +128,7 @@ export const moves = {
       .map(u => u.unitState.point)
 
     if (G.availablePoints.length === 0) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -155,7 +154,7 @@ export const moves = {
     let enemies = getNearestEnemies(G, currentUnit.unitState)
     if (hasStatus(currentUnit, UnitStatus.Unarmed)) {
       enemies = []
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -166,7 +165,7 @@ export const moves = {
       const mainTargetEnemy = enemies.find(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
       if (mainTargetEnemy !== undefined) {
         enemies = [mainTargetEnemy]
-        gameLog.addLog({
+        G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
@@ -180,7 +179,7 @@ export const moves = {
         if (vengeanceTarget) {
           if (enemies.find(enemy => enemy.id === vengeanceTarget.id)) {
             enemies = [vengeanceTarget]
-            gameLog.addLog({
+            G.serverMsgLog.push({
               id: Math.random().toString(10).slice(2),
               turn: ctx.turn,
               player: +ctx.currentPlayer,
@@ -189,7 +188,7 @@ export const moves = {
             })
           } else {
             enemies = []
-            gameLog.addLog({
+            G.serverMsgLog.push({
               id: Math.random().toString(10).slice(2),
               turn: ctx.turn,
               player: +ctx.currentPlayer,
@@ -267,7 +266,7 @@ export const moves = {
     })
     thisUnit.unitState.isClickable = false
     G.currentActionUnitId = undefined
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -282,7 +281,7 @@ export const moves = {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     handleUnitMove(G, ctx, unit.id, point)
     const thisUnit = getUnitById(G, G.currentActionUnitId)
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -299,7 +298,7 @@ export const moves = {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     handleUnitMove(G, ctx, unit.id, point)
     const thisUnit = getUnitById(G, G.currentActionUnitId)
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -326,7 +325,7 @@ export const moves = {
         actionQty = action.qty
       }
     })
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -452,7 +451,7 @@ export const moves = {
     const enemy = getUnitById(G, G.currentEnemySelectedId)
     const newEnemy = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
 
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -504,7 +503,7 @@ export const moves = {
     const player = G.players.find(p => p.id === +playerID);
     if (player.units.filter(u => u.type === UnitTypes.Idol).length > 0 && player.units.filter(u => u.type !== UnitTypes.Idol).length > 0) {
       G.buildingComplete++
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +playerID,
@@ -513,7 +512,7 @@ export const moves = {
       })
       events.setStage('finishBuildingStage')
     } else {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +playerID,
@@ -530,7 +529,7 @@ export const moves = {
       G.setupComplete++
       G.players[+playerID].availablePoints = []
       G.players[+playerID].isPlayerInBattle = true
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +playerID,
@@ -539,7 +538,7 @@ export const moves = {
       })
       events.setStage('finishSetupStage')
     } else {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +playerID,
@@ -551,7 +550,7 @@ export const moves = {
 
   nextRoundMove: ({G, ctx, events, playerID}) => {
     G.battleResultComplete++
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +playerID,
@@ -606,7 +605,7 @@ export const moves = {
       .filter(unit => unit.id !== G.currentUnit.id)
       .map(unit => unit.unitState.point)
     if (G.availablePoints.length === 0) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -631,7 +630,7 @@ export const moves = {
         actionQty = action.qty
       }
     })
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -677,7 +676,7 @@ export const moves = {
     })
 
     if (currentUnit.id === G.currentActionUnitId) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -704,7 +703,7 @@ export const moves = {
           status: [{name: UnitStatus.InitiativeDown, qty: 1}, {name: UnitStatus.PowerDown, qty: 1}, {name: UnitStatus.Cursed, qty: 99}]
         }
       });
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -733,7 +732,7 @@ export const moves = {
   throwWeaponActionMove: ({ G, ctx, events }) => {
     G.availablePoints = getNearestEnemies2(G, G.currentUnit.unitState).map(u => u.unitState.point)
     if (G.availablePoints.length === 0) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -750,7 +749,7 @@ export const moves = {
       .filter(unit => unit.type !== UnitTypes.Idol)
       .map(u => u.unitState.point)
     if (G.availablePoints.length === 0) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -767,7 +766,7 @@ export const moves = {
       .filter(unit => !hasStatus(unit, UnitStatus.Fired))
       .map(u => u.unitState.point)
     if (G.availablePoints.length === 0) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -790,7 +789,7 @@ export const moves = {
         actionQty = action.qty
       }
     })
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -833,7 +832,7 @@ export const moves = {
         actionQty = action.qty
       }
     })
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -872,7 +871,7 @@ export const moves = {
         actionQty = action.qty
       }
     })
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -907,7 +906,7 @@ export const moves = {
       .map(unit => unit.unitState.point)
 
     if (G.availablePoints.length === 0) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,
@@ -941,7 +940,7 @@ export const moves = {
         actionQty = action.qty
       }
     })
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -968,7 +967,7 @@ export const moves = {
         actionQty = action.qty
       }
     })
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -992,7 +991,7 @@ export const moves = {
   notMovedRecoverActionMove: ({ G, ctx, events }) => {
     const thisUnit = getUnitById(G, G.currentUnit.id)
 
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -1025,7 +1024,7 @@ export const moves = {
         actionQty = action.qty
       }
     })
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -1084,7 +1083,7 @@ export const moves = {
 
   leaveGame: ({ G, ctx, events, playerID }) => {
     const player = G.players.find(p => p.id === +playerID);
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -1104,7 +1103,7 @@ export const moves = {
     enemyPlayer.heals -= dmg
     thisPlayer.dealtDamage = true
 
-    gameLog.addLog({
+    G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
@@ -1122,7 +1121,7 @@ export const moves = {
     }
 
     if (enemyPlayer.heals <= 0) {
-      gameLog.addLog({
+      G.serverMsgLog.push({
         id: Math.random().toString(10).slice(2),
         turn: ctx.turn,
         player: +ctx.currentPlayer,

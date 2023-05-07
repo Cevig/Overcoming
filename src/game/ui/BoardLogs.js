@@ -1,7 +1,6 @@
 import React from 'react';
 import {playerColors} from "../helpers/Constants";
 import './BoardLogs.css';
-import {gameLog} from "../helpers/Log";
 
 const style = {
   display: 'flex',
@@ -9,24 +8,10 @@ const style = {
   flexBasis: `21%`
 };
 
-const sentChatMessages = [];
-
 export class BoardLogs extends React.Component {
   render () {
     const props = this.props.props
     const player = props.G.players.find(p => p.id === +props.playerID);
-    const messages = gameLog.log.filter(log => sentChatMessages.find(mes => mes === log.id) === undefined)
-    messages.forEach(message => {
-      props.sendChatMessage(message)
-      sentChatMessages.push(message.id)
-    })
-    if (+props.playerID === 0) {
-      const serverMsg = props.G.serverMsgLog.filter(log => sentChatMessages.find(mes => mes === log.id) === undefined)
-      serverMsg.forEach(message => {
-        props.sendChatMessage(message)
-        sentChatMessages.push(message.id)
-      })
-    }
     return (
       <div style={style}>
         {props.ctx.phase === 'Building' || props.ctx.phase === 'Setup' ?
@@ -79,14 +64,9 @@ export class BoardLogs extends React.Component {
         }
         <div className="log-container">
           <div style={{display: "flex", flexDirection: "column"}} dangerouslySetInnerHTML={
-            { __html: props.chatMessages.map(note => `<div>> <span style="color: ${playerColors[note.payload.player]}">(${note.payload.turn})</span> - <span>${note.payload.text}</span></div>`).join('')}
+            { __html: props.G.serverMsgLog.map(note => `<div>> <span style="color: ${playerColors[note.player]}">(${note.turn})</span> - <span>${note.text}</span></div>`).join('')}
           } />
         </div>
-        {/*<div className="log-container">*/}
-        {/*  <div style={{display: "flex", flexDirection: "column"}} dangerouslySetInnerHTML={*/}
-        {/*    { __html: props.G.serverMsgLog.map(note => `<div>> <span style="color: ${playerColors[note.player]}">(${note.turn})</span> - <span>${note.text}</span></div>`).join('')}*/}
-        {/*  } />*/}
-        {/*</div>*/}
 
       </div>
     )

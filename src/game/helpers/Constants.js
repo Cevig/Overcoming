@@ -150,7 +150,7 @@ export const BuildingsType = Object.freeze({
 export const Buildings = Object.freeze({
   Kapitoliy: {
     name: "Капітолій",
-    description: "Головний об'єкт гравця. Має 20 життя на старті. Гравець вибуває з гри якщо Капітолій буде зруйнован",
+    description: "Головний об'єкт гравця. Має 10 життя на старті. Гравець вибуває з гри якщо Капітолій буде зруйнован",
     price: 0,
     type: BuildingsType.Peace,
     sellPrice: 0
