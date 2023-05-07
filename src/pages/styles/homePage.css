@@ -7,6 +7,7 @@
 }
 #menu-description {
   padding: 25px;
+  height: 25px;
 }
 .menu-cards .card {
   width: 8vw;
@@ -17,6 +18,8 @@
   transition: margin 0.3s, width 0.2s, height 0.2s;
   -webkit-clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
   clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+  cursor: pointer;
+  margin-right: 5px;
 }
 .menu-cards .card .card-inside {
   width: 50%;
@@ -25,15 +28,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-.menu-cards .card:hover {
-  color: #212121;
-  margin-top: 0px;
-  width: 10vw;
-  height: 9vw;
-  margin-right: 10px;
-  z-index: 1;
-  cursor: pointer;
 }
 .menu-cards .card.start {
   background: #81c784;
