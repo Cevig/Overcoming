@@ -1,6 +1,7 @@
 import React from 'react';
-import {Buildings, BuildingsType} from "../helpers/Constants";
+import {Buildings, BuildingsType, UnitTypes} from "../helpers/Constants";
 import "./BoardBuildings.css";
+import {getHousePrice} from "../helpers/Utils";
 
 export class BoardBuildings extends React.Component {
   render () {
@@ -46,7 +47,26 @@ export class BoardBuildings extends React.Component {
       if (value.type === type) {
         const playersHouse = player.houses.find(house => house.name === value.name)
         if (playersHouse === undefined) {
-          availableBuildings.push(value)
+          if (value.name === Buildings.VivtarPoplichnukiv2.name) {
+            player.houses.find(house => house.name === Buildings.VivtarPoplichnukiv.name) !== undefined ? availableBuildings.push(value) : availableBuildings.push({...value, notAllowed: true})
+          } else if (value.name === Buildings.VivtarPoplichnukiv3.name) {
+            (player.houses.find(house => house.name === Buildings.VivtarPoplichnukiv.name) && player.houses.find(house => house.name === Buildings.VivtarPoplichnukiv2.name))
+              ? availableBuildings.push(value) : availableBuildings.push({...value, notAllowed: true})
+          } else if (value.name === Buildings.VivtarProminkoriv2.name) {
+            (player.houses.find(house => house.name === Buildings.VivtarProminkoriv.name))
+              ? availableBuildings.push(value) : availableBuildings.push({...value, notAllowed: true})
+          } else if (value.name === Buildings.VivtarProminkoriv3.name) {
+            (player.houses.find(house => house.name === Buildings.VivtarProminkoriv.name) && player.houses.find(house => house.name === Buildings.VivtarProminkoriv2.name))
+              ? availableBuildings.push(value) : availableBuildings.push({...value, notAllowed: true})
+          } else if (value.name === Buildings.VivtarVisnukiv2.name) {
+            (player.houses.find(house => house.name === Buildings.VivtarVisnukiv.name))
+              ? availableBuildings.push(value) : availableBuildings.push({...value, notAllowed: true})
+          } else if (value.name === Buildings.VivtarVisnukiv3.name) {
+            (player.houses.find(house => house.name === Buildings.VivtarVisnukiv.name) && player.houses.find(house => house.name === Buildings.VivtarVisnukiv2.name))
+              ? availableBuildings.push(value) : availableBuildings.push({...value, notAllowed: true})
+          } else {
+            availableBuildings.push(value)
+          }
         }
       }
     }
@@ -63,7 +83,7 @@ export class BoardBuildings extends React.Component {
               <div className="building-info-wrapper" key={i}>
                 <div className="building-info-name" dangerouslySetInnerHTML={{ __html: house.name}}></div>
                 <div className="building-info-description" dangerouslySetInnerHTML={{ __html: house.description}}></div>
-                <div className="building-info-price" dangerouslySetInnerHTML={{ __html: house.price > 0 ? `${house.price}✾` : ''}}></div>
+                <div className="building-info-price" dangerouslySetInnerHTML={{ __html: house.price > 0 ? `${getHousePrice(house, player)}✾` : ''}}></div>
                 {this.getBuildingBuyPrice(house)}
               </div>
             )
@@ -76,7 +96,7 @@ export class BoardBuildings extends React.Component {
   showMyBuildings() {
     const props = this.props.props
     const player = props.G.players.find(p => p.id === +props.playerID);
-
+    const availableToSell = []
     return (
       <div className="buildings-type">
         <div className="buildings-type-content">
@@ -85,7 +105,7 @@ export class BoardBuildings extends React.Component {
               <div className="building-info-wrapper" key={i}>
                 <div className="building-info-name" dangerouslySetInnerHTML={{ __html: house.name}}></div>
                 <div className="building-info-description" dangerouslySetInnerHTML={{ __html: house.description}}></div>
-                <div className="building-info-price" dangerouslySetInnerHTML={{ __html: house.price > 0 ? `${house.price}✾` : ''}}></div>
+                <div className="building-info-price" dangerouslySetInnerHTML={{ __html: house.price > 0 ? `${getHousePrice(house, player)}✾` : ''}}></div>
                 {this.getBuildingSellPrice(house)}
               </div>
             )
@@ -95,10 +115,43 @@ export class BoardBuildings extends React.Component {
     )
   }
 
+  isSellBuildingAvailable(house) {
+    const props = this.props.props
+    const player = props.G.players.find(p => p.id === +props.playerID);
+    let isAllowed = true
+    if (house.name === Buildings.VivtarPoplichnukiv.name) {
+      isAllowed = (player.units.find(u => u.type === UnitTypes.Prispeshnick && u.level === 1) ||
+      player.houses.find(h => h.name === Buildings.VivtarPoplichnukiv2.name)) ? false : isAllowed
+    } else if (house.name === Buildings.VivtarProminkoriv.name) {
+      isAllowed = (player.units.find(u => u.type === UnitTypes.Prominkor && u.level === 1) ||
+        player.houses.find(h => h.name === Buildings.VivtarProminkoriv2.name)) ? false : isAllowed
+    } else if (house.name === Buildings.VivtarVisnukiv.name) {
+      isAllowed = (player.units.find(u => u.type === UnitTypes.Vestnick && u.level === 1) ||
+      player.houses.find(h => h.name === Buildings.VivtarVisnukiv2.name)) ? false : isAllowed
+    } else if (house.name === Buildings.VivtarPoplichnukiv2.name) {
+      isAllowed = (player.units.find(u => u.type === UnitTypes.Prispeshnick && u.level === 2) ||
+      player.houses.find(h => h.name === Buildings.VivtarPoplichnukiv3.name)) ? false : isAllowed
+    } else if (house.name === Buildings.VivtarProminkoriv2.name) {
+      isAllowed = (player.units.find(u => u.type === UnitTypes.Prominkor && u.level === 2) ||
+      player.houses.find(h => h.name === Buildings.VivtarProminkoriv3.name)) ? false : isAllowed
+    } else if (house.name === Buildings.VivtarVisnukiv2.name) {
+      isAllowed = (player.units.find(u => u.type === UnitTypes.Vestnick && u.level === 2) ||
+      player.houses.find(h => h.name === Buildings.VivtarVisnukiv3.name)) ? false : isAllowed
+    } else if (house.name === Buildings.VivtarPoplichnukiv3.name) {
+      isAllowed = player.units.find(u => u.type === UnitTypes.Prispeshnick && u.level === 3) ? false : isAllowed
+    } else if (house.name === Buildings.VivtarProminkoriv3.name) {
+      isAllowed = player.units.find(u => u.type === UnitTypes.Prominkor && u.level === 3) ? false : isAllowed
+    } else if (house.name === Buildings.VivtarVisnukiv3.name) {
+      isAllowed = player.units.find(u => u.type === UnitTypes.Vestnick && u.level === 3) ? false : isAllowed
+    }
+
+    return isAllowed
+  }
+
   getBuildingBuyPrice(house) {
     const props = this.props.props
     const player = props.G.players.find(p => p.id === +props.playerID);
-    if (house.price > player.essence) {
+    if (getHousePrice(house, player) > player.essence || house.notAllowed) {
       return (<div className="building-info-buy disabled">Придбати</div>)
     } else {
       return (<div className='building-info-buy' onClick={() => props.moves.buyHouse(house)}>Придбати</div>)
@@ -108,7 +161,8 @@ export class BoardBuildings extends React.Component {
   getBuildingSellPrice(house) {
     const props = this.props.props
     if (props.ctx.turn === house.turn) {
-      return (<div className='building-info-buy' onClick={() => props.moves.sellHouse(house)}>Повернути</div>)
+      const isAllowedToSell = this.isSellBuildingAvailable(house)
+      return (<div className={isAllowedToSell?'building-info-buy':'building-info-buy disabled'} onClick={() => isAllowedToSell ? props.moves.sellHouse(house) : 0}>Повернути</div>)
     } else {
       return (<></>)
     }

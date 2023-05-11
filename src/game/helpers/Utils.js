@@ -362,8 +362,9 @@ export const handleUnitDeath = (data, target, killer = null) => {
   target.unitState.point = null
   if (target.heals > 0) target.heals = 0;
   if (killer) {
-    let essence = hasKeyword(killer, UnitKeywords.AdditionalEssence) ? 5 : 2
+    let essence = target.level ? 3+((target.level-1)*2) : 3
     if (target.type === UnitTypes.Idol) essence += 2;
+    if (hasKeyword(killer, UnitKeywords.AdditionalEssence)) essence += 2;
     G.players[killer.unitState.playerId].essence += essence;
     G.players[killer.unitState.playerId].killedUnits++;
     G.serverMsgLog.push({
@@ -468,6 +469,16 @@ export const cleanPlayer = (player) => {
   player.units = []
 }
 
+export const getHousePrice = (house, player) => {
+  if (house.name === Buildings.VivtarPoplichnukiv.name) {
+    return house.price - player.houses.filter(h => h.name === Buildings.VivtarProminkoriv.name || h.name === Buildings.VivtarVisnukiv.name).length
+  } else if (house.name === Buildings.VivtarProminkoriv.name) {
+    return house.price - player.houses.filter(h => h.name === Buildings.VivtarPoplichnukiv.name || h.name === Buildings.VivtarVisnukiv.name).length
+  } else if (house.name === Buildings.VivtarVisnukiv.name) {
+    return house.price - player.houses.filter(h => h.name === Buildings.VivtarProminkoriv.name || h.name === Buildings.VivtarPoplichnukiv.name).length
+  } else return house.price
+}
+
 export const calculateSortie = (G, p1) => {
   const results = []
   G.players.filter(eP => eP.id !== p1.id && eP.isPlayerInGame).map(ep => {
@@ -562,18 +573,6 @@ export const getUnstablePoints = (G, ctx) => {
       result.push([a, b, -G.grid.levels])
       result.push([b, a, -G.grid.levels])
     }
-    // for (let i = 0; i <= G.grid.levels-1; i++) {
-    //   const a = -i+0
-    //   const b = -(G.grid.levels-1-i)+0
-    //   result.push([a, G.grid.levels-1, b])
-    //   result.push([b, G.grid.levels-1, a])
-    // }
-    // for (let i = -1; i >= -G.grid.levels+1; i--) {
-    //   const a = -i
-    //   const b = (G.grid.levels-1)+i
-    //   result.push([a, b, -G.grid.levels+1])
-    //   result.push([b, a, -G.grid.levels+1])
-    // }
 
     return [...new Set(result)].map(arr => createPoint(...arr))
   } else {

@@ -1,0 +1,161 @@
+.creature-wiki-button {
+  width: 120px;
+  height: 35px;
+  border: 1px solid darkgray;
+  background-color: lightyellow;
+  text-align: center;
+  line-height: 35px;
+  font-size: 22px;
+  margin: 0 0 5px 10px;
+  cursor: pointer;
+}
+
+.leave-game-button {
+  width: 150px;
+  height: 35px;
+  border: 1px solid darkgray;
+  background-color: #dddddd;
+  text-align: center;
+  line-height: 35px;
+  font-size: 22px;
+  margin: 0 0 5px 10px;
+  cursor: pointer;
+}
+
+.creature-wiki-button:hover {
+  background-color: #ffffa1;
+}
+
+.leave-game-button:hover {
+  background-color: #9a9898;
+}
+
+.creature-wiki-popup {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  overflow: hidden;
+  font-size: 14px;
+  text-align: left;
+  padding: 10px;
+  width: 80%;
+  height: 80%;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.creature-wiki-popup .close-button {
+  width: 30px;
+  height: 20px;
+  position: absolute;
+  right: 0;
+}
+
+.creature-wiki-popup .popup {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  grid-template-rows: auto auto;
+  gap: 10px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.creature-wiki-popup .popup-biome {
+  grid-column: span 3;
+  font-weight: bold;
+  margin: 10px 0;
+  text-align: center;
+  background-color: beige;
+  font-size: 24px;
+}
+
+.creature-wiki-popup .popup-creature {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr min-content min-content min-content 6fr;
+  align-items: center;
+  gap: 10px;
+  grid-auto-rows: minmax(25px, auto);
+  border: 1px solid darkgray;
+  padding-left: 10px;
+  font-size: 22px;
+}
+
+.creature-wiki-popup .popup-creature > div {
+  background-color: white;
+}
+
+.creature-wiki-popup .popup-creature-header {
+  font-weight: bold;
+}
+
+.creature-wiki-popup .popup-creature-type {
+  grid-column: 1;
+}
+
+.creature-wiki-popup .popup-creature-name {
+  grid-column: 2;
+}
+
+.creature-wiki-popup .popup-creature-damage {
+  grid-column: 3;
+  text-align: center;
+  color: #3867f9;
+}
+
+.creature-wiki-popup .popup-creature-heals {
+  grid-column: 4;
+  text-align: center;
+  color: #e72828;
+}
+
+.creature-wiki-popup .popup-creature-initiative {
+  grid-column: 5;
+  text-align: center;
+  color: green;
+}
+
+.creature-wiki-popup .popup-creature-abilities {
+  grid-column: 6;
+  font-size: 20px;
+}
+
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip-text {
+  cursor: pointer;
+  font-style: italic;
+  color: blue;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1;
+  top: calc(100% - 82px);
+  left: -50px;
+  transform: translateX(-50%);
+  padding: 8px;
+  background-color: beige;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 325px;
+  text-align: center;
+}
+
+.creature-popup .tooltip {
+  left: 100px;
+  top: calc(100% - 90px);
+}
+
+.creature-popup .tooltip-text {
+  color: #2c2cbf;
+  font-style: normal;
+}
+

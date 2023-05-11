@@ -125,7 +125,7 @@ export const UnitSkills = Object.freeze({
   RaidBlock: "Рейд вже не той",
   AntiVestnick: `Опір до ${UnitTypes.Vestnick}`,
   ReduceDamage: `Товстошкірий`,
-  HealOnAttack: `Відновлення при атаці`,
+  HealOnAttack: `Вампіризм`,
   DeadlyDamage: "Смертельний урон",
   DoubleDamage: "Подвійний урон",
   DoubleDamageInDefence: "Подвійний урон через повільність",
@@ -157,31 +157,31 @@ export const Buildings = Object.freeze({
   Zmicnenja: {
     name: "Зміцнення",
     description: "Віднімає 2 життя у кожної істоти після атаки на Ваш Капітолій",
-    price: 5,
+    price: 4,
     type: BuildingsType.Peace
   },
   NebesnaBrama: {
     name: "Небесна брама",
     description: "Підвищує дохід з вилазок - +3 ✾ за кожну істоту у вилазці",
-    price: 6,
+    price: 5,
     type: BuildingsType.Peace
   },
   Veja: {
     name: "Вежа",
     description: "Подвоює урон по Капітолію ворога",
-    price: 8,
+    price: 5,
     type: BuildingsType.Peace
   },
   Pamjatnuk: {
     name: "Пам'ятник",
     description: "Блокує ворожі вилазки. Противник не отримує ніякого доходу при вилазці",
-    price: 10,
+    price: 7,
     type: BuildingsType.Peace
   },
   Sobor: {
     name: "Собор",
     description: "Приносить 10✾ на початку раунда",
-    price: 10,
+    price: 7,
     qty: 2,
     type: BuildingsType.Peace
   },
@@ -200,13 +200,13 @@ export const Buildings = Object.freeze({
   VivtarPoplichnukiv2: {
     name: `Вівтар "${UnitTypes.Prispeshnick}" &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prispeshnick} другого рівня`,
-    price: 10,
+    price: 7,
     type: BuildingsType.Vivtar1
   },
   VivtarPoplichnukiv3: {
     name: `Вівтар "${UnitTypes.Prispeshnick}" &#9733; &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prispeshnick} третього рівня`,
-    price: 15,
+    price: 10,
     type: BuildingsType.Vivtar1
   },
   VivtarProminkoriv: {
@@ -218,13 +218,13 @@ export const Buildings = Object.freeze({
   VivtarProminkoriv2: {
     name: `Вівтар "${UnitTypes.Prominkor}" &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prominkor} другого рівня`,
-    price: 10,
+    price: 7,
     type: BuildingsType.Vivtar2
   },
   VivtarProminkoriv3: {
     name: `Вівтар "${UnitTypes.Prominkor}" &#9733; &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Prominkor} третього рівня`,
-    price: 15,
+    price: 10,
     type: BuildingsType.Vivtar2
   },
   VivtarVisnukiv: {
@@ -236,13 +236,13 @@ export const Buildings = Object.freeze({
   VivtarVisnukiv2: {
     name: `Вівтар "${UnitTypes.Vestnick}" &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Vestnick} другого рівня`,
-    price: 10,
+    price: 7,
     type: BuildingsType.Vivtar3
   },
   VivtarVisnukiv3: {
     name: `Вівтар "${UnitTypes.Vestnick}" &#9733; &#9733; &#9733;`,
     description: `Дозволяє призивати істот типу ${UnitTypes.Vestnick} третього рівня`,
-    price: 15,
+    price: 10,
     type: BuildingsType.Vivtar3
   }
 })

@@ -12,6 +12,7 @@ import {BoardBuildings} from "./BoardBuildings";
 import {BattleResults} from "./BattleResults";
 import {createPoint, playerColors} from "../helpers/Constants";
 import {EssenceGiftsUI} from "./EssenceGiftsUI";
+import AllUnitsPopup from "./AllUnitsPopup";
 
 const style = {
   display: 'flex',
@@ -201,6 +202,7 @@ export function Board (props) {
     colorMapSecret = props.G.grid.colorMap;
   }
 
+  const [isPopupAllUnitsOpen, setIsPopupAllUnitsOpen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [infoUnit, setInfoUnit] = useState(false);
   return (
@@ -252,7 +254,7 @@ export function Board (props) {
           </HexGrid>
           : <></>
         }
-        <BoardLogs props={props} info={isPopupOpen}></BoardLogs>
+        <BoardLogs data={props} info={[isPopupAllUnitsOpen, setIsPopupAllUnitsOpen]}></BoardLogs>
         {
           props.G.winner !== undefined ?
             <motion.div
@@ -273,6 +275,7 @@ export function Board (props) {
             <div></div>
         }
         <UnitInfoPopup props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
+        <AllUnitsPopup props={props} info={[isPopupAllUnitsOpen, setIsPopupAllUnitsOpen]} />
 
       </div>
 

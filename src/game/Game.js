@@ -43,6 +43,7 @@ export const Overcoming = {
               summonUnit: { move: moves.summonUnit, noLimit: true },
               sellUnit: { move: moves.sellUnitMove, noLimit: true },
               complete: { move: moves.completeBuilding, noLimit: true },
+              sacrificeHeals: { move: moves.sacrificeHeals, noLimit: true },
               surrender: moves.leaveGame,
             }
           },

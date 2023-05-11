@@ -70,7 +70,6 @@ export class USteppe {
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.statUpdates.attack.push(UnitSkills.AddFreezeEffect)
-    abilities.keywords.push(UnitKeywords.MainTarget)
     abilities.actions.push({name: UnitSkills.Urka, qty: 2})
 
     return getIdol(USteppe.urkaName, Biom.Steppe, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)

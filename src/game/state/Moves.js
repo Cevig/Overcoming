@@ -1,11 +1,11 @@
 import {
   cleanPlayer,
+  getHousePrice,
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
   getNearestEnemies2,
   getNeighbors,
-  getNeighbors2,
   getStatus,
   getUnitById,
   handleUnitDeath,
@@ -120,7 +120,7 @@ export const moves = {
 
   doActionToEnemy: ({ G, ctx, events }) => {
     const thisUnit = getUnitById(G, G.currentActionUnitId)
-    const surroundings = getNeighbors2(thisUnit.unitState.point)
+    const surroundings = getNeighbors(thisUnit.unitState.point)
 
     G.availablePoints = getInGameUnits(G, (unit) => unit.unitState.playerId !== thisUnit.unitState.playerId)
       .filter(unit => surroundings.find(point => isSame(point)(unit.unitState.point)))
@@ -133,7 +133,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `Немає доступних цілей для переміщення!`,
+        text: `Немає доступних цілей для пересування!`,
       })
     }
     events.endStage();
@@ -162,15 +162,15 @@ export const moves = {
         text: `${currentUnit.name} щось не може атакувати через статус "${UnitStatus.Unarmed}"`,
       })
     } else {
-      const mainTargetEnemy = enemies.find(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
-      if (mainTargetEnemy !== undefined) {
-        enemies = [mainTargetEnemy]
+      const mainTargetEnemies = enemies.filter(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
+      if (mainTargetEnemies.length > 0) {
+        enemies = mainTargetEnemies
         G.serverMsgLog.push({
           id: Math.random().toString(10).slice(2),
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemy.name}!`,
+          text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemies.length > 0 ? 'декількох істот' : mainTargetEnemies[0].name}!`,
         })
       }
       const vengeanceStatus = getStatus(currentUnit, UnitStatus.Vengeance)
@@ -520,6 +520,13 @@ export const moves = {
         text: `Гравцю ${+playerID+1} необхідно викликати Ідола та хоч одну істоту`,
       })
     }
+  },
+
+  sacrificeHeals: ({G, ctx, events, playerID}) => {
+    const player = G.players.find(p => p.id === +playerID);
+    player.heals -= 2;
+    player.isUsedSacrifice = true
+    player.essence += 10;
   },
 
   complete: ({G, ctx, events, playerID}) => {
@@ -1069,7 +1076,7 @@ export const moves = {
 
   buyHouseMove: ({ G, ctx, events, playerID }, house) => {
     const player = G.players.find(p => p.id === +playerID);
-    player.essence = player.essence - house.price
+    player.essence = player.essence - getHousePrice(house, player)
     const playerHouse = player.houses.find(h => h.name === house.name)
     if (playerHouse) playerHouse.qty++;
     else player.houses.push({...house, turn: ctx.turn })
@@ -1077,7 +1084,7 @@ export const moves = {
 
   sellHouseMove: ({ G, ctx, events, playerID }, house) => {
     const player = G.players.find(p => p.id === +playerID);
-    player.essence = player.essence + house.price
+    player.essence = player.essence + getHousePrice(house, player)
     player.houses = player.houses.filter(h => h.name !== house.name)
   },
 

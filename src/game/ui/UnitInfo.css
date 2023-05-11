@@ -1,15 +1,15 @@
 .creature-popup {
   position: absolute;
   top: calc(50% - 225px);
-  left: calc(50% - 215px);
+  left: calc(50% - 265px);
   background-color: white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
-  overflow: auto;
+  overflow: visible;
   font-size: 14px;
   text-align: left;
   padding: 10px;
-  width: 450px;
+  width: 550px;
   height: 430px;
   justify-content: center;
   align-items: center;
@@ -20,7 +20,8 @@
   width: 30px;
   height: 20px;
   position: absolute;
-  right: 0;
+  right: 5px;
+  cursor: pointer;
 }
 
 .creature-popup .popup-content {

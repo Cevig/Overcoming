@@ -760,9 +760,16 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
       raidEnemies = getRaidEnemies(G, thisUnit.unitState)
     }
 
-    const mainTargetEnemy = raidEnemies.find(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
-    if (mainTargetEnemy !== undefined) {
-      raidEnemies = [mainTargetEnemy]
+    const mainTargetEnemies = raidEnemies.filter(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
+    if (mainTargetEnemies.length > 0) {
+      raidEnemies = mainTargetEnemies
+      G.serverMsgLog.push({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemies.length > 0 ? 'декількох істот' : mainTargetEnemies[0].name}!`,
+      })
     }
 
     const vengeanceStatus = getStatus(thisUnit, UnitStatus.Vengeance)

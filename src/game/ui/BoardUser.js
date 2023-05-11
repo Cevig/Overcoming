@@ -42,7 +42,10 @@ const styles = {
     backgroundColor: 'grey',
     marginRight: 5,
     textAlign: 'center',
-    marginTop: 5
+    marginTop: 5,
+    display: 'flex',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap'
   },
 
   units: {
@@ -70,87 +73,86 @@ export class BoardUser extends React.Component {
           : <></>
         }
         {this.showFightQueue()}
-        <div style={{marginTop: "auto", marginBottom: 30}}>
+        <div>
           <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20, fontSize: 22}}>Дії</div>
           {playerClient.isPlayerInGame ?
-            <div style={styles.actions}>
+            <div style={styles.actions} className="user-actions">
               <button onClick={() => props.undo()}>Назад</button>
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
                 <button onClick={() => props.moves.removeUnit()}>Видалити</button>
-                : <span></span>
+                : <></>
               }
               {props.ctx.phase === 'Building' || props.ctx.phase === 'Setup' ?
                 <button onClick={() => props.moves.complete()}>Завершити</button>
-                : <span></span>
+                : <></>
               }
-              {props.ctx.activePlayers && ((props.ctx.activePlayers[+playerClient.id] === "purchase") ||
-                (props.ctx.activePlayers[+playerClient.id] === "pickUnit"))?
-                <button onClick={() => props.moves.surrender()}>Покинути гру</button>
-                : <span></span>
+              {this.isSacrificeAvailable() ?
+                <button onClick={() => props.moves.sacrificeHeals()}>Пожертувати життям</button>
+                : <></>
               }
               {this.isDefaultSkipTurnAvailable() ?
                 <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
-                : <span></span>
+                : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "hookUnitAction") ?
                 <button onClick={() => props.moves.skipHook()}>Пропустити</button>
-                : <span></span>
+                : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "throwOverAction") ?
                 <button onClick={() => props.moves.skipHook()}>Пропустити</button>
-                : <span></span>
+                : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction") ?
                 <button onClick={() => props.moves.doActionToEnemy()}>Перемістити слугу</button>
-                : <span></span>
+                : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "curseAbasyActionStage") ?
                 <button onClick={() => props.moves.backFromAction()}>Повернутися до ходу</button>
-                : <span></span>
+                : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+playerClient.id] === "resultsStage") ?
                 <button onClick={() => props.moves.nextRound()}>Наступний раунд</button>
-                : <span></span>
+                : <></>
               }
               {this.isHealAllyAvailable() ?
                 <button onClick={() => props.moves.healAllyAction()}>Зцілити життя</button>
-                : <span></span>
+                : <></>
               }
               {this.isCurseAbasuAvailable() ?
                 <button onClick={() => props.moves.curseAction()}>Причинити біль</button>
-                : <span></span>
+                : <></>
               }
               {this.isWeaponThrowAvailable() ?
                 <button onClick={() => props.moves.throwWeaponAction()}>Шпурнути ікла</button>
-                : <span></span>
+                : <></>
               }
               {this.isReplaceUnitsAvailable() ?
                 <button onClick={() => props.moves.replaceUnitsAction()}>Поміняти місцями</button>
-                : <span></span>
+                : <></>
               }
               {this.isPauseToRecoverAvailable() ?
                 <button onClick={() => props.moves.pauseToRecoverAction()}>Час відновитись</button>
-                : <span></span>
+                : <></>
               }
               {this.isNotMovedRecoverAvailable() ?
                 <button onClick={() => props.moves.notMovedRecoverAction()}>Можна відновитись</button>
-                : <span></span>
+                : <></>
               }
               {this.isSetBlockSideAvailable() ?
                 <button onClick={() => props.moves.chooseBlockSideAction()}>Вибрати захищену сторону</button>
-                : <span></span>
+                : <></>
               }
               {this.isChargeAttackAvailable() ?
                 <button onClick={() => props.moves.chargeAttackAction()}>Зарядити атаку</button>
-                : <span></span>
+                : <></>
               }
               {this.isSetElokoCurseAvailable() ?
                 <button onClick={() => props.moves.setElokoCurseAction()}>Зачарувати істоту</button>
-                : <span></span>
+                : <></>
               }
               {this.isSetItOnFireAvailable() ?
                 <button onClick={() => props.moves.setItOnFireAction()}>Спалити істоту</button>
-                : <span></span>
+                : <></>
               }
             </div>
             : <></>
@@ -272,6 +274,15 @@ export class BoardUser extends React.Component {
     const playerStage = props.ctx.activePlayers ? props.ctx.activePlayers[+props.ctx.currentPlayer] : null
     return props.ctx.activePlayers && ((playerStage === "placeUnitOnBoard") || (playerStage === "makeDamage") ||
       (playerStage === "doRaid") || (playerStage === "showUrkaAction"));
+  }
+
+  isSacrificeAvailable() {
+    const props = this.props.props
+    const playerStage = props.ctx.activePlayers ? props.ctx.activePlayers[+props.ctx.currentPlayer] : null
+    if (props.ctx.activePlayers && playerStage === "purchase") {
+      const player = props.G.players.find(p => p.id === +props.playerID);
+      return player.isUsedSacrifice === false && player.heals > 2 && props.G.players.filter(p => p.isPlayerInGame).filter(p => p.heals > player.heals).length > 0
+    } else return false
   }
 
   showFightQueue() {

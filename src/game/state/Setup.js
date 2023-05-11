@@ -23,6 +23,7 @@ const createPlayer = (id, name, allPlayersNum) => ({
   killedUnits: 0,
   wins: 0,
   dealtDamage: false,
+  isUsedSacrifice: false,
   houses: [{...Buildings.Kapitoliy}, {...Buildings.Svjatulushe, qty: 1 }],
   sortie: []
 });
