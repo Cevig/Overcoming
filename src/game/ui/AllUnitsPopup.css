@@ -79,7 +79,7 @@
   grid-template-columns: 1fr 1.5fr min-content min-content min-content 6fr;
   align-items: center;
   gap: 10px;
-  grid-auto-rows: minmax(25px, auto);
+  grid-auto-rows: minmax(0px, auto);
   border: 1px solid darkgray;
   padding-left: 10px;
   font-size: 22px;
@@ -157,5 +157,13 @@
 .creature-popup .tooltip-text {
   color: #2c2cbf;
   font-style: normal;
+}
+
+.popup-divider {
+  grid-row-start: 3;
+  grid-column-start: 1;
+  grid-column-end: 7;
+  border-top: 1px solid darkgray;
+  margin-left: -10px;
 }
 

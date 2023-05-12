@@ -61,7 +61,7 @@ export class UJungle {
   }
 
   static getAdjatar = (id, playerId, _, createPosition, __) => {
-    const stat = [2, 9, 6]
+    const stat = [1, 10, 5]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.keywords.push(UnitKeywords.MainTarget)

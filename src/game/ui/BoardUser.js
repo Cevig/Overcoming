@@ -281,7 +281,8 @@ export class BoardUser extends React.Component {
     const playerStage = props.ctx.activePlayers ? props.ctx.activePlayers[+props.ctx.currentPlayer] : null
     if (props.ctx.activePlayers && playerStage === "purchase") {
       const player = props.G.players.find(p => p.id === +props.playerID);
-      return player.isUsedSacrifice === false && player.heals > 2 && props.G.players.filter(p => p.isPlayerInGame).filter(p => p.heals > player.heals).length > 0
+      return player.isUsedSacrifice === false && player.heals > 2 && props.G.players.filter(p => p.isPlayerInGame).filter(p => p.heals > player.heals).length > 0 &&
+        (player.essence < 18 && player.houses.find(h => props.ctx.turn === h.turn) === undefined && player.units.length === 0)
     } else return false
   }
 

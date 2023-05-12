@@ -68,7 +68,7 @@ export class UMash {
   }
 
   static getBegemot = (id, playerId, _, createPosition, __) => {
-    const stat = [3, 8, 4]
+    const stat = [2, 8, 2]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.keywords.push(UnitKeywords.AlwaysCounterDamage)

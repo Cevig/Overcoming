@@ -17,7 +17,7 @@ export class BoardBuildings extends React.Component {
 
   showBuildingsList() {
     return (
-      <div>
+      <div style={{width: '100%'}}>
         <div className="buildings-container">
           <div className="buildings-head">Доступні Споруди</div>
           <div className="buildings-list">

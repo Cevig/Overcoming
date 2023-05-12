@@ -90,19 +90,19 @@ const UnitInfoPopup = (props) => {
       } else if (skill.name === UnitSkills.UtilizeDeath || skill === UnitSkills.UtilizeDeath) {
         return (<><Tooltip text="Отримує заряд при смерті істоти у радіусі 2">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.healAlly || skill === UnitSkills.healAlly) {
-        return (<><Tooltip text="Відновити життя союзній істоті">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Відновити життя союзній істоті (+2 життя)">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.abasuCurse || skill === UnitSkills.abasuCurse) {
-        return (<><Tooltip text="Відновити собі життя чи знизити силу та ініціативу істоті">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Відновити собі життя (+2) чи знизити силу (-1) та ініціативу (-1) істоті">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.chainDamage || skill === UnitSkills.chainDamage) {
         return (<><Tooltip text="Якщо не рухався, то б'є усіх по ланцюжку">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.throwWeapon || skill === UnitSkills.throwWeapon) {
-        return (<><Tooltip text="Нанести урон не у битві та втратити можливість атакувати">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Нанести урон не у битві та втратити можливість атакувати 2 ходи">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.replaceUnits || skill === UnitSkills.replaceUnits) {
         return (<><Tooltip text="Поміняти місцями союзну та ворожу істоту, що стоять поруч">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.pauseToRecover || skill === UnitSkills.pauseToRecover) {
-        return (<><Tooltip text="Відновити життя, але втратити можливість відповідати">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Відновити життя, але втратити можливість відповідати 1 хід">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.NotMovedRecover || skill === UnitSkills.NotMovedRecover) {
-        return (<><Tooltip text="Відновити життя, якщо поруч немає ворогів">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Відновити життя до початкового, якщо поруч немає ворогів">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.RaidBlock || skill === UnitSkills.RaidBlock) {
         return (<><Tooltip text="Не отримує урону від рейду">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.AntiVestnick || skill === UnitSkills.AntiVestnick) {
@@ -112,7 +112,7 @@ const UnitInfoPopup = (props) => {
       } else if (skill.name === UnitSkills.HealOnAttack || skill === UnitSkills.HealOnAttack) {
         return (<><Tooltip text="Отримує 1 життя при атаці">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.DeadlyDamage || skill === UnitSkills.DeadlyDamage) {
-        return (<><Tooltip text="Вмирає, якщо отримає урон в пораненому стані">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Вмирає, якщо отримає урон у пораненому стані">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.DoubleDamage || skill === UnitSkills.DoubleDamage) {
         return (<><Tooltip text="Отримує подвійний урон, якщо у ворога більше життя">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.DoubleDamageInDefence || skill === UnitSkills.DoubleDamageInDefence) {
@@ -185,7 +185,7 @@ const UnitInfoPopup = (props) => {
 
   const getUnitKeywordsString = () => {
     const keywords = infoUnit.abilities.keywords
-    return infoUnit.status.map((keyword, i) => {
+    return keywords.map((keyword, i) => {
       if (keyword === UnitKeywords.Sneaky) {
         return (<><Tooltip text="Не отримує відповіді після атаки">{keyword}</Tooltip>{i !== keywords.length-1 ? ', ' : ''}</>)
       } else if (keyword === UnitKeywords.Unfocused) {
@@ -223,6 +223,7 @@ const UnitInfoPopup = (props) => {
   }
 
   if (infoUnit) {
+    const unitAbilities = getUnitAbilitiesString()
     return (
       <div className="creature-popup" style={popupStyle}>
         <button className="close-button" onClick={handleClose}>
@@ -261,10 +262,13 @@ const UnitInfoPopup = (props) => {
           </div>
           <div className="popup-description">
             <div className="creature-applied-statuses">
-              <div style={{borderBottom: "1px solid #cbcbcb", borderTop: "1px solid #cbcbcb", marginBottom: 5}}>
-                <div style={{textAlign: "center", marginTop: 5}}>Навички</div>
-                <div style={{fontSize: 20}}>{getUnitAbilitiesString()}</div>
-              </div>
+              {unitAbilities.length !== 0 ?
+                <div style={{borderBottom: "1px solid #cbcbcb", borderTop: "1px solid #cbcbcb", marginBottom: 5}}>
+                  <div style={{textAlign: "center", marginTop: 5}}>Навички</div>
+                  <div style={{fontSize: 20}}>{unitAbilities}</div>
+                </div>
+                : <></>
+              }
               {infoUnit.status.length > 0 ?
                 <div>Поточні статуси: <span style={{fontSize: 20}}>{getUnitStatusesString()}</span></div>
                 : <></>

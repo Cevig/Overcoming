@@ -156,11 +156,9 @@ const UnitList = (data) => {
     }
     else {
       isDisable = player.units.filter(u => u.type !== UnitTypes.Idol).length >= 6
-      price = unit.price + player.units.filter(u => u.type === unit.type).length + unit.level-1
+      price = unit.price + (player.units.filter(u => u.type === unit.type).length * 2) + unit.level-1
       if (hasKeyword(unit, UnitKeywords.LowCost)) {
-        price = unit.price + player.units.filter(u => u.type === unit.type).length + unit.level-2
-      } else {
-        price = unit.price + (player.units.filter(u => u.type === unit.type).length * 2) + unit.level-1
+        price -= 1;
       }
       if (player.essence < price) isDisable = true
     }

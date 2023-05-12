@@ -39,7 +39,7 @@
 }
 
 .creature-popup .creature-info {
-  overflow: hidden;
+  overflow: visible;
   width: 100%;
 }
 

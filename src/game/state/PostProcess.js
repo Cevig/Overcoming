@@ -3,6 +3,7 @@ import {
   getInGameUnits,
   getNearestAllies,
   getNearestEnemies,
+  getStatus,
   getUnstablePoints,
   handleUnitDeath,
   hasKeyword,
@@ -53,16 +54,6 @@ export const onBuildingBegin = (G, ctx, events) => {
           player: +ctx.currentPlayer,
           phase: ctx.phase,
           text: `${p.name} отримав 8✾ завдяки ${Buildings.Svjatulushe.name}`,
-        })
-      }
-      if (h.name === Buildings.Sobor.name) {
-        p.essence += 10;
-        G.serverMsgLog.push({
-          id: Math.random().toString(10).slice(2),
-          turn: ctx.turn,
-          player: +ctx.currentPlayer,
-          phase: ctx.phase,
-          text: `${p.name} отримав 10✾ завдяки ${Buildings.Svjatulushe.name}`,
         })
       }
     })
@@ -196,12 +187,13 @@ export const cleanFightPhase = (G, ctx, events) => {
     unit.unitState.isInFight = false
     unit.unitState.skippedTurn = false
     unit.unitState.isCounterAttacked = false
-    if (hasStatus(unit, UnitStatus.PowerUpSupport)) {
+    const supportStatus = getStatus(unit, UnitStatus.PowerUpSupport)
+    if (supportStatus) {
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: unit,
         enemy: unit,
         updates: {
-          power: 1,
+          power: supportStatus.qty,
           status: [{name: UnitStatus.PowerUpSupport, qty: -99}]
         }
       });

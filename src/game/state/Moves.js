@@ -628,7 +628,7 @@ export const moves = {
     const unit = getInGameUnits(G).find(unit => unit.id === G.currentUnit.id)
     const ally = getInGameUnits(G).find(unit => isSame(unit.unitState.point)(point))
 
-    const healValue = Math.min(ally.unitState.baseStats.heals, ally.heals + 3) - ally.heals
+    const healValue = Math.min(ally.unitState.baseStats.heals, ally.heals + 2) - ally.heals
 
     let actionQty = 0
     unit.abilities.allTimeActions.forEach(action => {

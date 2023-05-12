@@ -178,13 +178,6 @@ export const Buildings = Object.freeze({
     price: 7,
     type: BuildingsType.Peace
   },
-  Sobor: {
-    name: "Собор",
-    description: "Приносить 10✾ на початку раунда",
-    price: 7,
-    qty: 2,
-    type: BuildingsType.Peace
-  },
   Svjatulushe: {
     name: "Святилище",
     description: "Приносить 8✾ на початку раунда",

@@ -212,7 +212,7 @@ export function Board (props) {
           <BoardBuildings style={hexStyle} props={props} />
           : <></>
         }
-        {props.ctx.phase === 'FinishBattle' ?
+        {(props.ctx.phase === 'FinishBattle' ||  props.ctx.phase === null)?
           <BattleResults style={hexStyle} props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
           : <></>
         }
