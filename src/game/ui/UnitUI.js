@@ -22,6 +22,9 @@ const UnitUI = (data) => {
     setNameUnit(unit)
     setNameUnitPosition({x, y})
     setIsNamePopupOpen(true);
+    setTimeout(() => {
+      setIsNamePopupOpen(false);
+    }, "2000");
   };
 
   const handleMouseLeave = () => {
