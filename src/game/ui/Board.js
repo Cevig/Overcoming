@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import {HexGrid, Token} from './HexGrid';
 import {getInGameUnits, isSame, setEnemyMarks} from '../helpers/Utils';
-import {UnitUI} from './UnitUI';
 import {motion} from 'framer-motion';
 import {Link} from "react-router-dom";
 import {BoardUser} from "./BoardUser";
@@ -13,6 +12,8 @@ import {BattleResults} from "./BattleResults";
 import {createPoint, playerColors} from "../helpers/Constants";
 import {EssenceGiftsUI} from "./EssenceGiftsUI";
 import AllUnitsPopup from "./AllUnitsPopup";
+import UnitUI from "./UnitUI";
+import UnitNamePopup from "./UnitNamePopup";
 
 const style = {
   display: 'flex',
@@ -204,6 +205,9 @@ export function Board (props) {
 
   const [isPopupAllUnitsOpen, setIsPopupAllUnitsOpen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
+  const [nameUnit, setNameUnit] = useState(false);
+  const [nameUnitPosition, setNameUnitPosition] = useState(false);
   const [infoUnit, setInfoUnit] = useState(false);
   return (
       <div style={style}>
@@ -233,6 +237,7 @@ export function Board (props) {
                     markEnemy={setEnemyMarks(props, unit)}
                     fightQueue={props.G.fightQueue}
                     info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]}
+                    nameInfo={[isNamePopupOpen, setIsNamePopupOpen, nameUnit, setNameUnit, nameUnitPosition, setNameUnitPosition]}
                   />
                 </Token>
               })
@@ -275,6 +280,7 @@ export function Board (props) {
             <div></div>
         }
         <UnitInfoPopup props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
+        <UnitNamePopup props={props} info={[isNamePopupOpen, setIsNamePopupOpen, nameUnit, setNameUnit, nameUnitPosition, setNameUnitPosition]} />
         <AllUnitsPopup props={props} info={[isPopupAllUnitsOpen, setIsPopupAllUnitsOpen]} />
 
       </div>
