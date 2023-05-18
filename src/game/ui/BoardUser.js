@@ -77,12 +77,19 @@ export class BoardUser extends React.Component {
           <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20, fontSize: 22}}>Дії</div>
           {playerClient.isPlayerInGame ?
             <div style={styles.actions} className="user-actions">
-              <button onClick={() => props.undo()}>Назад</button>
-              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
-                <button onClick={() => props.moves.removeUnit()}>Видалити</button>
+              {props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight' ?
+                <button onClick={() => props.undo()}>Назад</button>
                 : <></>
               }
-              {props.ctx.phase === 'Building' || props.ctx.phase === 'Setup' ?
+              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "finishBuildingStage" || props.ctx.activePlayers[+props.playerID] === "finishSetupStage") ?
+                <button onClick={() => props.moves.returnBack()}>Повернутися</button>
+                : <></>
+              }
+              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
+                <button onClick={() => props.moves.removeUnit()}>Повернути</button>
+                : <></>
+              }
+              {(props.ctx.phase === 'Building' || props.ctx.phase === 'Setup') && (props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] !== "finishBuildingStage" && props.ctx.activePlayers[+props.playerID] !== "finishSetupStage"))?
                 <button onClick={() => props.moves.complete()}>Завершити</button>
                 : <></>
               }

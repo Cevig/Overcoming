@@ -199,6 +199,9 @@ export const cleanFightPhase = (G, ctx, events) => {
       });
     }
   });
+  G.players.filter(p => p.isPlayerInGame).forEach(p => {
+    if (p.units.every(unit => unit.unitState.isInGame === false)) p.isPlayerInBattle = false
+  })
   G.moveOrder++;
   G.shrinkZone++;
   G.fightQueue = []

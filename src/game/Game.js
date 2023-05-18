@@ -49,7 +49,9 @@ export const Overcoming = {
           },
 
           finishBuildingStage: {
-            moves: {}
+            moves: {
+              returnBack: { move: moves.returnToPurchase, noLimit: true }
+            }
           }
         }
       },
@@ -90,7 +92,9 @@ export const Overcoming = {
           },
 
           finishSetupStage: {
-            moves: {}
+            moves: {
+              returnBack: { move: moves.returnToSetup, noLimit: true }
+            }
           }
         },
         onMove: (data) => postProcess(data)

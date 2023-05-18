@@ -522,6 +522,32 @@ export const moves = {
     }
   },
 
+  returnToPurchase: ({G, ctx, events, playerID}) => {
+    G.buildingComplete -= 1;
+    G.serverMsgLog.push({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +playerID,
+      phase: ctx.phase,
+      text: `Гравець ${+playerID+1} хоче щось доробити`,
+    })
+    events.setStage('purchase')
+  },
+
+  returnToSetup: ({G, ctx, events, playerID}) => {
+    G.setupComplete -= 1;
+    G.players[+playerID].currentUnit = null
+    G.players[+playerID].isPlayerInBattle = false
+    G.serverMsgLog.push({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +playerID,
+      phase: ctx.phase,
+      text: `Гравець ${+playerID+1} хоче ще щось налаштувати`,
+    })
+    events.setStage('pickUnit')
+  },
+
   sacrificeHeals: ({G, ctx, events, playerID}) => {
     const player = G.players.find(p => p.id === +playerID);
     player.heals -= 2;
