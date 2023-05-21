@@ -79,8 +79,7 @@ export const Overcoming = {
               moveUnit: moves.moveUnit,
               removeUnit: moves.removeUnit,
               unitToSortie: moves.unitToSortie,
-              complete: { move: moves.complete, noLimit: true },
-              chooseBlockSideAction: { move: moves.chooseBlockSideActionMove, noLimit: true }
+              complete: { move: moves.complete, noLimit: true }
             },
             next: 'pickUnit'
           },

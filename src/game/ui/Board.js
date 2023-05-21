@@ -233,7 +233,7 @@ export function Board (props) {
                 return <Token x={x} y={y} z={z} key={i}>
                   <UnitUI
                     unit={unit}
-                    highlight={(props.G.currentUnit && props.G.currentUnit.unitState.point && isSame(props.G.currentUnit.unitState.point)(unit.unitState.point))}
+                    highlight={((props.G.currentUnit && props.G.currentUnit.id === unit.id) || (props.playerID && props.G.players[+props.playerID].currentUnit && props.G.players[+props.playerID].currentUnit.id === unit.id))}
                     markEnemy={setEnemyMarks(props, unit)}
                     fightQueue={props.G.fightQueue}
                     info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]}

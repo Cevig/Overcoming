@@ -29,7 +29,7 @@ export class UJungle {
     const stat = () => {
       if (level === 1) return [2, 4, 5]
       if (level === 2) return [2, 5, 6]
-      if (level === 3) return [4, 5, 5]
+      if (level === 3) return [4, 5, 6]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -46,8 +46,14 @@ export class UJungle {
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.actions.push({name: UnitSkills.Raid, qty: 99});
-    abilities.statUpdates.defence.push({name: UnitSkills.BlockDamage, point: null})
+
+    if (level > 0) {
+      abilities.actions.push({name: UnitSkills.Raid, qty: 99});
+      abilities.statUpdates.defence.push({name: UnitSkills.BlockDamage, point: null})
+      if (level > 2) {
+        abilities.allTimeActions.push({name: UnitSkills.ChargeAttack, qty: 1})
+      }
+    }
 
     return getCreature(UJungle.kaieryName, UnitTypes.Vestnick, Biom.Jungle, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }

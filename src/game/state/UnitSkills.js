@@ -76,23 +76,35 @@ export const handleAbility = (data, skill, eventData) => {
 const handlePolydnicaSurroundings = ({G, ctx, events}, {unitId}) => {
   const units = getInGameUnits(G)
   const thisUnit = getUnitById(G, unitId)
-  const alliedUnits = units.filter(unit => (unit.unitState.playerId === thisUnit.unitState.playerId) && (unit.name === USteppe.polydnicaName))
-  if (alliedUnits.length >= 3) {
+  const alliedUnits = units.filter(unit => (unit.unitState.playerId === thisUnit.unitState.playerId) && (unit.abilities.onMove.find(skill => skill.name === UnitSkills.Surround3)))
+  if (alliedUnits.length >= 2) {
     const enemyUnits = units.filter(unit => (unit.unitState.playerId !== thisUnit.unitState.playerId) && (unit.type !== UnitTypes.Idol))
     enemyUnits.forEach(enemy => {
-      const enemiesForEnemy = getNearestEnemies(G, enemy.unitState).filter(unit => unit.name === USteppe.polydnicaName)
-      if (enemiesForEnemy.length >= 3) {
-        G.serverMsgLog.push({
-          id: Math.random().toString(10).slice(2),
-          turn: ctx.turn,
-          player: +ctx.currentPlayer,
-          phase: ctx.phase,
-          text: `Полудніці оточили ${enemy.name}!`,
-        })
-        handleUnitDeath({G: G, ctx:ctx, events: events}, enemy)
-        G.fightQueue.forEach((unitInQ, i, q) => {
-          if(unitInQ.unitId === enemy.id) {
-            q.splice(i, 1);
+      const enemiesForEnemy = getNearestEnemies(G, enemy.unitState).filter(unit => unit.abilities.onMove.find(skill => skill.name === UnitSkills.Surround3))
+      if (enemiesForEnemy.length >= 2) {
+        enemiesForEnemy.forEach(polydnica => {
+          const thisPoint = polydnica.unitState.point
+          const enemyPoint = enemy.unitState.point
+          if (enemyPoint === null) return;
+          const vector = {x: enemyPoint.x - thisPoint.x, y: enemyPoint.y - thisPoint.y, z: enemyPoint.z - thisPoint.z}
+          const acrossPolydnicaPoint = createPoint(...[enemyPoint.x + vector.x, enemyPoint.y + vector.y, enemyPoint.z + vector.z])
+          const acrossPolydnica = getInGameUnits(G, unit => thisUnit.unitState.playerId === unit.unitState.playerId)
+            .find(unit => isSame(acrossPolydnicaPoint)(unit.unitState.point) && unit.name === polydnica.name && unit.abilities.onMove.find(skill => skill.name === UnitSkills.Surround3))
+
+          if (acrossPolydnica) {
+            G.serverMsgLog.push({
+              id: Math.random().toString(10).slice(2),
+              turn: ctx.turn,
+              player: +ctx.currentPlayer,
+              phase: ctx.phase,
+              text: `${enemy.name} в оточенні та миттєво вмирає!`,
+            })
+            handleUnitDeath({G: G, ctx:ctx, events: events}, enemy)
+            G.fightQueue.forEach((unitInQ, i, q) => {
+              if(unitInQ.unitId === enemy.id) {
+                q.splice(i, 1);
+              }
+            })
           }
         })
       }
@@ -113,7 +125,7 @@ const handleMaraAura = ({G, ctx, events}, {unitId}) => {
       value = value - enemyStatus.qty
     }
     if (nearMaras.length > 0) {
-      value = value + nearMaras.reduce((val, mara) => val + ((mara.level >= 2) ? 2 : 1), 0)
+      value = value + nearMaras.reduce((val, mara) => val + ((mara.level >= 1) ? 3 : 2), 0)
     }
     if (value !== 0) {
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -811,15 +823,15 @@ const handleLethalGrab = ({G, ctx}, {killerId, target, thisUnit}) => {
   if (thisUnit.id !== killerId) return;
 
   if (target.type === UnitTypes.Idol) {
-    thisUnit.power++
-    thisUnit.heals++
-    thisUnit.initiative++
+    thisUnit.power = thisUnit.level > 2 ? thisUnit.power + 2 : thisUnit.power + 1
+    thisUnit.heals = thisUnit.level > 2 ? thisUnit.heals + 2 : thisUnit.heals + 1
+    thisUnit.initiative = thisUnit.level > 2 ? thisUnit.initiative + 2 : thisUnit.initiative + 1
   } else if (target.type === UnitTypes.Prispeshnick) {
-    thisUnit.heals++
+    thisUnit.heals = thisUnit.level > 2 ? thisUnit.heals + 2 : thisUnit.heals + 1
   } else if (target.type === UnitTypes.Prominkor) {
-    thisUnit.power++
+    thisUnit.power = thisUnit.level > 2 ? thisUnit.power + 2 : thisUnit.power + 1
   } else if (target.type === UnitTypes.Vestnick) {
-    thisUnit.initiative++
+    thisUnit.initiative = thisUnit.level > 2 ? thisUnit.initiative + 2 : thisUnit.initiative + 1
   }
   G.serverMsgLog.push({
     id: Math.random().toString(10).slice(2),

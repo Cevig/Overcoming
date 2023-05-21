@@ -5,6 +5,7 @@ import {
   essencePoints,
   SortieTypes,
   UnitKeywords,
+  UnitStatus,
   UnitTypes
 } from "./Constants";
 import {
@@ -180,12 +181,15 @@ export const onEndFightTurn = (G, ctx) => {
       unit.unitState.isClickable = false
       unit.unitState.isInFight = false
     }
+    if (hasStatus(unit, UnitStatus.Stun) && unit.unitState.isClickable) {
+      unit.unitState.isClickable = false;
+    }
   });
 
-  const skippedTurnUnits = getInGameUnits(G, (unit) => unit.unitState.isInFight && unit.unitState.isClickable && unit.unitState.skippedTurn)
+  const skippedTurnUnits = getInGameUnits(G, (unit) => unit.unitState.isInFight && unit.unitState.isClickable && unit.unitState.skippedTurn && !hasStatus(unit, UnitStatus.Stun))
     .sort((u1, u2) => sortFightOrder(u1, u2))
     .reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
-  const notMovedUnits = getInGameUnits(G, (unit) => unit.unitState.isInFight && unit.unitState.isClickable && !unit.unitState.skippedTurn)
+  const notMovedUnits = getInGameUnits(G, (unit) => unit.unitState.isInFight && unit.unitState.isClickable && !unit.unitState.skippedTurn && !hasStatus(unit, UnitStatus.Stun))
     .sort((u1, u2) => sortFightOrder(u1, u2))
     .reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
   G.fightQueue = notMovedUnits.concat(skippedTurnUnits)

@@ -219,9 +219,14 @@ export const moves = {
     }
     unit.unitState.point = point
     unit.unitState.isInGame = true
-    player.currentUnit = null
-    player.availablePoints = []
-    events.endStage();
+    if (unit.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage && skill.point === null)) {
+      player.availablePoints = getNeighbors(unit.unitState.point)
+      events.setStage('chooseBlockSideActionStage');
+    } else {
+      player.currentUnit = null
+      player.availablePoints = []
+      events.endStage();
+    }
   },
 
   removeUnit: ({G, ctx, events, playerID}) => {

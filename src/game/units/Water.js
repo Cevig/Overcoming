@@ -10,19 +10,28 @@ export class UWater {
   static vodyanoiName = "Водяний"
   static getLerneyskiyRak = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [2, 3, 4]
-      if (level === 2) return [2, 5, 4]
-      if (level === 3) return [3, 6, 4]
+      if (level === 1) return [1, 1, 1]
+      if (level === 2) return [1, 1, 1]
+      if (level === 3) return [1, 1, 1]
     }
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.keywords.push(UnitKeywords.LowCost)
+
+    if (level > 0) {
+      abilities.keywords.push(UnitKeywords.LowCost)
+      if (level > 1) {
+        abilities.onMove.push({name: UnitSkills.Surround3})
+        if (level > 2) {
+          abilities.statUpdates.attack.push(UnitSkills.InstantKill)
+        }
+      }
+    }
 
     return getCreature(UWater.lerneyskiyRakName, UnitTypes.Prispeshnick, Biom.Water, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
   static getBykavaz = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 3, 4]
-      if (level === 2) return [2, 4, 5]
+      if (level === 2) return [2, 3, 4]
       if (level === 3) return [3, 4, 5]
     }
 
@@ -30,7 +39,7 @@ export class UWater {
     if (level > 0) {
       abilities.keywords.push(UnitKeywords.Sneaky)
       abilities.keywords.push(UnitKeywords.Support)
-      if (level > 2) {
+      if (level > 1) {
         abilities.statUpdates.attack.push(UnitSkills.AddStunEffect)
       }
     }
@@ -41,8 +50,8 @@ export class UWater {
   static getAidahar = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
-      if (level === 2) return [3, 5, 3]
-      if (level === 3) return [3, 5, 3]
+      if (level === 2) return [3, 4, 3]
+      if (level === 3) return [3, 4, 3]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -51,7 +60,7 @@ export class UWater {
       abilities.keywords.push(UnitKeywords.Unfocused)
       abilities.allTimeActions.push({name: UnitSkills.healAlly, qty: 1})
       if (level > 2) {
-        abilities.statUpdates.defence.push({name: UnitSkills.Wholeness, unitId: id})
+        abilities.keywords.push(UnitKeywords.Support)
       }
     }
 
@@ -62,7 +71,7 @@ export class UWater {
     const stat = [3, 8, 1]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.keywords.push(UnitKeywords.ExtendedMove)
+    abilities.keywords.push(UnitKeywords.AbsoluteMove)
     abilities.statUpdates.attack.push(UnitSkills.InstantKillOnCounter)
     abilities.statUpdates.defence.push({name: UnitSkills.DoubleDamageInDefence})
     return getIdol(UWater.balorName, Biom.Water, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)

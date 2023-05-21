@@ -145,10 +145,6 @@ export class BoardUser extends React.Component {
                 <button onClick={() => props.moves.notMovedRecoverAction()}>Можна відновитись</button>
                 : <></>
               }
-              {this.isSetBlockSideAvailable() ?
-                <button onClick={() => props.moves.chooseBlockSideAction()}>Вибрати захищену сторону</button>
-                : <></>
-              }
               {this.isChargeAttackAvailable() ?
                 <button onClick={() => props.moves.chargeAttackAction()}>Зарядити атаку</button>
                 : <></>
@@ -256,16 +252,6 @@ export class BoardUser extends React.Component {
     return false
   }
 
-  isSetBlockSideAvailable() {
-    const props = this.props.props
-    if (props.G.players[+props.playerID].currentUnit && props.G.players[+props.playerID].currentUnit.unitState.isInGame && props.G.players[+props.playerID].currentUnit.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage && skill.point === null)) {
-      if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit")) {
-        return true
-      }
-    }
-    return false
-  }
-
   isChargeAttackAvailable() {
     const props = this.props.props
     if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.ChargeAttack && skill.qty > 0)) {
@@ -289,7 +275,7 @@ export class BoardUser extends React.Component {
     if (props.ctx.activePlayers && playerStage === "purchase") {
       const player = props.G.players.find(p => p.id === +props.playerID);
       return player.isUsedSacrifice === false && player.heals > 2 && props.G.players.filter(p => p.isPlayerInGame).filter(p => p.heals > player.heals).length > 0 &&
-        (player.essence < 18 && player.houses.find(h => props.ctx.turn === h.turn) === undefined && player.units.length === 0)
+        (player.essence < 24 && player.houses.find(h => props.ctx.turn === h.turn) === undefined && player.units.length === 0)
     } else return false
   }
 

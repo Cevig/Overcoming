@@ -22,15 +22,16 @@ export class UMountains {
   }
   static getGarzyk = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [2, 3, 5]
-      if (level === 2) return [2, 4, 6]
-      if (level === 3) return [3, 4, 6]
+      if (level === 1) return [2, 3, 4]
+      if (level === 2) return [2, 4, 5]
+      if (level === 3) return [3, 4, 5]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {
       abilities.keywords.push(UnitKeywords.Sneaky)
       abilities.statUpdates.defence.push({name: UnitSkills.Wholeness, unitId: id})
+      abilities.statUpdates.defence.push({name: UnitSkills.RaidBlock, origin: true})
       if (level > 1) {
         abilities.allTimeActions.push({name: UnitSkills.throwWeapon, qty: 1})
       }
@@ -42,7 +43,7 @@ export class UMountains {
   static getVeshizaSoroka = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
-      if (level === 2) return [3, 5, 3]
+      if (level === 2) return [2, 4, 3]
       if (level === 3) return [3, 5, 4]
     }
 
@@ -51,7 +52,7 @@ export class UMountains {
       abilities.keywords.push(UnitKeywords.Unfocused)
       abilities.keywords.push(UnitKeywords.NoObstaclesRaid)
       abilities.actions.push({name: UnitSkills.Raid, qty: 99})
-      if (level > 2) {
+      if (level > 1) {
         abilities.allTimeActions.push({name: UnitSkills.replaceUnits, qty: 1})
       }
     }

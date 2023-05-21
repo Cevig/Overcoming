@@ -24,7 +24,7 @@ export class UTundra {
     const stat = () => {
       if (level === 1) return [2, 3, 5]
       if (level === 2) return [2, 4, 5]
-      if (level === 3) return [3, 4, 5]
+      if (level === 3) return [3, 5, 5]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));

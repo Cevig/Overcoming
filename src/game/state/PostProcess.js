@@ -266,8 +266,9 @@ export const setFightOrder = (G, events, ctx) => {
         })
       }
     })
+  getInGameUnits(G, unit => hasStatus(unit, UnitStatus.Stun)).forEach(u => {u.unitState.isClickable = false;})
 
-  G.fightQueue = getInGameUnits(G, (unit) => unit.unitState.isInFight)
+  G.fightQueue = getInGameUnits(G, (unit) => unit.unitState.isInFight && !hasStatus(unit, UnitStatus.Stun))
     .sort((u1, u2) => sortFightOrder(u1, u2))
     .reverse().map(unit => ({unitId: unit.id, playerId: unit.unitState.playerId}))
   G.endFightPhase = G.fightQueue.length === 0

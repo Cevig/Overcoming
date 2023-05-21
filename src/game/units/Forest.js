@@ -11,19 +11,25 @@ export class UForest {
   static getLesavka = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 3]
-      if (level === 2) return [2, 6, 4]
-      if (level === 3) return [3, 7, 4]
+      if (level === 2) return [2, 5, 4]
+      if (level === 3) return [3, 6, 4]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.afterHitActions.push({name: UnitSkills.Lesavka, qty: 99})
+
+    if (level > 0) {
+      abilities.afterHitActions.push({name: UnitSkills.Lesavka, qty: 99})
+      if (level > 1) {
+        abilities.statUpdates.attack.push(UnitSkills.DecreaseInitiative)
+      }
+    }
 
     return getCreature(UForest.lesavkaName, UnitTypes.Prispeshnick, Biom.Forest, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
   static getBereginya = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [1, 3, 5]
-      if (level === 2) return [2, 4, 6]
+      if (level === 2) return [2, 3, 5]
       if (level === 3) return [3, 4, 6]
     }
 

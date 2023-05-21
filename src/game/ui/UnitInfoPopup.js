@@ -46,7 +46,7 @@ const UnitInfoPopup = (props) => {
       if (skill.name === UnitSkills.Wholeness || skill === UnitSkills.Wholeness) {
         return (<><Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.Surround3 || skill === UnitSkills.Surround3) {
-        return (<><Tooltip text="Вбиває ворожу істоту (окрім Ідола) коли 3 Полудниці опиняться поруч">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Вбиває ворожу істоту (окрім Ідола) коли 2 таких істоти оточують її з протилежних боків">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.BlockStatuses || skill === UnitSkills.BlockStatuses) {
         return (<><Tooltip text="Опір до всіх негативних ефектів, статусів та аур">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.AddFreezeEffect || skill === UnitSkills.AddFreezeEffect) {
@@ -126,7 +126,7 @@ const UnitInfoPopup = (props) => {
       } else if (skill.name === UnitSkills.InjuredDamage || skill === UnitSkills.InjuredDamage) {
         return (<><Tooltip text="Одноразово збільшити силу на 1 при поранені">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.DecreaseInitiative || skill === UnitSkills.DecreaseInitiative) {
-        return (<><Tooltip text="Знижує ініціативу цілі при атаці на 1">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Знижує ініціативу цілі при атаці/рейді на 1">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.ChargeAttack || skill === UnitSkills.ChargeAttack) {
         return (<><Tooltip text="Одноразово збільшити силу на 2 на наступний удар">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.RemoveChargeAttack || skill === UnitSkills.RemoveChargeAttack) {
@@ -147,7 +147,7 @@ const UnitInfoPopup = (props) => {
       if (status.name === UnitStatus.Freeze) {
         return (<><Tooltip text="Істота не може рухатися доки не пропустить хід">{status.name}{status.qty < 10 ? ` (${status.qty})` : ``}</Tooltip>{i !== statuses.length-1 ? ', ' : ''}</>)
       } else if (status.name === UnitStatus.Stun) {
-        return (<><Tooltip text="Істота пропускає хід у наступній фазі пересування">{status.name}{status.qty < 10 ? ` (${status.qty})` : ``}</Tooltip>{i !== statuses.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Істота пропускає хід до наступної фази пересування">{status.name}{status.qty < 10 ? ` (${status.qty})` : ``}</Tooltip>{i !== statuses.length-1 ? ', ' : ''}</>)
       } else if (status.name === UnitStatus.InitiativeDown) {
         return (<><Tooltip text="Ініціативу істоти знижено">{status.name}{status.qty < 10 ? ` (${status.qty})` : ``}</Tooltip>{i !== statuses.length-1 ? ', ' : ''}</>)
       } else if (status.name === UnitStatus.InitiativeDownAura) {
@@ -215,7 +215,7 @@ const UnitInfoPopup = (props) => {
       } else if (keyword === UnitKeywords.RestrictedRoundDamage) {
         return (<><Tooltip text="Істота б'є сусідніх з ціллю істот тільки на 1 урон">{keyword}</Tooltip>{i !== keywords.length-1 ? ', ' : ''}</>)
       } else if (keyword === UnitKeywords.LowCost) {
-        return (<><Tooltip text="Знижка на виклик істоти">{keyword}</Tooltip>{i !== keywords.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Ціна для виклику завжди 3✾">{keyword}</Tooltip>{i !== keywords.length-1 ? ', ' : ''}</>)
       } else if (keyword === UnitKeywords.AdditionalEssence) {
         return (<><Tooltip text="Додаткова есенція при вбивстві">{keyword}</Tooltip>{i !== keywords.length-1 ? ', ' : ''}</>)
       }

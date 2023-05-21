@@ -10,9 +10,9 @@ export class UDesert {
   static vasiliskName = "Василіск"
   static getAmfisbena = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [2, 5, 3]
+      if (level === 1) return [2, 4, 3]
       if (level === 2) return [2, 5, 4]
-      if (level === 3) return [3, 6, 4]
+      if (level === 3) return [3, 5, 4]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -54,7 +54,7 @@ export class UDesert {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
       if (level === 2) return [2, 5, 3]
-      if (level === 3) return [3, 6, 3]
+      if (level === 3) return [3, 5, 3]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -65,6 +65,9 @@ export class UDesert {
       abilities.statUpdates.defence.push({name: UnitSkills.DeadlyDamage})
       if (level > 1) {
         abilities.keywords.push(UnitKeywords.AdditionalSacrificeRaid)
+        if (level > 2) {
+          abilities.statUpdates.defence.push({name: UnitSkills.Wholeness, unitId: id})
+        }
       }
     }
 

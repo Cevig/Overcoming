@@ -11,16 +11,19 @@ export class UGeysers {
   static getHimera = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 3]
-      if (level === 2) return [3, 6, 3]
+      if (level === 2) return [2, 6, 3]
       if (level === 3) return [3, 6, 4]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     if (level > 0) {
       abilities.statUpdates.attack.push(UnitSkills.ThroughDamage)
-      if (level > 2) {
-        abilities.statUpdates.attack.push(UnitSkills.RoundDamage)
-        abilities.keywords.push(UnitKeywords.RestrictedRoundDamage)
+      if (level > 1) {
+        abilities.statUpdates.defence.push({name: UnitSkills.InjuredDamage})
+        if (level > 2) {
+          abilities.statUpdates.attack.push(UnitSkills.RoundDamage)
+          abilities.keywords.push(UnitKeywords.RestrictedRoundDamage)
+        }
       }
     }
 
@@ -38,6 +41,9 @@ export class UGeysers {
       abilities.onMove.push({name: UnitSkills.UnfocusedAura})
       if (level > 1) {
         abilities.keywords.push(UnitKeywords.Support)
+        if (level > 2) {
+          abilities.keywords.push(UnitKeywords.FullDeathDamage)
+        }
       }
     }
 
@@ -56,9 +62,11 @@ export class UGeysers {
       abilities.actions.push({name: UnitSkills.Raid, qty: 99});
       abilities.keywords.push(UnitKeywords.Unfocused)
       abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffect)
-      if (level > 2) {
+      if (level > 1) {
         abilities.statUpdates.defence.push({name: UnitSkills.Wholeness, unitId: id})
-        abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffectOnRaid)
+        if (level > 2) {
+          abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffectOnRaid)
+        }
       }
     }
 

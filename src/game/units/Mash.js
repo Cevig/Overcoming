@@ -49,9 +49,9 @@ export class UMash {
 
   static getMavka = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [2, 4, 3]
-      if (level === 2) return [2, 5, 3]
-      if (level === 3) return [2, 5, 4]
+      if (level === 1) return [2, 3, 3]
+      if (level === 2) return [2, 4, 3]
+      if (level === 3) return [2, 4, 4]
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
@@ -61,6 +61,9 @@ export class UMash {
       abilities.statUpdates.attack.push(UnitSkills.AddVengeanceEffect)
       if (level > 1) {
         abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffectOnRaid)
+        if (level > 2) {
+          abilities.allTimeActions.push({name: UnitSkills.replaceUnits, qty: 1})
+        }
       }
     }
 
@@ -83,6 +86,7 @@ export class UMash {
     abilities.allTimeActions.push({name: UnitSkills.NotMovedRecover, qty: 99})
     abilities.statUpdates.defence.push({name: UnitSkills.BlockStatuses, unitId: id})
     abilities.statUpdates.attack.push(UnitSkills.HealOnAttack)
+    abilities.onDeath.push({name: UnitSkills.LethalGrab})
     return getIdol(UMash.fekstName, Biom.Mash, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 }

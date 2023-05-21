@@ -89,7 +89,7 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-initiative" style={{gridRowStart: 6}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 7}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 8}}>4</div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 6}}>Якщо 3 {USteppe.polydnicaName} оточують ворожу істоту (окрім {UnitTypes.Idol}), то ціль миттєво гине</div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 6}}>Якщо 2 {USteppe.polydnicaName} оточують ворожу істоту (окрім {UnitTypes.Idol}) з протилежних боків, то ціль миттєво гине</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 7}}>..., <Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{UnitSkills.Wholeness}</Tooltip></div>
             <div className="popup-creature-abilities" style={{gridRowStart: 8}}>..., При атаці <Tooltip text="Істота не може рухатися доки не пропустить хід">зупиняє</Tooltip> ціль</div>
 
@@ -105,11 +105,11 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-heals" style={{gridRowStart: 10}}>3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 11}}>4</div>
             <div className="popup-creature-heals" style={{gridRowStart: 12}}>4</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 10}}>5</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>6</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 12}}>5</div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 10}}><Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>, <Tooltip text="Діє на ворожих істот у радіусі 1">{UnitSkills.MaraAura}</Tooltip>: -1 до ініціативи</div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 11}}><Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>, <Tooltip text="Діє на ворожих істот у радіусі 1">{UnitSkills.MaraAura}</Tooltip>: -2 до ініціативи</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 10}}>4</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>4</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 12}}>4</div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 10}}><Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>, <Tooltip text="Діє на ворожих істот у радіусі 1">{UnitSkills.MaraAura}</Tooltip>: -2 до ініціативи</div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 11}}><Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>, <Tooltip text="Діє на ворожих істот у радіусі 1">{UnitSkills.MaraAura}</Tooltip>: -3 до ініціативи</div>
 
             <div style={{gridRowStart: 13}} className="popup-divider"></div>
 
@@ -124,12 +124,14 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-heals" style={{gridRowStart: 15}}>4</div>
             <div className="popup-creature-heals" style={{gridRowStart: 16}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 14}}>3</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 15}}>3</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 16}}>4</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 15}}>4</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 16}}>5</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 14}}><Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>, <Tooltip text="Може нанести урон по істоті (50% сили атаки, радіус 2). Не можна здійснити рейд, якщо поруч є ворог чи скрізь союзну істоту">
               {UnitSkills.Raid}</Tooltip>, <Tooltip text="Під час рейду може відняти додаткове життя та додати його союзній до цілі істоті у радіусі 1">{UnitKeywords.ReplaceHealsRaid}</Tooltip></div>
             <div className="popup-creature-abilities" style={{gridRowStart: 15}}>..., При вбивстві істоти {USteppe.letavicaName} отримає бонус до характеристик в залежності від типу цілі:
               {UnitTypes.Prispeshnick}: +1 життя, {UnitTypes.Prominkor}: +1 ініціатива, {UnitTypes.Vestnick}:+1 сила, {UnitTypes.Idol}:+1 до всіх параметрів</div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., При вбивстві істоти {USteppe.letavicaName} отримає бонус до характеристик в залежності від типу цілі:
+              {UnitTypes.Prispeshnick}: +2 життя, {UnitTypes.Prominkor}: +2 ініціатива, {UnitTypes.Vestnick}:+2 сила, {UnitTypes.Idol}:+2 до всіх параметрів</div>
           </div>
         </>
       )
@@ -176,12 +178,13 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-damage">2</div>
             <div className="popup-creature-damage">3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 6}}>5</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 7}}>6</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 8}}>7</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 7}}>5</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 8}}>6</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 6}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 7}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 8}}>4</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 6}}>Може перемістити істоту після атаки на вільну клітину поруч з {UForest.lesavkaName} ігноруючи <Tooltip text="Зона Контролю: істоти не можуть пресуватися на клітини відходячи від ворога поруч">ЗК</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 7}}><Tooltip text="Знижує ініціативу цілі на 1 при атаці">{UnitSkills.DecreaseInitiative}</Tooltip></div>
 
             <div style={{gridRowStart: 9}} className="popup-divider"></div>
 
@@ -193,10 +196,10 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-damage">2</div>
             <div className="popup-creature-damage">3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 10}}>3</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 11}}>4</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 11}}>3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 12}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 10}}>5</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>6</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>5</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 12}}>6</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 10}}><Tooltip text="Зарядів: 2, Дальність: ∞, Фаза: будь-яка, Завершує хід">Активно</Tooltip>: відновлює істоті (окрім {UnitTypes.Idol}) до 2 життів. <Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip></div>
             <div className="popup-creature-abilities" style={{gridRowStart: 11}}><Tooltip text="Зарядів: 3, Дальність: ∞, Фаза: будь-яка, Завершує хід">Активно</Tooltip>: відновлює істоті (окрім {UnitTypes.Idol}) до 2 життів. <Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>. <Tooltip text="Рандомно додає 1 силу до істоти поруч (окрім Ідола) на початку битви">{UnitKeywords.Support}</Tooltip></div>
@@ -283,10 +286,10 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-heals" style={{gridRowStart: 10}}>3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 11}}>4</div>
             <div className="popup-creature-heals" style={{gridRowStart: 12}}>4</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 10}}>5</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>6</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 12}}>6</div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 10}}><Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>, <Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{UnitSkills.Wholeness}</Tooltip></div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 10}}>4</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>5</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 12}}>5</div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 10}}><Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>, <Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{UnitSkills.Wholeness}</Tooltip>, <Tooltip text="Не отримує урону від Рейду">{UnitSkills.RaidBlock}</Tooltip></div>
             <div className="popup-creature-abilities" style={{gridRowStart: 11}}>..., <Tooltip text="Зарядів: 1, Дальність: 2, Фаза: пересування, Завершує хід">Активно</Tooltip>: наносить урон рівний силі атаки та отримує статус <Tooltip text="Істота не може атакувати/відповідати/рейдити">
               {UnitStatus.Unarmed}</Tooltip> на 2 ходи.</div>
 
@@ -297,17 +300,17 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-name" style={{gridRowStart: 15, color: playerColors[playerId]}}>{UMountains.veshizaSorokaName} <div style={{display: "inline"}} className="unit-stars-info">{renderStarsCreated(2)}</div></div>
             <div className="popup-creature-name" style={{gridRowStart: 16, color: playerColors[playerId]}}>{UMountains.veshizaSorokaName} <div style={{display: "inline"}} className="unit-stars-info">{renderStarsCreated(3)}</div></div>
             <div className="popup-creature-damage">2</div>
-            <div className="popup-creature-damage">3</div>
+            <div className="popup-creature-damage">2</div>
             <div className="popup-creature-damage">3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 14}}>4</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 15}}>5</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 15}}>4</div>
             <div className="popup-creature-heals" style={{gridRowStart: 16}}>5</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 14}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 15}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 16}}>4</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 14}}><Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>, <Tooltip text="Може нанести урон по істоті (50% сили атаки, радіус 2). Не можна здійснити рейд, якщо поруч є ворог чи скрізь союзну істоту">
               {UnitSkills.Raid}</Tooltip>, {UnitKeywords.NoObstaclesRaid}</div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., <Tooltip text="Зарядів: 1, Дальність: ∞, Фаза: будь-яка, Завершує хід">Активно</Tooltip>: може поміняти місцями поруч розташованих союзну та ворожу істоту (окрім {UnitTypes.Idol})
+            <div className="popup-creature-abilities" style={{gridRowStart: 15}}>..., <Tooltip text="Зарядів: 1, Дальність: ∞, Фаза: будь-яка, Завершує хід">Активно</Tooltip>: може поміняти місцями поруч розташованих союзну та ворожу істоту (окрім {UnitTypes.Idol})
             ігноруючи <Tooltip text="Зона Контролю: істоти не можуть пресуватися на клітини відходячи від ворога поруч">ЗК</Tooltip></div>
           </div>
         </>
@@ -352,9 +355,9 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-damage">2</div>
             <div className="popup-creature-damage">2</div>
             <div className="popup-creature-damage">3</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 6}}>5</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 6}}>4</div>
             <div className="popup-creature-heals" style={{gridRowStart: 7}}>5</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 8}}>6</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 8}}>5</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 6}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 7}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 8}}>4</div>
@@ -392,13 +395,14 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-damage">3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 14}}>4</div>
             <div className="popup-creature-heals" style={{gridRowStart: 15}}>5</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 16}}>6</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 16}}>5</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 14}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 15}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 16}}>3</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 14}}><Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>, <Tooltip text="Може нанести урон по істоті (50% сили атаки, радіус 2). Не можна здійснити рейд, якщо поруч є ворог чи скрізь союзну істоту">
               {UnitSkills.Raid}</Tooltip>, <Tooltip text="Під час рейду може відняти додаткове життя та додати його союзній до цілі істоті у радіусі 1">{UnitKeywords.ReplaceHealsRaid}</Tooltip>, Якщо {UDesert.adzeName} поранений, то будь-який урон у фазі битви вбиває його</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 15}}>..., <Tooltip text="Рейд отрумує +1 урону, але Адзе втрачає 1 життя">{UnitKeywords.AdditionalSacrificeRaid}</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., <Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{UnitSkills.Wholeness}</Tooltip></div>
           </div>
         </>
       )
@@ -463,10 +467,10 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-damage">3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 10}}>3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 11}}>4</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 12}}>4</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 12}}>5</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 10}}>5</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>6</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 12}}>6</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>5</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 12}}>5</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 10}}><Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>, <Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>.
             Отримує +1 до сили коли поранився (одноразово)</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 11}}>..., <Tooltip text="Рандомно додає 1 силу до істоти поруч (окрім Ідола) на початку битви">{UnitKeywords.Support}</Tooltip></div>
@@ -487,7 +491,7 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-initiative" style={{gridRowStart: 15}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 16}}>3</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 14}}><Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>, <Tooltip text="Може нанести урон по істоті (50% сили атаки, радіус 2). Не можна здійснити рейд, якщо поруч є ворог чи скрізь союзну істоту">
-              {UnitSkills.Raid}</Tooltip>, <Tooltip text="Знижує ініціативу цілі на 1 при атаці">{UnitSkills.DecreaseInitiative}</Tooltip></div>
+              {UnitSkills.Raid}</Tooltip>, <Tooltip text="Знижує ініціативу цілі на 1 при атаці/рейді">{UnitSkills.DecreaseInitiative}</Tooltip></div>
             <div className="popup-creature-abilities" style={{gridRowStart: 15}}>..., Може рухатись на 2 клітини, НЕ ігноруючи <Tooltip text="Зона Контролю: істоти не можуть пресуватися на клітини відходячи від ворога поруч">ЗК</Tooltip></div>
             <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., <Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{UnitSkills.Wholeness}</Tooltip></div>
           </div>
@@ -555,7 +559,7 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-heals" style={{gridRowStart: 12}}>5</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 10}}>5</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 11}}>6</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 12}}>5</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 12}}>6</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 10}}><Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>, при атаці ціль отримує статус <Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip></div>
 
             <div style={{gridRowStart: 13}} className="popup-divider"></div>
@@ -575,6 +579,7 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-initiative" style={{gridRowStart: 16}}>5</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 14}}><Tooltip text="Може нанести урон по істоті (50% сили атаки, радіус 2). Не можна здійснити рейд, якщо поруч є ворог чи скрізь союзну істоту">
               {UnitSkills.Raid}</Tooltip>, <Tooltip text="Не отримує урону з вибраного у фазі розташування боку">{UnitSkills.BlockDamage}</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 16}}><Tooltip text="Заряди: 1, Фаза: пересування, Завершує хід">Активно</Tooltip>: додає +2 сили для своєї наступної атаки/рейду/відповіді</div>
           </div>
         </>
       )
@@ -597,7 +602,7 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-damage">3</div>
             <div className="popup-creature-heals">8</div>
             <div className="popup-creature-initiative">1</div>
-            <div className="popup-creature-abilities">Може рухатись на 2 клітини, НЕ ігноруючи <Tooltip text="Зона Контролю: істоти не можуть пресуватися на клітини відходячи від ворога поруч">ЗК</Tooltip>.
+            <div className="popup-creature-abilities">Може рухатись на 2 клітини, ІГНОРУЮЧИ <Tooltip text="Зона Контролю: істоти не можуть пресуватися на клітини відходячи від ворога поруч">ЗК</Tooltip>.
             Миттєве вбивство істоти (окрім {UnitTypes.Idol}) при відповіді. Отримує у 2 рази більше урону, якщо ворожа істота (окрім {UnitTypes.Idol}) першою наблизалися перед боєм</div>
 
             <div className="popup-divider"></div>
@@ -616,16 +621,19 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-name" style={{gridRowStart: 6, color: playerColors[playerId]}}>{UWater.lerneyskiyRakName} <div style={{display: "inline"}} className="unit-stars-info">{renderStarsCreated(1)}</div></div>
             <div className="popup-creature-name" style={{gridRowStart: 7, color: playerColors[playerId]}}>{UWater.lerneyskiyRakName} <div style={{display: "inline"}} className="unit-stars-info">{renderStarsCreated(2)}</div></div>
             <div className="popup-creature-name" style={{gridRowStart: 8, color: playerColors[playerId]}}>{UWater.lerneyskiyRakName} <div style={{display: "inline"}} className="unit-stars-info">{renderStarsCreated(3)}</div></div>
-            <div className="popup-creature-damage">2</div>
-            <div className="popup-creature-damage">2</div>
-            <div className="popup-creature-damage">3</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 6}}>2</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 7}}>4</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 8}}>5</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 6}}>4</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 7}}>4</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 8}}>4</div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 6}}>Коштує дешевше для виклику на 1✾</div>
+            <div className="popup-creature-damage">1</div>
+            <div className="popup-creature-damage">1</div>
+            <div className="popup-creature-damage">1</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 6}}>1</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 7}}>1</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 8}}>1</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 6}}>1</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 7}}>1</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 8}}>1</div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 6}}>Завжди коштує 3✾</div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 7}}>..., Якщо 2 {UWater.lerneyskiyRakName} оточують ворожу істоту (окрім {UnitTypes.Idol}) з протилежних боків, то ціль миттєво гине</div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 8}}>..., Миттєво вбиває істоту при атаці, якщо союзна істота знаходиться поруч з цілью та {UWater.lerneyskiyRakName}.
+              Якщо ціль - {UnitTypes.Idol}, то атакує з силою у розмірі 50% від початкового життя цілі</div>
 
             <div style={{gridRowStart: 9}} className="popup-divider"></div>
 
@@ -637,13 +645,13 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-damage">2</div>
             <div className="popup-creature-damage">3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 10}}>3</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 11}}>4</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 11}}>3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 12}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 10}}>4</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>5</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 11}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 12}}>5</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 10}}><Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip>, <Tooltip text="Рандомно додає 1 силу до істоти поруч (окрім Ідола) на початку битви">{UnitKeywords.Support}</Tooltip></div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 12}}>..., При атаці ціль отримує статус <Tooltip text="Істота пропускає хід у наступній фазі пересування">{UnitStatus.Stun}</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 11}}>..., При атаці ціль отримує статус <Tooltip text="Істота миттєво завершує хід та пропускає хід у наступній фазі пересування">{UnitStatus.Stun}</Tooltip></div>
 
             <div style={{gridRowStart: 13}} className="popup-divider"></div>
 
@@ -655,14 +663,14 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-damage">3</div>
             <div className="popup-creature-damage">3</div>
             <div className="popup-creature-heals" style={{gridRowStart: 14}}>4</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 15}}>5</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 16}}>5</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 15}}>4</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 16}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 14}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 15}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 16}}>3</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 14}}><Tooltip text="Може нанести урон по істоті (50% сили атаки, радіус 2). Не можна здійснити рейд, якщо поруч є ворог чи скрізь союзну істоту">
               {UnitSkills.Raid}</Tooltip>, <Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>. <Tooltip text="Зарядів: 1, Дальність: ∞, Фаза: будь-яка, Завершує хід">Активно</Tooltip>: відновлює істоті (окрім {UnitTypes.Idol}) до 2 життів.</div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., <Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{UnitSkills.Wholeness}</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., <Tooltip text="Рандомно додає 1 силу до істоти поруч (окрім Ідола) на початку битви">{UnitKeywords.Support}</Tooltip></div>
           </div>
         </>
       )
@@ -695,7 +703,8 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-heals">7</div>
             <div className="popup-creature-initiative">4</div>
             <div className="popup-creature-abilities"><Tooltip text="Заряди: ∞, Фаза: пересування, Завершує хід">Активно</Tooltip>: може відновити життя, якщо поруч немає ворожих істот. <Tooltip text="Отримує 1 життя при атаці">
-              {UnitSkills.HealOnAttack}</Tooltip>. <Tooltip text="Опір до всіх негативних ефектів, статусів та аур">{UnitSkills.BlockStatuses}</Tooltip></div>
+              {UnitSkills.HealOnAttack}</Tooltip>. <Tooltip text="Опір до всіх негативних ефектів, статусів та аур">{UnitSkills.BlockStatuses}</Tooltip>. При вбивстві істоти {UMash.fekstName} отримає бонус до характеристик в залежності від типу цілі:
+              {UnitTypes.Prispeshnick}: +1 життя, {UnitTypes.Prominkor}: +1 ініціатива, {UnitTypes.Vestnick}:+1 сила, {UnitTypes.Idol}:+1 до всіх параметрів</div>
 
             <div style={{gridRowStart: 5}} className="popup-divider"></div>
 
@@ -712,7 +721,7 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-initiative" style={{gridRowStart: 6}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 7}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 8}}>4</div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 6}}>Може рухатись на 2 клітини, НЕ ігноруючи <Tooltip text="Зона Контролю: істоти не можуть пресуватися на клітини відходячи від ворога поруч">ЗК</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 6}}>Може рухатись на 2 клітини, ІГНОРУЮЧИ <Tooltip text="Зона Контролю: істоти не можуть пресуватися на клітини відходячи від ворога поруч">ЗК</Tooltip></div>
             <div className="popup-creature-abilities" style={{gridRowStart: 7}}>..., Завжди відповідає на атаку (навіть при смерті)</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 8}}>..., <Tooltip text="Не отримує відповіді після атаки">{UnitKeywords.Sneaky}</Tooltip></div>
 
@@ -741,18 +750,20 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-name" style={{gridRowStart: 14, color: playerColors[playerId]}}>{UMash.mavkaName} <div style={{display: "inline"}} className="unit-stars-info">{renderStarsCreated(1)}</div></div>
             <div className="popup-creature-name" style={{gridRowStart: 15, color: playerColors[playerId]}}>{UMash.mavkaName} <div style={{display: "inline"}} className="unit-stars-info">{renderStarsCreated(2)}</div></div>
             <div className="popup-creature-name" style={{gridRowStart: 16, color: playerColors[playerId]}}>{UMash.mavkaName} <div style={{display: "inline"}} className="unit-stars-info">{renderStarsCreated(3)}</div></div>
+            <div className="popup-creature-damage">1</div>
+            <div className="popup-creature-damage">1</div>
             <div className="popup-creature-damage">2</div>
-            <div className="popup-creature-damage">2</div>
-            <div className="popup-creature-damage">2</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 14}}>4</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 15}}>5</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 16}}>5</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 14}}>3</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 15}}>4</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 16}}>4</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 14}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 15}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 16}}>4</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 14}}><Tooltip text="Може нанести урон по істоті (50% сили атаки, радіус 2). Не можна здійснити рейд, якщо поруч є ворог чи скрізь союзну істоту">
               {UnitSkills.Raid}</Tooltip>, <Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>. При атаці/рейді ціль отримує статус <Tooltip text="Істота може атакувати/рейдити тільки того, хто наклав помсту">{UnitStatus.Vengeance}</Tooltip></div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., При рейді ціль отримує статус <Tooltip text="Істота втрачає 1 життя на початку кожної фази пересування">{UnitStatus.Poison}</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 15}}>..., При рейді ціль отримує статус <Tooltip text="Істота втрачає 1 життя на початку кожної фази пересування">{UnitStatus.Poison}</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., <Tooltip text="Зарядів: 1, Дальність: ∞, Фаза: будь-яка, Завершує хід">Активно</Tooltip>: може поміняти місцями поруч розташованих союзну та ворожу істоту (окрім {UnitTypes.Idol})
+              ігноруючи <Tooltip text="Зона Контролю: істоти не можуть пресуватися на клітини відходячи від ворога поруч">ЗК</Tooltip></div>
           </div>
         </>
       )
@@ -796,14 +807,15 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-name" style={{gridRowStart: 8, color: playerColors[playerId]}}>{UGeysers.himeraName} <div style={{display: "inline"}} className="unit-stars-info">{renderStarsCreated(3)}</div></div>
             <div className="popup-creature-damage">2</div>
             <div className="popup-creature-damage">2</div>
-            <div className="popup-creature-damage">2</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 6}}>4</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 7}}>5</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 8}}>5</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 6}}>4</div>
-            <div className="popup-creature-initiative" style={{gridRowStart: 7}}>4</div>
+            <div className="popup-creature-damage">3</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 6}}>5</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 7}}>6</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 8}}>6</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 6}}>3</div>
+            <div className="popup-creature-initiative" style={{gridRowStart: 7}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 8}}>4</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 6}}>При атаці/відповіді урон отримує ще й істота позаду цілі.</div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 7}}>Отримує +1 до сили коли поранився (одноразово)</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 8}}>..., <Tooltip text="Атака завдає 1 урон по істотам праворуч та ліворуч від цілі">{UnitSkills.RoundDamage}</Tooltip></div>
 
             <div style={{gridRowStart: 9}} className="popup-divider"></div>
@@ -823,6 +835,7 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-initiative" style={{gridRowStart: 12}}>5</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 10}}><Tooltip text="Діє на ворожих істот у радіусі 1">{UnitSkills.UnfocusedAura}</Tooltip>: дає ворожим істотам статус <Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>.</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 11}}>..., <Tooltip text="Рандомно додає 1 силу до істоти поруч (окрім Ідола) на початку битви">{UnitKeywords.Support}</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 12}}>..., Відповідь у повну силу</div>
 
             <div style={{gridRowStart: 13}} className="popup-divider"></div>
 
@@ -841,7 +854,8 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-initiative" style={{gridRowStart: 16}}>4</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 14}}><Tooltip text="Може нанести урон по істоті (50% сили атаки, радіус 2). Не можна здійснити рейд, якщо поруч є ворог чи скрізь союзну істоту">
               {UnitSkills.Raid}</Tooltip>, <Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>. При атаці ціль отримує статус <Tooltip text="Істота втрачає 1 життя на початку кожної фази пересування">{UnitStatus.Poison}</Tooltip></div>
-            <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., <Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{UnitSkills.Wholeness}</Tooltip>. При рейді ціль отримує статус <Tooltip text="Істота втрачає 1 життя на початку кожної фази пересування">{UnitStatus.Poison}</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 15}}>..., <Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{UnitSkills.Wholeness}</Tooltip></div>
+            <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., При рейді ціль отримує статус <Tooltip text="Істота втрачає 1 життя на початку кожної фази пересування">{UnitStatus.Poison}</Tooltip></div>
           </div>
         </>
       )
