@@ -25,6 +25,7 @@ import {
 } from '../helpers/Constants';
 import {getColorMap} from "./Setup";
 import {handleOnMoveActions} from "./GameActions";
+import {createUnitObject} from "../units/Unit";
 
 const setColorMap = (G, ctx, playerID) => {
   if (ctx.phase === 'Setup') {
@@ -70,6 +71,26 @@ export const onBuildingBegin = (G, ctx, events) => {
 
   G.players.filter(p => p.bioms.length === 0).forEach(p => {
     p.bioms = [getRandomBiom(), getRandomBiom()]
+  })
+}
+
+export const onSetupBegin = (G, ctx, events) => {
+  const availableBioms = {...Biom}
+  const pBioms = G.players.filter(p => p.isPlayerInGame).flatMap(p => p.bioms)
+  const freeBioms =  Object.values(availableBioms).filter(biom => pBioms.find(pBiom => biom === pBiom) === undefined)
+  G.players.filter(p => p.isPlayerInGame && !p.isUsedReinforce && p.heals <= 5).forEach(p => {
+    const randBiom = freeBioms[Math.floor(Math.random()*freeBioms.length)]
+    const randType = [UnitTypes.Prispeshnick, UnitTypes.Prominkor, UnitTypes.Vestnick][Math.floor(Math.random()*3)]
+    const newUnit = createUnitObject(Math.random().toString(10).slice(2), p.id, randBiom, randType, 0, 2, 0)
+    p.units.push(newUnit)
+    p.isUsedReinforce = true
+    G.serverMsgLog.push({
+      id: Math.random().toString(10).slice(2),
+      turn: ctx.turn,
+      player: +ctx.currentPlayer,
+      phase: ctx.phase,
+      text: `${p.name} отримує підмогу!`,
+    })
   })
 }
 

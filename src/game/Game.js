@@ -11,6 +11,7 @@ import {
   onEndPositioningTurn,
   onGameOver,
   onPositioningStart,
+  onSetupBegin,
   postProcess,
   setFightOrder,
   setInFightUnits
@@ -60,6 +61,7 @@ export const Overcoming = {
       next: "Setup"
     },
     Setup: {
+      onBegin: ({ G, ctx, events }) => { onSetupBegin(G, ctx, events) },
       turn: {
         activePlayers: {
           all: { stage: 'pickUnit' }

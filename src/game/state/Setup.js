@@ -24,6 +24,7 @@ const createPlayer = (id, name, allPlayersNum) => ({
   wins: 0,
   dealtDamage: false,
   isUsedSacrifice: false,
+  isUsedReinforce: false,
   houses: [{...Buildings.Kapitoliy}, {...Buildings.Svjatulushe, qty: 1 }],
   sortie: []
 });
