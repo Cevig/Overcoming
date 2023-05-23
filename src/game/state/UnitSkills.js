@@ -650,28 +650,42 @@ const handleThroughDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates
       .find(unit => isSame(newEnemyPoint)(unit.unitState.point))
 
     if (newEnemy) {
-      G.serverMsgLog.push({
-        id: Math.random().toString(10).slice(2),
-        turn: ctx.turn,
-        player: +ctx.currentPlayer,
-        phase: ctx.phase,
-        text: `Произуючий удар по ${newEnemy.name}`,
-      })
-      resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
-        currentUnit: thisUnit,
-        enemy: newEnemy,
-        updates: {
-          damage: updates.damage,
-          damageType: DamageType.Chained,
+      const skill = newEnemy.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage)
+      if (skill.point) {
+        const newEnemyBlockPoint = createPoint(newEnemy.unitState.point.x + skill.point.x, newEnemy.unitState.point.y + skill.point.y, newEnemy.unitState.point.z + skill.point.z)
+        if (isSame(enemy.unitState.point)(newEnemyBlockPoint)) {
+          G.serverMsgLog.push({
+            id: Math.random().toString(10).slice(2),
+            turn: ctx.turn,
+            player: +ctx.currentPlayer,
+            phase: ctx.phase,
+            text: `Произуючий удар по ${newEnemy.name} заблоковано`,
+          })
         }
-      })
-      if(newEnemy.heals <= 0) {
-        handleUnitDeath({G: G, ctx: ctx, events: events}, newEnemy, thisUnit)
-        G.fightQueue.forEach((unitInQ, i, q) => {
-          if(unitInQ.unitId === newEnemy.id) {
-            q.splice(i, 1);
+      } else {
+        G.serverMsgLog.push({
+          id: Math.random().toString(10).slice(2),
+          turn: ctx.turn,
+          player: +ctx.currentPlayer,
+          phase: ctx.phase,
+          text: `Произуючий удар по ${newEnemy.name}`,
+        })
+        resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
+          currentUnit: thisUnit,
+          enemy: newEnemy,
+          updates: {
+            damage: updates.damage,
+            damageType: DamageType.Chained,
           }
         })
+        if(newEnemy.heals <= 0) {
+          handleUnitDeath({G: G, ctx: ctx, events: events}, newEnemy, thisUnit)
+          G.fightQueue.forEach((unitInQ, i, q) => {
+            if(unitInQ.unitId === newEnemy.id) {
+              q.splice(i, 1);
+            }
+          })
+        }
       }
     }
   }

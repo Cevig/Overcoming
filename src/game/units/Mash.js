@@ -49,8 +49,8 @@ export class UMash {
 
   static getMavka = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [2, 3, 3]
-      if (level === 2) return [2, 4, 3]
+      if (level === 1) return [1, 3, 3]
+      if (level === 2) return [1, 4, 3]
       if (level === 3) return [2, 4, 4]
     }
 
