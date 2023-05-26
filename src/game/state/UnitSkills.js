@@ -651,7 +651,7 @@ const handleThroughDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates
 
     if (newEnemy) {
       const skill = newEnemy.abilities.statUpdates.defence.find(skill => skill.name === UnitSkills.BlockDamage)
-      if (skill.point) {
+      if (skill && skill.point) {
         const newEnemyBlockPoint = createPoint(newEnemy.unitState.point.x + skill.point.x, newEnemy.unitState.point.y + skill.point.y, newEnemy.unitState.point.z + skill.point.z)
         if (isSame(enemy.unitState.point)(newEnemyBlockPoint)) {
           G.serverMsgLog.push({
