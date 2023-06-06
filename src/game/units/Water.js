@@ -10,9 +10,9 @@ export class UWater {
   static vodyanoiName = "Водяний"
   static getLerneyskiyRak = (id, playerId, level, createPosition, price) => {
     const stat = () => {
-      if (level === 1) return [1, 1, 1]
-      if (level === 2) return [1, 1, 1]
-      if (level === 3) return [1, 1, 1]
+      if (level === 1) return [1, 2, 1]
+      if (level === 2) return [1, 2, 1]
+      if (level === 3) return [1, 2, 1]
     }
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
 

@@ -294,6 +294,7 @@ export const moves = {
       text: `${thisUnit.name} викорстовує здібність та пересуває істоту`,
     })
     thisUnit.unitState.isClickable = false
+    thisUnit.unitState.isAttackedThisPhase = true
     G.availablePoints = []
     G.currentUnit = null
     onEndFightTurn(G, ctx)
@@ -311,6 +312,7 @@ export const moves = {
       text: `${thisUnit.name} викорстовує здібність та перекидує істоту`,
     })
     thisUnit.unitState.isClickable = false
+    thisUnit.unitState.isAttackedThisPhase = true
     G.availablePoints = []
     G.currentUnit = null
     onEndFightTurn(G, ctx)
@@ -393,6 +395,7 @@ export const moves = {
       })
     } else {
       unit.unitState.isClickable = false
+      unit.unitState.isAttackedThisPhase = true
       G.currentUnit = null
       G.availablePoints = []
       onEndFightTurn(G, ctx)
@@ -632,6 +635,7 @@ export const moves = {
   skipHook: ({ G, ctx }) => {
     const unit = getUnitById(G, G.currentActionUnitId)
     unit.unitState.isClickable = false
+    unit.unitState.isAttackedThisPhase = true
     G.availablePoints = []
     G.currentUnit = null
     onEndFightTurn(G, ctx)

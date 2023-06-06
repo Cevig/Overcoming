@@ -208,6 +208,7 @@ export const cleanFightPhase = (G, ctx, events) => {
     unit.unitState.isInFight = false
     unit.unitState.skippedTurn = false
     unit.unitState.isCounterAttacked = false
+    unit.unitState.isAttackedThisPhase = false
     const supportStatus = getStatus(unit, UnitStatus.PowerUpSupport)
     if (supportStatus) {
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {

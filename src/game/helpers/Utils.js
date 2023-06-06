@@ -173,7 +173,7 @@ export const onEndFightTurn = (G, ctx) => {
 
   getInGameUnits(G).forEach(unit => {
     const isNearEnemies = getNearestEnemies(G, unit.unitState).length > 0;
-    if (!unit.unitState.isInFight && isNearEnemies) {
+    if (!unit.unitState.isInFight && isNearEnemies && !unit.unitState.isAttackedThisPhase) {
       unit.unitState.isClickable = true
       unit.unitState.isInFight = true
     }

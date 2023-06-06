@@ -112,7 +112,7 @@ const UnitInfoPopup = (props) => {
       } else if (skill.name === UnitSkills.HealOnAttack || skill === UnitSkills.HealOnAttack) {
         return (<><Tooltip text="Отримує 1 життя при атаці">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.DeadlyDamage || skill === UnitSkills.DeadlyDamage) {
-        return (<><Tooltip text="Вмирає, якщо отримає урон у пораненому стані">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
+        return (<><Tooltip text="Вмирає, якщо отримає урон у пораненому стані від атаки/відповіді">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.DoubleDamage || skill === UnitSkills.DoubleDamage) {
         return (<><Tooltip text="Отримує подвійний урон, якщо у ворога більше життя">{skill.name ? skill.name : skill}{skill.qty < 10 ? ` (${skill.qty})` : ``}</Tooltip>{i !== skills.length-1 ? ', ' : ''}</>)
       } else if (skill.name === UnitSkills.DoubleDamageInDefence || skill === UnitSkills.DoubleDamageInDefence) {

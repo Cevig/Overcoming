@@ -8,9 +8,9 @@ export const handleOnMoveActions = (data) => {
   getInGameUnits(G, unit => unit.abilities.onMove.length !== 0)
     .forEach(unit => {
       unit.abilities.onMove.forEach(skill => {
-        if (appliedSkills.find(as => as === skill.name) === undefined) {
+        if (appliedSkills.find(as => as.playerId === unit.unitState.playerId && as.sk === skill.name) === undefined) {
           handleAbility(data, skill.name, {unitId: unit.id})
-          appliedSkills.push(skill.name)
+          appliedSkills.push({playerId: unit.unitState.playerId, sk: skill.name})
         }
       })
     })

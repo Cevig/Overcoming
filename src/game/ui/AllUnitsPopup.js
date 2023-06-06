@@ -400,7 +400,7 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-initiative" style={{gridRowStart: 15}}>3</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 16}}>3</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 14}}><Tooltip text="Істота не може відповідати на атаку">{UnitKeywords.Unfocused}</Tooltip>, <Tooltip text="Може нанести урон по істоті (50% сили атаки, радіус 2). Не можна здійснити рейд, якщо поруч є ворог чи скрізь союзну істоту">
-              {UnitSkills.Raid}</Tooltip>, <Tooltip text="Під час рейду може відняти додаткове життя та додати його союзній до цілі істоті у радіусі 1">{UnitKeywords.ReplaceHealsRaid}</Tooltip>, Якщо {UDesert.adzeName} поранений, то будь-який урон у фазі битви вбиває його</div>
+              {UnitSkills.Raid}</Tooltip>, <Tooltip text="Під час рейду може відняти додаткове життя та додати його союзній до цілі істоті у радіусі 1">{UnitKeywords.ReplaceHealsRaid}</Tooltip>, Якщо {UDesert.adzeName} поранений, то будь-який урон від атаки/відповіді вбиває його</div>
             <div className="popup-creature-abilities" style={{gridRowStart: 15}}>..., <Tooltip text="Рейд отрумує +1 урону, але Адзе втрачає 1 життя">{UnitKeywords.AdditionalSacrificeRaid}</Tooltip></div>
             <div className="popup-creature-abilities" style={{gridRowStart: 16}}>..., <Tooltip text="Атака та ініціатива не опускаються нижче базових значень">{UnitSkills.Wholeness}</Tooltip></div>
           </div>
@@ -624,9 +624,9 @@ const AllUnitsPopup = (data) => {
             <div className="popup-creature-damage">1</div>
             <div className="popup-creature-damage">1</div>
             <div className="popup-creature-damage">1</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 6}}>1</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 7}}>1</div>
-            <div className="popup-creature-heals" style={{gridRowStart: 8}}>1</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 6}}>2</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 7}}>2</div>
+            <div className="popup-creature-heals" style={{gridRowStart: 8}}>2</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 6}}>1</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 7}}>1</div>
             <div className="popup-creature-initiative" style={{gridRowStart: 8}}>1</div>

@@ -99,7 +99,7 @@ const handlePolydnicaSurroundings = ({G, ctx, events}, {unitId}) => {
               phase: ctx.phase,
               text: `${enemy.name} в оточенні та миттєво вмирає!`,
             })
-            handleUnitDeath({G: G, ctx:ctx, events: events}, enemy)
+            handleUnitDeath({G: G, ctx: ctx, events: events}, enemy, thisUnit)
             G.fightQueue.forEach((unitInQ, i, q) => {
               if(unitInQ.unitId === enemy.id) {
                 q.splice(i, 1);
@@ -639,7 +639,7 @@ const handleRoundDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates})
 }
 
 const handleThroughDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates}) => {
-  if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Counter || updates.damageType === DamageType.Chained) {
+  if (updates.damageType === DamageType.Default || updates.damageType === DamageType.Counter) {
     const thisUnit = getUnitById(G, unitId)
     const enemy = getUnitById(G, enemyId)
     const thisPoint = thisUnit.unitState.point
@@ -945,6 +945,7 @@ const handleLesavka = ({G, events, ctx}, {unitId, enemyId}) => {
     events.setActivePlayers({ currentPlayer: 'hookUnitAction' });
   } else {
     thisUnit.unitState.isClickable = false
+    thisUnit.unitState.isAttackedThisPhase = true
     G.availablePoints = []
     G.currentUnit = null
     onEndFightTurn(G, ctx)
@@ -967,6 +968,7 @@ const handleThrowOver = ({G, events, ctx}, {unitId, enemyId}) => {
     events.setActivePlayers({ currentPlayer: 'throwOverAction' });
   } else {
     thisUnit.unitState.isClickable = false
+    thisUnit.unitState.isAttackedThisPhase = true
     G.currentUnit = null
     onEndFightTurn(G, ctx)
   }
