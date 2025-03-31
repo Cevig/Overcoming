@@ -59,7 +59,7 @@ export const getColorMap = (allPlayersNum) => {
 
 export const setup = ({ ctx }) => ({
   currentUnit: null,
-  players: [...Array(ctx.numPlayers).keys()].map(num => createPlayer(num, `Гравець ${num+1}`, ctx.numPlayers)),
+  players: [...Array(ctx.numPlayers).keys()].map(num => createPlayer(num, `Player ${num+1}`, ctx.numPlayers)),
   grid: {
     levels: ctx.numPlayers === 2 ? 3 : 4,
     colorMap: getColorMap(ctx.numPlayers),

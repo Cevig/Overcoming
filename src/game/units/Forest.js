@@ -3,11 +3,11 @@ import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UForest {
 
-  static lesavkaName = "Лісавка"
-  static bereginyaName = "Берегиня"
-  static sirinName = "Сірін"
-  static abasuName = "Абаси"
-  static chygaysterName = "Чугайстер"
+  static lesavkaName = "lesavka"
+  static bereginyaName = "bereginya"
+  static sirinName = "sirin"
+  static abasuName = "abasu"
+  static chygaysterName = "chygayster"
   static getLesavka = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 3]
@@ -37,10 +37,10 @@ export class UForest {
     if (level > 0) {
       abilities.keywords.push(UnitKeywords.Sneaky)
       if (level > 1) {
-        abilities.allTimeActions.push({name: UnitSkills.healAlly, qty: 3})
+        abilities.allTimeActions.push({name: UnitSkills.HealAlly, qty: 3})
         abilities.keywords.push(UnitKeywords.Support)
       } else {
-        abilities.allTimeActions.push({name: UnitSkills.healAlly, qty: 2})
+        abilities.allTimeActions.push({name: UnitSkills.HealAlly, qty: 2})
       }
     }
 
@@ -73,7 +73,7 @@ export class UForest {
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.onDeath.push({name: UnitSkills.UtilizeDeath})
-    abilities.allTimeActions.push({name: UnitSkills.abasuCurse, qty: 0})
+    abilities.allTimeActions.push({name: UnitSkills.AbasuCurse, qty: 0})
 
     return getIdol(UForest.abasuName, Biom.Forest, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }

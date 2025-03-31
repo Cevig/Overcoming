@@ -3,11 +3,15 @@ import "./styles/homePage.css";
 import {LobbyAPI} from "../api";
 import TemplatePage from "./TemplatePage";
 import {setPlayerNumber} from "../game/helpers/Utils";
+import i18n from "../i18n";
+import {withTranslation} from "react-i18next";
 
-const info_texts = {
-  start2: "Створити нову кімнату для 2 гравців",
-  start3: "Створити нову кімнату для 3 гравців",
-  start4: "Створити нову кімнату для 4 гравців",
+const info_texts = () => {
+  return {
+    start2: i18n.t('game.create_for_players', {qty: 2}),
+    start3: i18n.t('game.create_for_players', {qty: 3}),
+    start4: i18n.t('game.create_for_players', {qty: 4})
+  }
 };
 const api = new LobbyAPI();
 class SelectPlayersNumberPage extends Component {
@@ -18,8 +22,8 @@ class SelectPlayersNumberPage extends Component {
   };
   hoverIn = (src) => {
     let infoText = "";
-    if (Object.keys(info_texts).includes(src)) {
-      infoText = info_texts[src];
+    if (Object.keys(info_texts()).includes(src)) {
+      infoText = info_texts()[src];
     } else {
       console.log("Unrecognized key for info_text");
     }
@@ -68,7 +72,7 @@ class SelectPlayersNumberPage extends Component {
                 onClick={() => this.createGame(2)}
               >
                 <div className="card-inside">
-                  <h1>2 гравця</h1>
+                  <h1>{i18n.t('game.qty_players',{qty: 2})}</h1>
                 </div>
               </div>
               <div
@@ -78,7 +82,7 @@ class SelectPlayersNumberPage extends Component {
                 onClick={() => this.createGame(3)}
               >
                 <div className="card-inside">
-                  <h1>3 гравця</h1>
+                  <h1>{i18n.t('game.qty_players',{qty: 3})}</h1>
                 </div>
               </div>
               <div
@@ -88,7 +92,7 @@ class SelectPlayersNumberPage extends Component {
                 onClick={() => this.createGame(4)}
               >
                 <div className="card-inside">
-                  <h1>4 гравця</h1>
+                  <h1>{i18n.t('game.qty_players',{qty: 4})}</h1>
                 </div>
               </div>
             </div>
@@ -100,4 +104,4 @@ class SelectPlayersNumberPage extends Component {
   }
 }
 
-export default SelectPlayersNumberPage;
+export default withTranslation()(SelectPlayersNumberPage);

@@ -16,7 +16,12 @@ import TemplatePage from "./TemplatePage";
 
 // Constants
 import {APP_PRODUCTION, GAME_SERVER_URL, WEB_SERVER_URL} from "../config.js";
-import {getPlayersNumber, setPlayerNumber} from "../game/helpers/Utils";
+import {
+  getPlayersNumber,
+  logGameUi,
+  logPlayerName,
+  setPlayerNumber
+} from "../game/helpers/Utils";
 
 const api = new LobbyAPI();
 const server = APP_PRODUCTION
@@ -53,7 +58,7 @@ class Lobby extends Component {
     window.removeEventListener("beforeunload", this.cleanup.bind(this));
   }
   joinRoom = (player_no) => {
-    const username = "Гравець " + (player_no+1);
+    const username = logPlayerName(player_no+1);
     if (this.state.id) {
       const metadata = (Math.random() + 1).toString(36).substring(7);
       api.joinRoom(this.state.id, username, player_no, metadata).then(
@@ -122,7 +127,7 @@ class Lobby extends Component {
         return (
           <div>
             <div className="player-item">
-              {player.name} - Ви
+              {logPlayerName(player.id+1)} - {logGameUi('you')}
               <div className="player-ready"></div>
             </div>
           </div>
@@ -131,7 +136,7 @@ class Lobby extends Component {
         return (
           <div>
             <div className="player-item">
-              {player.name}
+              {logPlayerName(player.id+1)}
               <div className="player-ready"></div>
             </div>
           </div>
@@ -141,7 +146,7 @@ class Lobby extends Component {
       return (
         <div>
           <div className="player-item loading">
-            Очікування гравців
+            {logGameUi('waiting_players')}
             <div className="player-waiting"></div>
           </div>
         </div>
@@ -171,7 +176,7 @@ class Lobby extends Component {
       : WEB_SERVER_URL;
     return (
       <>
-        <div>Запроси друзів за допомогою посилання:</div>
+        <div>{logGameUi('invite_friends')}:</div>
         <div className="game-link">
           <div
             className="game-link-box"
@@ -180,11 +185,11 @@ class Lobby extends Component {
             {`${server}/lobby/${this.state.id}`}
           </div>
           <div className="game-link-button" onClick={this.copyToClipboard}>
-            {this.state.copied ? "Готово!" : " Скопіювати "}
+            {this.state.copied ? logGameUi('ready')+"!" : " "+logGameUi('copy')+" "}
           </div>
         </div>
         <div>
-          Код Гри
+          {logGameUi('game_code')}
           <br /> <div className="game-code">{this.state.id}</div>
         </div>
         <div className="player-list">
@@ -195,7 +200,7 @@ class Lobby extends Component {
         </div>
         <div>
           <br />
-          Гра почнеться одразу як усі гравці приєднаються!
+          {logGameUi('ready_note')}!
         </div>
       </>
     );
@@ -204,9 +209,9 @@ class Lobby extends Component {
     return (
       <>
         <div>
-          Вибачайте! Такої гри немає.
+          {logGameUi('sorry_no_game')}
           <br />
-          <Link to="/">Створити нову</Link>
+          <Link to="/">{logGameUi('create_game')}</Link>
         </div>
       </>
     );

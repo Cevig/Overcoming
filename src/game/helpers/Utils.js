@@ -15,6 +15,7 @@ import {
 import {handleAbility} from "../state/UnitSkills";
 import {biomComparison} from "./UnitPriority";
 import {createUnitObject} from "../units/Unit";
+import i18n from '../../i18n';
 
 export const isSame = p1 => p2 => p1.coord === p2.coord;
 
@@ -225,14 +226,13 @@ export const cleanRound = (G, ctx, events) => {
       p.availablePoints = []
       p.currentUnit = null
       p.dealtDamage = false
+      let savedUnits = []
       const sortieUnits = p.units.filter(u => u.unitState.isInSortie)
       if (sortieUnits.length > 0) {
         const savedUnit = sortieUnits[Math.floor(Math.random()*sortieUnits.length)]
-        savedUnit.unitState.isInSortie = false
+        savedUnits.push(createUnitObject(Math.random().toString(10).slice(2), p.id, savedUnit.biom, savedUnit.type, savedUnit.unitState.createPosition, savedUnit.level, savedUnit.price))
       }
-      p.units = p.units.filter(u => u.heals > 0 && !u.unitState.isInSortie).map(u =>
-        createUnitObject(Math.random().toString(10).slice(2), p.id, u.biom, u.type, u.unitState.createPosition, u.level, u.price)
-      )
+      p.units = savedUnits
       p.sortie = []
     }
   })
@@ -272,7 +272,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
             turn: ctx.turn,
             player: +ctx.currentPlayer,
             phase: ctx.phase,
-            text: `${enemy.name} отримує статус ${status.name}`,
+            text: i18n.t('log.get_status', {unitName: logUnitName(enemy.name), status: logUnitStatus(status.name).name}),
           })
         } else {
           removeStatus(enemy, status.name)
@@ -281,7 +281,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
             turn: ctx.turn,
             player: +ctx.currentPlayer,
             phase: ctx.phase,
-            text: `${enemy.name} втрачає статус ${status.name}`,
+            text: i18n.t('log.lose_status', {unitName: logUnitName(enemy.name), status: logUnitStatus(status.name).name})
           })
         }
       } else if(status.qty > 0) {
@@ -291,7 +291,7 @@ export const resolveUnitsInteraction = (data, fightData) => {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `${enemy.name} отримує статус ${status.name}`,
+          text: i18n.t('log.get_status', {unitName: logUnitName(enemy.name), status: logUnitStatus(status.name).name}),
         })
       }
     })
@@ -303,7 +303,12 @@ export const resolveUnitsInteraction = (data, fightData) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${enemy.name} отримує ${Math.abs(resultMods.damage)} ${resultMods.damage >= 0 ? `урону` : `до життя`} від ${currentUnit.name}`,
+      text: i18n.t('log.health_change', {
+        unitName: logUnitName(enemy.name),
+        qty: Math.abs(resultMods.damage),
+        qtyLabel: resultMods.damage >= 0 ? i18n.t('game.to_damage') : i18n.t('game.to_heals'),
+        source: logUnitName(currentUnit.name)
+      }),
     })
   }
   if(resultMods.power !== undefined) {
@@ -313,7 +318,11 @@ export const resolveUnitsInteraction = (data, fightData) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `Силу ${enemy.name} ${resultMods.power >= 0 ? 'знижено' : 'підвищено'} на ${Math.abs(resultMods.power)}`,
+      text: i18n.t('log.power_change', {
+        unitName: logUnitName(enemy.name),
+        qty: Math.abs(resultMods.power),
+        qtyLabel: resultMods.power >= 0 ? i18n.t('game.increased') : i18n.t('game.decreased'),
+      }),
     })
   }
   if(resultMods.initiative !== undefined) {
@@ -323,7 +332,11 @@ export const resolveUnitsInteraction = (data, fightData) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `Ініціативу ${enemy.name} ${resultMods.initiative >= 0 ? 'знижено' : 'підвищено'} на ${Math.abs(resultMods.initiative)}`,
+      text: i18n.t('log.initiative_change', {
+        unitName: logUnitName(enemy.name),
+        qty: Math.abs(resultMods.initiative),
+        qtyLabel: resultMods.initiative >= 0 ? i18n.t('game.increased') : i18n.t('game.decreased'),
+      }),
     })
   }
 }
@@ -349,7 +362,7 @@ export const handleUnitDeath = (data, target, killer = null) => {
     turn: ctx.turn,
     player: +ctx.currentPlayer,
     phase: ctx.phase,
-    text: `Було вбито ${target.name} Гравця ${target.unitState.playerId+1}`,
+    text: i18n.t('log.unit_killed', {unitName: logUnitName(target.name), player: +target.unitState.playerId+1}),
   })
 
   const unitsWithOnDeath = getInGameUnits(G, unit => unit.abilities.onDeath.length)
@@ -376,7 +389,7 @@ export const handleUnitDeath = (data, target, killer = null) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${G.players[killer.unitState.playerId].name} отримує ${essence}✾`,
+      text: i18n.t('log.receive_essence', {qty: essence, player: +killer.unitState.playerId+1}),
     })
   }
 }
@@ -432,7 +445,7 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
       turn: ctx.turn,
       player: thisUnit.unitState.playerId,
       phase: ctx.phase,
-      text: `${thisPlayer.name} отримує дар богів: +${essence}✾`,
+      text: i18n.t('log.receive_gift', {qty: essence, player: thisPlayer.id+1}),
     })
     thisPlayer.essence += essence;
     G.grid.essencePoints = G.grid.essencePoints.filter(isNotSame(thisUnit.unitState.point))
@@ -618,3 +631,40 @@ export const getUnstablePoints = (G, ctx) => {
       .map(arr => createPoint(...arr))
   }
 }
+
+export const logUnitName = (name) =>
+  i18n.t('unit.'+name)
+
+export const logUnitStatus = (name) => {
+  let loweredName = name.charAt(0).toLowerCase() + name.slice(1)
+  return {
+    name: '✶'+i18n.t('unitStatus.'+loweredName+'.name')+'✶',
+    description: i18n.t('unitStatus.'+loweredName+'.description')
+  }
+}
+
+export const logUnitKeyword = (name) => {
+  return {
+    name: '✦'+i18n.t('unitKeywords.'+name+'.name')+'✦',
+    description: i18n.t('unitKeywords.'+name+'.description'),
+    descriptionTooltip: i18n.t('unitKeywords.'+name+'.descriptionTooltip', { defaultValue: '' })
+  }
+}
+
+export const logUnitSkill = (name) => {
+  return {
+    name: '✧'+i18n.t('unitSkills.'+name+'.name')+'✧',
+    description: i18n.t('unitSkills.'+name+'.description'),
+    descriptionTooltip: i18n.t('unitSkills.'+name+'.descriptionTooltip', { defaultValue: '' }),
+    effect: i18n.t('unitSkills.'+name+'.effect', { defaultValue: '' })
+  }
+}
+
+export const logBuilding = (name) => {
+  return {name: i18n.t('buildings.'+name+'.name'), description: i18n.t('buildings.'+name+'.description')}
+}
+
+export const logPhase = (name) => i18n.t('phase.'+name)
+
+export const logGameUi = (name) => i18n.t('game.'+name)
+export const logPlayerName = (qty) => i18n.t('game.player', {number: qty})

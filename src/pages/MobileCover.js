@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import TemplatePage from "./TemplatePage";
+import {logGameUi} from "../game/helpers/Utils";
 
 class MobileCover extends Component {
   state = {};
@@ -8,7 +9,7 @@ class MobileCover extends Component {
       <TemplatePage
         content={
           <div style={{ fontSize: 35 }}>
-            Вибачте, гра недоступна для телефонів.
+            {logGameUi('unavailable_mobile')}
           </div>
         }
       />

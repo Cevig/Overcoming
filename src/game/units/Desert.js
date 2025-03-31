@@ -3,11 +3,11 @@ import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UDesert {
 
-  static amfisbenaName = "Амфінсбена"
-  static obajifoName = "Обаїфо"
-  static adzeName = "Адзе"
-  static sfinksName = "Сфінкс"
-  static vasiliskName = "Василіск"
+  static amfisbenaName = "amfisbena"
+  static obajifoName = "obajifo"
+  static adzeName = "adze"
+  static sfinksName = "sfinks"
+  static vasiliskName = "vasilisk"
   static getAmfisbena = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 3]

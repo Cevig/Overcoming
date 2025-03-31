@@ -1,10 +1,14 @@
 import React, {Component} from "react";
 import "./styles/homePage.css";
 import TemplatePage from "./TemplatePage";
+import {withTranslation} from "react-i18next";
+import {logGameUi} from "../game/helpers/Utils";
 
-const info_texts = {
-  start: "Почати нову гру",
-  join: "Приєднатися використовуючи код запрошення",
+const info_texts = () => {
+  return {
+    start: logGameUi('new_game'),
+    join: logGameUi('invite_code')
+  }
 };
 class HomePage extends Component {
   state = {
@@ -14,8 +18,8 @@ class HomePage extends Component {
   };
   hoverIn = (src) => {
     let infoText = "";
-    if (Object.keys(info_texts).includes(src)) {
-      infoText = info_texts[src];
+    if (Object.keys(info_texts()).includes(src)) {
+      infoText = info_texts()[src];
     } else {
       console.log("Unrecognized key for info_text");
     }
@@ -42,7 +46,7 @@ class HomePage extends Component {
                 onClick={() => { history.push("/new") }}
               >
                 <div className="card-inside">
-                  <h1>нова гра</h1>
+                  <h1>{logGameUi('new_game')}</h1>
                 </div>
               </div>
               <div
@@ -52,7 +56,7 @@ class HomePage extends Component {
                 onClick={() => { history.push("/join"); }}
               >
                 <div className="card-inside">
-                  <h1>зайти до</h1>
+                  <h1>{logGameUi('go_to')}</h1>
                 </div>
               </div>
             </div>
@@ -64,4 +68,4 @@ class HomePage extends Component {
   }
 }
 
-export default HomePage;
+export default withTranslation()(HomePage);

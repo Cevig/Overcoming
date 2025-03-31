@@ -10,6 +10,9 @@ import {
   hasStatus,
   isNotSame,
   isSame,
+  logBuilding,
+  logUnitName,
+  logUnitStatus,
   resolveUnitsInteraction,
   shuffleArray,
   sortFightOrder
@@ -26,6 +29,7 @@ import {
 import {getColorMap} from "./Setup";
 import {handleOnMoveActions} from "./GameActions";
 import {createUnitObject} from "../units/Unit";
+import i18n from "i18next";
 
 const setColorMap = (G, ctx, playerID) => {
   if (ctx.phase === 'Setup') {
@@ -54,7 +58,7 @@ export const onBuildingBegin = (G, ctx, events) => {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `${p.name} отримав 8✾ завдяки ${Buildings.Svjatulushe.name}`,
+          text: i18n.t('log.svjatulushe_impact', {player: p.id+1, building: logBuilding("svjatulushe").name}),
         })
       }
     })
@@ -89,7 +93,7 @@ export const onSetupBegin = (G, ctx, events) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${p.name} отримує підмогу!`,
+      text: i18n.t('log.reinforcement', {player: p.id+1})
     })
   })
 }
@@ -113,7 +117,7 @@ export const onPositioningStart = (G, ctx, events) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `Руйнування простору - поле зменшилося!!!`,
+      text: i18n.t('log.battlefield_shrink')
     })
     const unstablePoints = getUnstablePoints(G, ctx)
     units.filter(unit => unstablePoints.find(isSame(unit.unitState.point)))
@@ -131,7 +135,7 @@ export const onPositioningStart = (G, ctx, events) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${unit.name} страждає від ${UnitStatus.Poison}`,
+        text: i18n.t('log.poisoned', {unitName: logUnitName(unit.name), status: logUnitStatus('poison').name}),
       })
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: unit,
@@ -170,7 +174,7 @@ export const onPositioningStart = (G, ctx, events) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${unit.name} приголомшений та пропускає хід`,
+        text: i18n.t('log.confused', {unitName: logUnitName(unit.name)}),
       })
       unit.unitState.isClickable = false
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -284,7 +288,7 @@ export const setFightOrder = (G, events, ctx) => {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `${unit.name} не має доступних цілей для підтримки`,
+          text: i18n.t('log.no_selection_targets', {unitName: logUnitName(unit.name)}),
         })
       }
     })
@@ -320,7 +324,7 @@ export const handleSortieRewards = (G, events, ctx) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${p.name} отримує ${essence}✾ від вилазок!`,
+        text: i18n.t('log.sortie_impact', {player: p.id+1, qty: essence})
       })
     }
   })

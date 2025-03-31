@@ -3,11 +3,11 @@ import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UMountains {
 
-  static beytirName = "Бейтір"
-  static garzykName = "Гарцук"
-  static veshizaSorokaName = "Вещіця-сорока"
-  static psoglavName = "Псоглав"
-  static halaName = "Хала"
+  static beytirName = "beytir"
+  static garzykName = "garzyk"
+  static veshizaSorokaName = "veshizaSoroka"
+  static psoglavName = "psoglav"
+  static halaName = "hala"
   static getBeytir = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 3]
@@ -16,7 +16,7 @@ export class UMountains {
     }
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.statUpdates.attack.push(UnitSkills.chainDamage)
+    abilities.statUpdates.attack.push(UnitSkills.ChainDamage)
 
     return getCreature(UMountains.beytirName, UnitTypes.Prispeshnick, Biom.Mountains, id, ...stat(), level, getUnitState(id, playerId, ...stat(), createPosition), abilities, price)
   }
@@ -33,7 +33,7 @@ export class UMountains {
       abilities.statUpdates.defence.push({name: UnitSkills.Wholeness, unitId: id})
       abilities.statUpdates.defence.push({name: UnitSkills.RaidBlock, origin: true})
       if (level > 1) {
-        abilities.allTimeActions.push({name: UnitSkills.throwWeapon, qty: 1})
+        abilities.allTimeActions.push({name: UnitSkills.ThrowWeapon, qty: 1})
       }
     }
 
@@ -53,7 +53,7 @@ export class UMountains {
       abilities.keywords.push(UnitKeywords.NoObstaclesRaid)
       abilities.actions.push({name: UnitSkills.Raid, qty: 99})
       if (level > 1) {
-        abilities.allTimeActions.push({name: UnitSkills.replaceUnits, qty: 1})
+        abilities.allTimeActions.push({name: UnitSkills.ReplaceUnits, qty: 1})
       }
     }
 
@@ -64,7 +64,7 @@ export class UMountains {
     const stat = [3, 6, 4]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.allTimeActions.push({name: UnitSkills.pauseToRecover, qty: 2})
+    abilities.allTimeActions.push({name: UnitSkills.PauseToRecover, qty: 2})
     return getIdol(UMountains.psoglavName, Biom.Mountains, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }
 

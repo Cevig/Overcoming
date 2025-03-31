@@ -3,11 +3,11 @@ import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UGeysers {
 
-  static himeraName = "Хімера"
-  static alyName = "Алі"
-  static rarogName = "Рарог"
-  static cherufeName = "Черуфе"
-  static jarPtizaName = "Жар-птиця"
+  static himeraName = "himera"
+  static alyName = "aly"
+  static rarogName = "rarog"
+  static cherufeName = "cherufe"
+  static jarPtizaName = "jarPtiza"
   static getHimera = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 3]
@@ -88,7 +88,7 @@ export class UGeysers {
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
     abilities.keywords.push(UnitKeywords.AdditionalEssence)
     abilities.statUpdates.defence.push({name: UnitSkills.BlockStatuses, unitId: id})
-    abilities.allTimeActions.push({name: UnitSkills.healAlly, qty: 3})
+    abilities.allTimeActions.push({name: UnitSkills.HealAlly, qty: 3})
     abilities.statUpdates.attack.push(UnitSkills.ThroughDamage)
     return getIdol(UGeysers.jarPtizaName, Biom.Geysers, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)
   }

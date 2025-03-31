@@ -6,7 +6,9 @@ import {
   UnitKeywords,
   UnitTypes
 } from "../helpers/Constants";
-import {hasKeyword} from "../helpers/Utils";
+import {hasKeyword, logGameUi, logUnitName} from "../helpers/Utils";
+import {withTranslation} from "react-i18next";
+import i18n from "i18next";
 
 const UnitList = (data) => {
 
@@ -56,7 +58,7 @@ const UnitList = (data) => {
     return Object.values(UnitTypes).map((type, i) => {
       return (
         <div key={i} className="unit-section">
-          <h2>{type}</h2>
+          <h2>{logUnitName(type)}</h2>
           {renderAvailableUnits(type)}
         </div>
       );
@@ -85,9 +87,9 @@ const UnitList = (data) => {
       .map((unit, i) => {
       return (
         <div key={unit.id} className="unit-row">
-          <h3 style={{color: playerColors[+player.id]}}>{unit.name} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", cursor: "pointer", fontSize: 20}}>&#9432;</span></h3>
+          <h3 style={{color: playerColors[+player.id]}}>{logUnitName(unit.name)} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", cursor: "pointer", fontSize: 20}}>&#9432;</span></h3>
           <div className="unit-details">
-            <span>[{unit.biom}]</span>
+            <span>[{i18n.t('biom.'+unit.biom)}]</span>
             <div className="unit-stars">
               {unit.level !== undefined ? renderStars(unit.level) : ""}
             </div>
@@ -120,12 +122,12 @@ const UnitList = (data) => {
   const renderCreatedUnits = () => {
     return (
       <div className="created-wrapper">
-        <h2>Призвані істоти:</h2>
+        <h2>{logGameUi('own')}:</h2>
         <ul className="unit-instance-list">
           {player.units.map((unit) => {
             return (
               <li className={getSummonedUnitClass(unit)} key={unit.id} onClick={() => data.data.moves.selectNewUnit(unit)}>
-                <h3 style={{color: playerColors[+player.id]}} >{unit.name} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", fontSize: 20}}>&#9432;</span></h3>
+                <h3 style={{color: playerColors[+player.id]}} >{logUnitName(unit.name)} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", fontSize: 20}}>&#9432;</span></h3>
                 <div className="unit-stars">
                   {unit.level !== undefined ? renderStars(unit.level) : ""}
                 </div>
@@ -165,9 +167,9 @@ const UnitList = (data) => {
     return (
       isDisable ?
           <button className="unit-create-button disabled">
-            Викликати {price}✾
+            {logGameUi('summon')} {price}✾
           </button> :
-          <button className="unit-create-button" onClick={() => handleCreateUnit(unit.id, price)} dangerouslySetInnerHTML={{ __html: `<span style="font-weight: bold">${price}✾</span></br>Викликати` }}>
+          <button className="unit-create-button" onClick={() => handleCreateUnit(unit.id, price)} dangerouslySetInnerHTML={{ __html: `<span style="font-weight: bold">${price}✾</span></br>${logGameUi('summon')}` }}>
           </button>
     )
   }
@@ -176,7 +178,7 @@ const UnitList = (data) => {
     <div className="unit-list">
       {ctx.phase === 'Setup' || ctx.phase === 'Building' ?
         <div className="unit-types">
-          <h2>Доступні істоти</h2>
+          <h2>{logGameUi('available')}</h2>
           {renderUnitTypes()}
         </div> :
         <></>
@@ -186,4 +188,4 @@ const UnitList = (data) => {
   );
 };
 
-export default UnitList;
+export default withTranslation()(UnitList);

@@ -14,6 +14,10 @@ import {
   hasStatus,
   isNotSame,
   isSame,
+  logUnitKeyword,
+  logUnitName,
+  logUnitSkill,
+  logUnitStatus,
   onEndFightTurn,
   resolveUnitsInteraction
 } from "../helpers/Utils";
@@ -28,6 +32,7 @@ import {
   UnitStatus,
   UnitTypes
 } from "../helpers/Constants";
+import i18n from "i18next";
 
 export const handleAbility = (data, skill, eventData) => {
   const abilitiesMap = {
@@ -51,7 +56,7 @@ export const handleAbility = (data, skill, eventData) => {
     [UnitSkills.Lesavka]: handleLesavka,
     [UnitSkills.ThrowOver]: handleThrowOver,
     [UnitSkills.UtilizeDeath]: handleUtilizeDeath,
-    [UnitSkills.chainDamage]: handleChainDamageOnAttack,
+    [UnitSkills.ChainDamage]: handleChainDamageOnAttack,
     [UnitSkills.HalaAura]: handleHalaAura,
     [UnitSkills.RaidBlock]: handleRaidBlockOnDefence,
     [UnitSkills.AntiVestnick]: handleAntiVestnickOnDefence,
@@ -97,7 +102,7 @@ const handlePolydnicaSurroundings = ({G, ctx, events}, {unitId}) => {
               turn: ctx.turn,
               player: +ctx.currentPlayer,
               phase: ctx.phase,
-              text: `${enemy.name} в оточенні та миттєво вмирає!`,
+              text: i18n.t('log.skills.surrounding', {unitName: logUnitName(enemy.name)}),
             })
             handleUnitDeath({G: G, ctx: ctx, events: events}, enemy, thisUnit)
             G.fightQueue.forEach((unitInQ, i, q) => {
@@ -212,7 +217,7 @@ const handleHalaAura = ({G, ctx, events}, {unitId}) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${ally.name} отримує здібність ${UnitSkills.RaidBlock}`,
+        text: i18n.t('log.skills.raidBlock_up', {unitName: logUnitName(ally.name), skill: logUnitSkill('raidBlock').name}),
       })
     }
     if (nearHalas.length === 0 && allyAbility && allyAbility.origin === false) {
@@ -223,7 +228,7 @@ const handleHalaAura = ({G, ctx, events}, {unitId}) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${ally.name} втрачає здібність ${UnitSkills.RaidBlock}`,
+        text: i18n.t('log.skills.raidBlock_down', {unitName: logUnitName(ally.name), skill: logUnitSkill('raidBlock').name})
       })
     }
   })
@@ -275,7 +280,7 @@ const handleWholenessOnDefence = ({G, ctx}, {unitId, updates}) => {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `Цілісність ${thisUnit.name} заблокувала зниження сили`,
+          text: i18n.t('log.skills.wholeness_on_power', {unitName: logUnitName(thisUnit.name), skill: logUnitSkill('wholeness').name}),
         })
       }
     }
@@ -291,7 +296,7 @@ const handleWholenessOnDefence = ({G, ctx}, {unitId, updates}) => {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `Цілісність ${thisUnit.name} заблокувала зниження ініціативи`,
+          text: i18n.t('log.skills.wholeness_on_ini', {unitName: logUnitName(thisUnit.name), skill: logUnitSkill('wholeness').name}),
         })
       }
     }
@@ -310,7 +315,7 @@ const handleBlockStatusesOnDefence = ({G, ctx}, {unitId, updates}) => {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `${thisUnit.name} блокує негатив і відводить статус ${status.name}`,
+          text: i18n.t('log.skills.status_block', {unitName: logUnitName(thisUnit.name), status: logUnitStatus(status.name).name}),
         })
         updates.status = updates.status.filter(us => us.name !== status.name)
         if (status.name === UnitStatus.PowerDown && updates.power && updates.power > 0) {
@@ -339,7 +344,7 @@ const handleRaidBlockOnDefence = ({G, ctx}, {unitId, updates}) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} заблокував урон за допомогою здібності ${UnitSkills.RaidBlock}`,
+      text: i18n.t('log.skills.block_dmg', {unitName: logUnitName(thisUnit.name), skill: logUnitSkill('raidBlock').name}),
     })
   }
   return updates
@@ -356,7 +361,7 @@ const handleAntiVestnickOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} зменшив урон за допомогою здібності ${UnitSkills.AntiVestnick}`,
+      text: i18n.t('log.skills.block_reduce', {unitName: logUnitName(thisUnit.name), skill: logUnitSkill('antiVestnick').name}),
     })
   }
   return updates
@@ -372,7 +377,7 @@ const handleReduceDamageOnDefence = ({G, ctx}, {unitId, updates}) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} зменшив урон за допомогою здібності ${UnitSkills.ReduceDamage}`,
+      text: i18n.t('log.skills.block_reduce', {unitName: logUnitName(thisUnit.name), skill: logUnitSkill('reduceDamage').name}),
     })
   }
   return updates
@@ -389,7 +394,7 @@ const handleDeadlyDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${thisUnit.name} отримує смертельний урон через здібність ${UnitSkills.DeadlyDamage}`,
+        text: i18n.t('log.skills.deadly_dmg', {unitName: logUnitName(thisUnit.name), skill: logUnitSkill('deadlyDamage').name}),
       })
     }
   }
@@ -409,7 +414,7 @@ const handleDoubleDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${thisUnit.name} отримує подвійний урон адже ${enemy.name} має більше життя`,
+        text: i18n.t('log.skills.double_dmg_low_hp', {unitName: logUnitName(thisUnit.name), enemy: logUnitName(enemy.name)}),
       })
     }
   }
@@ -429,7 +434,7 @@ const handleDoubleDamageInDefenceOnDefence = ({G, ctx}, {unitId, enemyId, update
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${thisUnit.name} отримує подвійний урон адже ${enemy.name} ініціював битву`,
+        text: i18n.t('log.skills.double_dmg', {unitName: logUnitName(thisUnit.name), enemy: logUnitName(enemy.name)}),
       })
     }
   }
@@ -450,7 +455,7 @@ const handleReturnDamageOnDefence = ({G, ctx, events}, {unitId, enemyId, updates
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${thisUnit.name} завдає шкоди за допомогою здібності ${UnitSkills.ReturnDamage}`,
+        text: i18n.t('log.skills.skill_dmg', {unitName: logUnitName(thisUnit.name), skill: logUnitSkill('returnDamage').name}),
       })
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
         currentUnit: thisUnit,
@@ -482,7 +487,7 @@ const handleBlockDamageOnDefence = ({G, ctx}, {unitId, enemyId, updates}) => {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `${thisUnit.name} блокує урон з цього боку від ${enemy.name}`,
+          text: i18n.t('log.skills.block_side', {unitName: logUnitName(thisUnit.name), enemy: logUnitName(enemy.name)}),
         })
       }
     }
@@ -507,7 +512,7 @@ const handleInjuredDamageOnDefence = ({G, ctx, events}, {unitId, updates}) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} підвищує силу через ${UnitSkills.InjuredDamage}`,
+      text: i18n.t('log.skills.injured_power', {unitName: logUnitName(thisUnit.name), skill: logUnitSkill('injuredDamage').name}),
     })
   }
 
@@ -578,7 +583,7 @@ const handleDecreaseInitiativeOnAttack = ({G, ctx}, {unitId, updates}) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `Додатковий ефект удару - зниження ініціативи!`,
+      text: i18n.t('log.skills.addition'),
     })
   }
   return updates
@@ -614,7 +619,7 @@ const handleRoundDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates})
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `Удар по конусу по ${enemyAlly.name}`,
+          text: i18n.t('log.skills.round_dmg', {unitName: logUnitName(thisUnit.name), enemy: logUnitName(enemyAlly.name)}),
         })
         resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
           currentUnit: thisUnit,
@@ -659,7 +664,7 @@ const handleThroughDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates
             turn: ctx.turn,
             player: +ctx.currentPlayer,
             phase: ctx.phase,
-            text: `Произуючий удар по ${newEnemy.name} заблоковано`,
+            text: i18n.t('log.skills.block_piercing', {enemy: logUnitName(newEnemy.name)}),
           })
         }
       } else {
@@ -668,7 +673,7 @@ const handleThroughDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `Произуючий удар по ${newEnemy.name}`,
+          text: i18n.t('log.skills.piercing', {enemy: logUnitName(newEnemy.name)}),
         })
         resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
           currentUnit: thisUnit,
@@ -731,7 +736,7 @@ const handleChainDamageOnAttack = ({G, ctx, events}, {unitId, enemyId, updates})
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `Удар ланцюжковою реакцією по ${currentEnemy.name}`,
+          text: i18n.t('log.skills.chained', {enemy: logUnitName(currentEnemy.name)}),
         })
         resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
           currentUnit: thisUnit,
@@ -766,7 +771,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${unit.name} сьогодні без рейду`,
+      text: i18n.t('log.skills.no_raid', {unitName: logUnitName(unit.name)}),
     })
   }
 
@@ -794,7 +799,9 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemies.length > 0 ? 'декількох істот' : mainTargetEnemies[0].name}!`,
+        text: i18n.t('log.main_target', {
+          unitName: (mainTargetEnemies.length > 0 ? i18n.t('log.several_creatures') : logUnitName(mainTargetEnemies[0].name)),
+          keyword: logUnitKeyword('mainTarget').name}),
       })
     }
 
@@ -809,7 +816,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
             turn: ctx.turn,
             player: +ctx.currentPlayer,
             phase: ctx.phase,
-            text: `Мстивість дозволяє атакувати тільки ${vengeanceTarget.name}`,
+            text: i18n.t('log.vengeance', {unitName: logUnitName(vengeanceTarget.name), status: logUnitStatus('vengeance').name}),
           })
         } else {
           raidEnemies = []
@@ -818,7 +825,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
             turn: ctx.turn,
             player: +ctx.currentPlayer,
             phase: ctx.phase,
-            text: `Об'єкт для помсти ${vengeanceTarget.name} не є в зоні ураження`,
+            text: i18n.t('log.vengeance_error', {unitName: logUnitName(vengeanceTarget.name), status: logUnitStatus('vengeance').name}),
           })
         }
       }
@@ -852,7 +859,7 @@ const handleLethalGrab = ({G, ctx}, {killerId, target, thisUnit}) => {
     turn: ctx.turn,
     player: +ctx.currentPlayer,
     phase: ctx.phase,
-    text: `Характеристики ${thisUnit.name} були збільшені`,
+    text: i18n.t('log.skills.stats_up', {unitName: logUnitName(thisUnit.name)}),
   })
 }
 
@@ -866,7 +873,7 @@ const handleLethalBlow = ({G, ctx, events}, {thisUnit, target}) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} лакає всіх поблизу!`,
+      text: i18n.t('log.skills.fear', {unitName: logUnitName(thisUnit.name)}),
     })
     nearEnemies.forEach(enemy => {
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -925,7 +932,7 @@ const handleInstantKillOnCounterOnAttack = ({G, ctx, events}, {unitId, enemyId, 
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${thisUnit.name} смертельно вражає відповіддю`,
+        text: i18n.t('log.skills.deadly', {unitName: logUnitName(thisUnit.name)}),
       })
     }
     return updates
@@ -976,7 +983,7 @@ const handleThrowOver = ({G, events, ctx}, {unitId, enemyId}) => {
 
 const handleUtilizeDeath = ({G, ctx, events}, {thisUnit, target}) => {
   if (getNeighbors2(thisUnit.unitState.point).find(isSame(target.unitState.point))) {
-    const action = thisUnit.abilities.allTimeActions.find(action => action.name === UnitSkills.abasuCurse)
+    const action = thisUnit.abilities.allTimeActions.find(action => action.name === UnitSkills.AbasuCurse)
     if (action) {
       action.qty++
 
@@ -985,7 +992,7 @@ const handleUtilizeDeath = ({G, ctx, events}, {thisUnit, target}) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${thisUnit.name} отримує заряд`,
+        text: i18n.t('log.skills.add_charge', {unitName: logUnitName(thisUnit.name), skill: logUnitSkill('abasuCurse').name}),
       })
     }
   }

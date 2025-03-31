@@ -1,6 +1,10 @@
 import React from 'react';
 import {playerColors} from "../helpers/Constants";
 import './BoardLogs.css';
+import {LanguageToggle} from "./LanguageToggle";
+import {logBuilding, logGameUi, logPlayerName} from "../helpers/Utils";
+import i18n from "../../i18n";
+import {withTranslation} from "react-i18next";
 
 const style = {
   display: 'flex',
@@ -8,7 +12,7 @@ const style = {
   flexBasis: `21%`
 };
 
-export const BoardLogs = (data) => {
+const BoardLogs = (data) => {
   const props = data.data
   const player = props.G.players.find(p => p.id === +props.playerID);
 
@@ -20,28 +24,32 @@ export const BoardLogs = (data) => {
   return (
     <div style={style}>
       <div style={{display: "flex", justifyContent: "space-between"}}>
-        <div className="creature-wiki-button" onClick={togglePopup}>Істотопедія</div>
+        <div className="top-panel-tools">
+          <div className="creature-wiki-button" onClick={togglePopup}>{logGameUi('wiki')}</div>
+          <LanguageToggle />
+        </div>
+
         {props.ctx.activePlayers && ((props.ctx.activePlayers[+player.id] === "purchase") ||
           (props.ctx.activePlayers[+player.id] === "pickUnit"))?
-          <div className="leave-game-button" onClick={() => props.moves.surrender()}>Покинути гру</div>
+          <div className="leave-game-button" onClick={() => props.moves.surrender()}>{logGameUi('leave_game')}</div>
           : <></>
         }
       </div>
       {props.ctx.phase === 'Building' || props.ctx.phase === 'Setup' ?
         <div>
           <div className="player-info">
-            <div className="player-heals">Життя Капітолію: <span>{player.heals}&hearts;</span></div>
-            <div className="player-resources">Есенції: <span>{player.essence}✾</span></div>
-            <div className="player-wins">Здобуто перемог: {player.wins}</div>
-            <div className="player-frags">Вбито істот: {player.killedUnits}</div>
+            <div className="player-heals">{logGameUi('heals_cap')}: <span>{player.heals}&hearts;</span></div>
+            <div className="player-resources">{logGameUi('essence')}: <span>{player.essence}✾</span></div>
+            <div className="player-wins">{logGameUi('player_won')} {player.wins}</div>
+            <div className="player-frags">{logGameUi('player_killed')} {player.killedUnits}</div>
           </div>
           <div>
             <div className="enemy-info" dangerouslySetInnerHTML={
               { __html: props.G.players.filter(p => p.id !== player.id)
                   .map(p => `<div>
                                   <div>
-                                      <span style="color: ${playerColors[p.id]}">${p.name}</span>
-                                      <span style="font-size: 12px">[${p.bioms[0]}, ${p.bioms[1]}]</span> -
+                                      <span style="color: ${playerColors[p.id]}">${logPlayerName(p.id+1)}</span>
+                                      <span style="font-size: 12px">[${i18n.t('biom.'+p.bioms[0])}, ${i18n.t('biom.'+p.bioms[1])}]</span> -
                                       <span style="color: red">${p.heals}&hearts;</span>
                                       [<span style="color: black; font-weight: bold">${p.essenceFreeze}✾</span>]
                                   </div>
@@ -55,19 +63,19 @@ export const BoardLogs = (data) => {
         <div>
           <div className="player-info" style={{fontSize: 18}}>
             <div><span style={{color: "red"}}>{player.heals}&hearts;</span> [<span style={{color: "black", fontWeight: "bold"}}>{player.essence}✾</span>]</div>
-            <div style={{}}>Здобуто перемог: {player.wins}</div>
-            <div style={{}}>Вбито істот: {player.killedUnits}</div>
+            <div style={{}}>{logGameUi('player_won')} {player.wins}</div>
+            <div style={{}}>{logGameUi('player_killed')} {player.killedUnits}</div>
           </div>
           <div>
             <div className="enemy-info full" dangerouslySetInnerHTML={
               { __html: props.G.players.filter(p => p.id !== player.id)
                   .map(p => `<div>
                                   <div>
-                                    <span style="color: ${playerColors[p.id]}">${p.name}</span>
-                                    <span style="font-size: 12px">[${p.bioms[0]}, ${p.bioms[1]}]</span> -
+                                    <span style="color: ${playerColors[p.id]}">${logPlayerName(p.id+1)}</span>
+                                    <span style="font-size: 12px">[${i18n.t('biom.'+p.bioms[0])}, ${i18n.t('biom.'+p.bioms[1])}]</span> -
                                     <span style="color: red">${p.heals}&hearts;</span>
                                     [<span style="color: black; font-weight: bold">${p.essence}✾</span>] -
-                                    <span style="font-size: 14px;">${p.houses.map(h => h.name).join(', ')}</span>
+                                    <span style="font-size: 14px;">${p.houses.map(h => logBuilding(h.name).name).join(', ')}</span>
                                   </div>
                                 </div>`).join('')}
             } />
@@ -84,3 +92,5 @@ export const BoardLogs = (data) => {
     </div>
   )
 }
+
+export default withTranslation()(BoardLogs)

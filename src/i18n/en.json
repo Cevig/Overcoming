@@ -1,0 +1,678 @@
+{
+  "unit": {
+    "idol": "Idol",
+    "prispeshnick": "Myrmidon",
+    "prominkor": "Hyperion",
+    "vestnick": "Harbinger",
+    "amfisbena": "Amphisbaena",
+    "obajifo": "Obajifo",
+    "adze": "Adze",
+    "sfinks": "Sphinx",
+    "vasilisk": "Basilisk",
+    "lesavka": "Lesavka",
+    "bereginya": "Berehynia",
+    "sirin": "Sirin",
+    "abasu": "Abasu",
+    "chygayster": "Chugayster",
+    "himera": "Chimera",
+    "aly": "Ali",
+    "rarog": "Rarog",
+    "cherufe": "Cherufe",
+    "jarPtiza": "Firebird",
+    "blemmii": "Blemmyae",
+    "petsyhos": "Petsyhos",
+    "kaiery": "Kaiery",
+    "eloko": "Eloko",
+    "adjatar": "Adjatar",
+    "mohovik": "Mokhovyk",
+    "drekavaz": "Drekavac",
+    "mavka": "Mavka",
+    "begemot": "Behemoth",
+    "fekst": "Fekst",
+    "beytir": "Beytir",
+    "garzyk": "Garzyk",
+    "veshizaSoroka": "Veshyza-Soroka",
+    "psoglav": "Psoglav",
+    "hala": "Hala",
+    "polydnica": "Poludnytsya",
+    "mara": "Mara",
+    "letavica": "Letavytsya",
+    "urka": "Irka",
+    "viy": "Viy",
+    "ledyanoyJack": "Icy Jack",
+    "bonakon": "Bonacon",
+    "planetnick": "Planetnyk",
+    "medvedOboroten": "Werebear",
+    "marena": "Marena",
+    "lerneyskiy": "Lernaean Crab",
+    "bykavaz": "Bukavac",
+    "aidahar": "Aydahar",
+    "balor": "Balor",
+    "vodyanoi": "Vodyanoy"
+  },
+  "biom": {
+    "steppe": "Steppe",
+    "forest": "Forest",
+    "mountains": "Mountains",
+    "desert": "Desert",
+    "tundra": "Tundra",
+    "jungle": "Jungle",
+    "water": "Water",
+    "mash": "Swamp",
+    "geysers": "Geysers"
+  },
+  "damageType": {
+    "default": "Normal",
+    "counter": "Counter",
+    "raid": "Raid",
+    "replaceHeals": "Life Transfer",
+    "heal": "Healing",
+    "poison": "Poisoning",
+    "chained": "Chain"
+  },
+  "phase": {
+    "move": "Movement",
+    "any": "Any"
+  },
+  "buildingsType": {
+    "peace": "Peaceful Buildings",
+    "vivtar1": "Altars of Myrmidons",
+    "vivtar2": "Altars of Hyperions",
+    "vivtar3": "Altars of Harbingers"
+  },
+  "buildings": {
+    "kapitoliy": {
+      "name": "Capitol",
+      "description": "The player's main building. Starts at 10 HP. The player is eliminated if the Capitol is destroyed."
+    },
+    "zmicnenja": {
+      "name": "Fortification",
+      "description": "Deals 2 damage to each enemy creature after they attack your Capitol."
+    },
+    "nebesnaBrama": {
+      "name": "Celestial Gate",
+      "description": "Increases Foray income — +3 ✾ for each creature in a foray."
+    },
+    "veja": {
+      "name": "Tower",
+      "description": "Doubles damage dealt to the enemy Capitol."
+    },
+    "pamjatnuk": {
+      "name": "Monument",
+      "description": "Blocks enemy forays. The opponent gains no income from forays."
+    },
+    "svjatulushe": {
+      "name": "Sanctum",
+      "description": "Grants 8✾ at the start of each round."
+    },
+    "vivtarPoplichnukiv": {
+      "name": "Myrmidon Altar &#9733;",
+      "description": "Allows you to summon Myrmidon-type creatures of the first tier."
+    },
+    "vivtarPoplichnukiv2": {
+      "name": "Myrmidon Altar &#9733; &#9733;",
+      "description": "Allows you to summon Myrmidon-type creatures of the second tier."
+    },
+    "vivtarPoplichnukiv3": {
+      "name": "Myrmidon Altar &#9733; &#9733; &#9733;",
+      "description": "Allows you to summon Myrmidon-type creatures of the third tier."
+    },
+    "vivtarProminkoriv": {
+      "name": "Hyperion Altar &#9733;",
+      "description": "Allows you to summon Hyperion-type creatures of the first tier."
+    },
+    "vivtarProminkoriv2": {
+      "name": "Hyperion Altar &#9733; &#9733;",
+      "description": "Allows you to summon Hyperion-type creatures of the second tier."
+    },
+    "vivtarProminkoriv3": {
+      "name": "Hyperion Altar &#9733; &#9733; &#9733;",
+      "description": "Allows you to summon Hyperion-type creatures of the third tier."
+    },
+    "vivtarVisnukiv": {
+      "name": "Harbinger Altar &#9733;",
+      "description": "Allows you to summon Harbinger-type creatures of the first tier."
+    },
+    "vivtarVisnukiv2": {
+      "name": "Harbinger Altar &#9733; &#9733;",
+      "description": "Allows you to summon Harbinger-type creatures of the second tier."
+    },
+    "vivtarVisnukiv3": {
+      "name": "Harbinger Altar &#9733; &#9733; &#9733;",
+      "description": "Allows you to summon Harbinger-type creatures of the third tier."
+    },
+    "available": "Available Buildings",
+    "own": "Purchased Buildings"
+  },
+  "sortieTypes": {
+    "A": "Overwhelming Advantage - +7✾ +5✾ from the loser",
+    "B": "Numerical Suppression - +7✾",
+    "C": "Evenly Matched - +0✾",
+    "D": "Outnumbered - -0✾",
+    "E": "Total Defeat - -5✾",
+    "X": "Enemy foray blocked by Monument - +0✾",
+    "Y": "Foray failed due to Monument - +0✾"
+  },
+  "unitKeywords": {
+    "sneaky": {
+      "name": "Agility",
+      "description": "Does not receive a counterattack after striking."
+    },
+    "unfocused": {
+      "name": "Confusion",
+      "description": "The creature cannot counterattack."
+    },
+    "mainTarget": {
+      "name": "Primary Target",
+      "description": "An enemy creature must only attack this creature when choosing targets."
+    },
+    "support": {
+      "name": "Support",
+      "description": "Randomly adds +1 power to a neighboring creature (except the Idol) at the start of the battle."
+    },
+    "restrictedRaid": {
+      "name": "Restricted Raid",
+      "description": "Cannot perform a Raid if there are 2 allied creatures standing next to it."
+    },
+    "absoluteRaid": {
+      "name": "Unrestricted Raid",
+      "description": "Can raid through an ally and even if an enemy stands adjacent."
+    },
+    "noObstaclesRaid": {
+      "name": "Raid Through Allies",
+      "description": "This creature can raid even through an allied creature."
+    },
+    "replaceHealsRaid": {
+      "name": "Raid with Life Transfer",
+      "description": "During a raid, may remove extra life from the target and give it to another enemy creature within 1 tile of the target."
+    },
+    "additionalSacrificeRaid": {
+      "name": "Empowered Sacrificial Raid",
+      "description": "Raid gains +1 damage at the cost of 1 life."
+    },
+    "extendedMove": {
+      "name": "Speed",
+      "description": "The creature may move up to 2 tiles, following the ZoC (Zone of Control) rule",
+      "descriptionTooltip": "The creature may move up to 2 tiles, following the <tooltip>ZoC</tooltip> rule"
+    },
+    "absoluteMove": {
+      "name": "Untamed Speed",
+      "description": "The creature can always move up to 2 tiles, ignoring ZoC",
+      "descriptionTooltip": "The creature may move up to 2 tiles, IGNORING <tooltip>ZoC</tooltip>"
+    },
+    "alwaysCounterDamage": {
+      "name": "Endless Counter",
+      "description": "Always deals a counterattack (even upon death)."
+    },
+    "fullDeathDamage": {
+      "name": "Full Retaliation",
+      "description": "Deals full power on counterattack (even upon dying)."
+    },
+    "restrictedRoundDamage": {
+      "name": "Limited Cone Attack",
+      "description": "Deals 1 damage to neighboring creatures of the target, regardless of the attacker’s own power."
+    },
+    "lowCost": {
+      "name": "Single Price",
+      "description": "Always costs 3✾"
+    },
+    "additionalEssence": {
+      "name": "Additional Reward",
+      "description": "Killing this creature yields +2✾ more."
+    }
+  },
+  "unitStatus": {
+    "freeze": {
+      "name": "Immobility",
+      "description": "The creature cannot move until it skips a turn."
+    },
+    "stun": {
+      "name": "Stunned",
+      "description": "The creature misses its turn until the next movement phase."
+    },
+    "initiativeDown": {
+      "name": "Initiative Down",
+      "description": "The creature’s initiative has been lowered."
+    },
+    "initiativeDownAura": {
+      "name": "Initiative Down (Aura)",
+      "description": "The creature’s initiative is lowered due to an aura."
+    },
+    "initiativeUpAura": {
+      "name": "Initiative Up (Aura)",
+      "description": "The creature’s initiative is increased due to an aura."
+    },
+    "healsDownAura": {
+      "name": "Life-Reducing Aura",
+      "description": "Nearby aura effect – minus 1 life (cannot kill the creature)."
+    },
+    "powerDown": {
+      "name": "Power Reduced",
+      "description": "The creature’s power has been decreased."
+    },
+    "powerUp": {
+      "name": "Power Increased",
+      "description": "The creature’s power has been increased."
+    },
+    "powerUpCharge": {
+      "name": "Charged Attack",
+      "description": "A temporary power boost for the next hit."
+    },
+    "powerUpSupport": {
+      "name": "Support",
+      "description": "Power increased by a Support effect."
+    },
+    "poison": {
+      "name": "Poisoned",
+      "description": "The creature loses 1 life at the start of each movement phase."
+    },
+    "unfocused": {
+      "name": "Confusion",
+      "description": "The creature cannot counterattack."
+    },
+    "vengeance": {
+      "name": "Vengeance",
+      "description": "The creature can only attack/raid the one who inflicted Vengeance."
+    },
+    "vengeanceTarget": {
+      "name": "Wrongdoer",
+      "description": "Must be targeted by creatures under Vengeance status."
+    },
+    "unarmed": {
+      "name": "Disarmed",
+      "description": "The creature cannot attack/counter/raid."
+    },
+    "fired": {
+      "name": "Burned",
+      "description": "The creature was scorched — it lost 1 life and 1 power."
+    },
+    "cursed": {
+      "name": "Cursed",
+      "description": "The creature was cursed — it lost 1 initiative and 1 power."
+    }
+  },
+  "unitSkills": {
+    "surround3": {
+      "name": "Surround to Death",
+      "description": "Kills an enemy unit (except an Idol) if 2 of these creatures surround it from opposite sides.",
+      "descriptionTooltip": "If 2 {{unitName}} surround an enemy unit (except the Idol) from opposite sides, the target instantly dies."
+    },
+    "wholeness": {
+      "name": "Integrity",
+      "description": "Attack power and initiative cannot drop below base values."
+    },
+    "blockStatuses": {
+      "name": "Negate Negatives",
+      "description": "Negative effects, statuses, and auras have no impact on this creature."
+    },
+    "addFreezeEffect": {
+      "name": "Attack Immobilizes",
+      "description": "The target cannot move until it skips a turn.",
+      "descriptionTooltip": "When attacking, <tooltip>immobilizes</tooltip> the target.",
+      "effect": "Applies the {{status}} status — the creature cannot move until it skips a turn."
+    },
+    "addUnfocusedEffect": {
+      "name": "Attack Confuses",
+      "description": "Attacking causes the target to become confused — {{statusEffect}}",
+      "descriptionTooltip": "When attacking, <tooltip>confuses</tooltip> the target",
+      "effect": "Applies the {{status}} status — {{statusEffect}}"
+    },
+    "addPoisonEffect": {
+      "name": "Attack Poisons",
+      "description": "Attacking poisons the target — {{statusEffect}}",
+      "descriptionTooltip": "When attacking, <tooltip>poisons</tooltip> the target",
+      "effect": "Applies the {{status}} status — {{statusEffect}}"
+    },
+    "addPoisonEffectOnRaid": {
+      "name": "Raid Poisons",
+      "description": "Raiding poisons the target — {{statusEffect}}",
+      "descriptionTooltip": "When raiding, <tooltip>poisons</tooltip> the target",
+      "effect": "Applies the {{status}} status — {{statusEffect}}"
+    },
+    "addStunEffect": {
+      "name": "Attack Stuns",
+      "description": "Attacking stuns the target — {{statusEffect}}",
+      "descriptionTooltip": "When attacking, <tooltip>stuns</tooltip> the target",
+      "effect": "Applies the {{status}} status — {{statusEffect}}"
+    },
+    "addVengeanceEffect": {
+      "name": "Attack Enforces Vengeance",
+      "description": "Upon dealing damage, forces the target to seek vengeance — {{statusEffect}}",
+      "descriptionTooltip": "Upon dealing damage, forces the target to <tooltip>take vengeance</tooltip>",
+      "effect": "Applies the {{status}} status — {{statusEffect}}"
+    },
+    "maraAura": {
+      "name": "Initiative-Reducing Aura",
+      "description": "Lowers the initiative of enemy creatures within radius 1.",
+      "descriptionTooltip": "Lowers the initiative of enemy creatures in radius 1 by {{qty}}."
+    },
+    "lowHealsAura": {
+      "name": "Life-Reducing Aura",
+      "description": "Removes 1 life (but cannot kill) from enemy creatures in radius 1."
+    },
+    "halaAura": {
+      "name": "Raid Negation Aura",
+      "description": "Allied creatures next to it (radius 1) take no damage from raids.",
+      "descriptionTooltip": "Allied creatures gain the <tooltip>{{skill}}</tooltip> trait.",
+      "effect": "Affects allied creatures within radius 1."
+    },
+    "obajifoAura": {
+      "name": "Initiative-Boost Aura",
+      "description": "Allied creatures next to it (radius 1) get +1 initiative.",
+      "descriptionTooltip": "Allied creatures gain +1 initiative.",
+      "effect": "Affects allied creatures within radius 1."
+    },
+    "unfocusedAura": {
+      "name": "Confusion Aura",
+      "description": "Enemy creatures within radius 1 receive {{status}} -> {{statusEffect}}",
+      "descriptionTooltip": "Enemy creatures receive the <tooltip>{{status}}</tooltip> status",
+      "effect": "Affects enemy creatures within radius 1."
+    },
+    "raid": {
+      "name": "Raid",
+      "description": "After movement, may deal damage equal to 50% of its power to an enemy creature within 2 tiles if there are no adjacent enemies and a free cell lies between this creature and the target."
+    },
+    "lethalGrab": {
+      "name": "Absorb the Fallen",
+      "description": "Gains a bonus to stats when it kills a creature.",
+      "descriptionTooltip": "When {{unitName}} kills a creature, it gains a temporary stat bonus until the end of the round, depending on the <tooltip>target’s type</tooltip>.",
+      "effect": "Myrmidon: +{{qty}} HP, Hyperion: +{{qty}} initiative, Harbinger: +{{qty}} power, Idol: +{{qty}} to all parameters"
+    },
+    "lethalBlow": {
+      "name": "Horror Blast",
+      "description": "Upon death, disarms enemy creatures in radius 1 -> {{statusEffect}}",
+      "descriptionTooltip": "Upon death, <tooltip>disarms</tooltip> enemy creatures in radius 1",
+      "effect": "Applies the {{status}} status — {{statusEffect}}"
+    },
+    "urka": {
+      "name": "Irka's Possibilities",
+      "description": "After finishing its move, can move one more cell in the same direction OR move an active enemy creature instead.",
+      "descriptionTooltip": "After finishing movement, may either move one more cell in the same direction or shift an active enemy creature, ignoring <tooltip>ZoC</tooltip>"
+    },
+    "instantKill": {
+      "name": "Instant Death",
+      "description": "Instantly kills a creature or deals 50% damage to an Idol if an ally is adjacent.",
+      "descriptionTooltip": "Instantly kills a creature on attack if an allied creature is adjacent to both the target and {{unitName}}. If the target is an Idol, deals damage equal to 50% of the Idol’s starting HP."
+    },
+    "instantKillOnCounter": {
+      "name": "Fatal Counter",
+      "description": "Instantly kills any enemy creature (except an Idol) when counterattacking."
+    },
+    "lesavka": {
+      "name": "Attack Pulls Target",
+      "description": "May reposition the target after attacking.",
+      "descriptionTooltip": "After attacking, may move the target to a free tile adjacent to {{unitName}}, ignoring <tooltip>ZoC</tooltip>"
+    },
+    "throwOver": {
+      "name": "Attack Flips Over",
+      "description": "May flip the target behind itself after attacking.",
+      "descriptionTooltip": "After attacking, may flip the target onto the tile behind itself, ignoring <tooltip>ZoC</tooltip>"
+    },
+    "utilizeDeath": {
+      "name": "Death Catalyst",
+      "description": "Gains a skill charge whenever any creature dies within 2 tiles."
+    },
+    "healAlly": {
+      "name": "Restore Life",
+      "description": "Heals an allied unit (not an Idol) up to +2 life."
+    },
+    "abasuCurse": {
+      "name": "Abasu’s Curse",
+      "description": "Either restore up to +2 life to itself OR reduce another unit’s power and initiative by 1 (not an Idol).",
+      "descriptionTooltip": "Restores up to 2 life or casts a <tooltip>curse</tooltip> on a unit (except an Idol). Gains a charge if any creature dies within 2 tiles.",
+      "effect": "The unit gets -1 power and -1 initiative until the end of the round. Does not stack."
+    },
+    "chainDamage": {
+      "name": "Chain Damage",
+      "description": "Deals 1 damage to each enemy creature adjacent to the target in a chain reaction if it did not move in the previous movement phase."
+    },
+    "throwWeapon": {
+      "name": "Hurl Tusks",
+      "description": "Performs an extra attack outside the battle phase but receives the {{status}} status — losing the ability to deal damage for 2 turns.",
+      "descriptionTooltip": "Performs an extra attack outside the battle phase but receives the <tooltip>{{status}}</tooltip> status for 2 turns."
+    },
+    "replaceUnits": {
+      "name": "Swap Places",
+      "description": "Swaps positions of an allied and an enemy creature that are standing next to each other.",
+      "descriptionTooltip": "May swap places of adjacent allied and enemy units (except an Idol), IGNORING <tooltip>ZoC</tooltip>"
+    },
+    "pauseToRecover": {
+      "name": "Time to Recover",
+      "description": "Fully restores its life but loses the ability to counterattack for 1 turn.",
+      "descriptionTooltip": "This action fully heals it but applies <tooltip>{{status}}</tooltip> for the next battle phase."
+    },
+    "notMovedRecover": {
+      "name": "Recover If Still",
+      "description": "Can restore itself to full health if no enemies stand adjacent."
+    },
+    "raidBlock": {
+      "name": "Raid No More",
+      "description": "Takes no damage from raid."
+    },
+    "antiVestnick": {
+      "name": "Harbinger Resistance",
+      "description": "Reduces damage from Harbinger-type creatures by 1."
+    },
+    "reduceDamage": {
+      "name": "Thick-Skinned",
+      "description": "If it takes more than 1 damage, that damage is reduced by 1."
+    },
+    "healOnAttack": {
+      "name": "Vampirism",
+      "description": "Gains +1 life after attacking."
+    },
+    "deadlyDamage": {
+      "name": "Hanging by a Thread",
+      "description": "If this creature is not at full HP, any attack/counterattack kills it instantly."
+    },
+    "doubleDamage": {
+      "name": "Double Absorption",
+      "description": "Takes double damage if attacked by an enemy with higher current life."
+    },
+    "doubleDamageInDefence": {
+      "name": "Fragile Under Pressure",
+      "description": "Takes double damage if the enemy unit (except Idol) was the first to move in before the battle."
+    },
+    "roundDamage": {
+      "name": "Cone Attack",
+      "description": "Deals full damage to creatures on either side of the main target."
+    },
+    "throughDamage": {
+      "name": "Piercing Attack",
+      "description": "When attacking/counterattacking, the creature behind the target also takes damage."
+    },
+    "blockDamage": {
+      "name": "Block Damage",
+      "description": "Blocks all incoming damage from one chosen side during the Positioning Phase."
+    },
+    "injuredDamage": {
+      "name": "Adrenaline Surge",
+      "description": "When first wounded, permanently gains +1 power."
+    },
+    "decreaseInitiative": {
+      "name": "Lowers Initiative",
+      "description": "Reduces the target’s initiative by 1 upon attacking/raiding."
+    },
+    "chargeAttack": {
+      "name": "Charge Attack",
+      "description": "A one-time increase of +2 power for the next hit."
+    },
+    "removeChargeAttack": {
+      "name": "Discharge Attack",
+      "description": "Restores normal power after a charged attack."
+    },
+    "setElokoCurse": {
+      "name": "Bewitch the Creature",
+      "description": "Casts a charm on a creature, reducing its initiative by 1 and forcing it to attack only this unit.",
+      "descriptionTooltip": "Charms the creature by reducing its initiative by 1 and applying the <tooltip>{{status}}</tooltip> status."
+    },
+    "setItOnFire": {
+      "name": "Scorching Flame",
+      "description": "Burns the target — reduces its power by 1 and removes 1 life. Does not stack.",
+      "descriptionTooltip": "Burns the creature, reducing its power by 1 and removing 1 life. Applies the <tooltip>{{status}}</tooltip> status."
+    },
+    "returnDamage": {
+      "name": "Return Damage",
+      "description": "Reflects 50% (rounded down) of incoming damage back to the attacker."
+    }
+  },
+  "game": {
+    "unknown": "Unknown",
+    "turn": "Turn",
+    "player": "Player {{number}}",
+    "actions": "Actions",
+    "back": "Back",
+    "back2": "Return",
+    "turn_around": "Turn Around",
+    "end": "End",
+    "attack": "Attack {{name}}",
+    "sacrifice_health": "Sacrifice Life",
+    "skip": "Skip",
+    "move_unit": "Move Unit",
+    "next_round": "Next Round",
+    "heal_lives": "Heal Life",
+    "curse": "Inflict Pain",
+    "throw_weapon": "Hurl Tusks",
+    "switch_pos": "Swap Places",
+    "time_to_heal": "Time to Recover",
+    "recover": "Recover",
+    "attack_charge": "Charge Attack",
+    "glamour": "Enthrall Creature",
+    "burn": "Burn Creature",
+    "fight_queue": "Battle Order",
+    "to_damage": "damage",
+    "to_heals": "to life",
+    "increased": "increased",
+    "decreased": "decreased",
+    "not_ending_turn": "Action does NOT end the turn",
+    "action_ending_turn": "Action ends the turn",
+    "zoc": {
+      "name": "ZoC",
+      "description": "Zone of Control: creatures cannot move onto tiles if it means leaving an adjacent enemy behind."
+    },
+    "survived_creatures": "Survivors",
+    "sortie_results": "Foray Results",
+    "income": "Income \"{{building}}\"",
+    "player_won": "Victories achieved:",
+    "player_killed": "Creatures killed:",
+    "congrats": "Congratulations",
+    "you_won": "You won!",
+    "its_draw": "It’s a draw",
+    "new_game": "New Game",
+    "buy": "Purchase",
+    "return": "Return",
+    "wiki": "Bestiary",
+    "leave_game": "Leave Game",
+    "heals_cap": "Capitol HP",
+    "essence": "Essence",
+    "summon": "Summon",
+    "available": "Available Creatures",
+    "own": "Summoned Creatures",
+    "sortie": "Foray",
+    "invite_code": "Join using an invite code",
+    "go_to": "Go to",
+    "unavailable_mobile": "Sorry, the game is not available on phones.",
+    "create_for_players": "Create a new room for {{qty}} players",
+    "qty_players": "{{qty}} players",
+    "join_via_code": "Join the game using a code",
+    "lets_go": "Let’s Go",
+    "you": "You",
+    "waiting_players": "Waiting for players",
+    "invite_friends": "Invite friends via the link",
+    "copy": "Copy",
+    "ready": "Ready",
+    "game_code": "Game Code",
+    "ready_note": "The game will start as soon as all players have joined",
+    "sorry_no_game": "Sorry! No such game.",
+    "create_game": "Create a new one"
+  },
+  "log": {
+    "get_status": "{{unitName}} receives status {{status}}",
+    "lose_status": "{{unitName}} loses status {{status}}",
+    "poisoned": "{{unitName}} suffers from {{status}}",
+    "health_change": "{{unitName}} receives {{qty}} {{qtyLabel}} from {{source}}",
+    "power_change": "{{unitName}}’s power is {{qtyLabel}} by {{qty}}",
+    "initiative_change": "{{unitName}}’s initiative is {{qtyLabel}} by {{qty}}",
+    "unit_killed": "{{unitName}} of Player {{player}} was killed",
+    "receive_essence": "Player {{player}} gains {{qty}}✾",
+    "receive_gift": "Player {{player}} gains a godly gift: +{{qty}}✾",
+    "no_targets": "No valid movement targets available!",
+    "cannot_attack": "{{unitName}} cannot attack due to the {{status}} status",
+    "several_creatures": "several creatures",
+    "main_target": "{{unitName}} triggers the {{keyword}} ability!",
+    "vengeance": "{{status}} only allows attacking {{unitName}}",
+    "vengeance_error": "The target for {{status}} — {{unitName}} is not in range",
+    "move_creature_action": "{{unitName}} uses an ability to move a creature. {{qty}} charges left",
+    "heal_creature_action": "{{unitName}} uses an ability to heal a creature. {{qty}} charges left",
+    "heal_self_action": "{{unitName}} uses an ability to restore its life. {{qty}} charges left",
+    "heal_self_no_action": "{{unitName}} uses an ability to restore its life",
+    "curse_creature_action": "{{unitName}} uses an ability to cast a curse. {{qty}} charges left",
+    "dmg_creature_action": "{{unitName}} uses an ability to inflict damage. {{qty}} charges left",
+    "glamour_creature_action": "{{unitName}} uses an ability to enthrall the target. {{qty}} charges left",
+    "burn_creature_action": "{{unitName}} uses an ability to scorch the target. {{qty}} charges left",
+    "replace_creature_action": "{{unitName}} uses an ability to swap places with creatures. {{qty}} charges left",
+    "concentrate_creature_action": "{{unitName}} uses an ability to charge its next attack. {{qty}} charges left",
+    "move_creature": "{{unitName}} uses an ability to move a creature",
+    "confused": "{{unitName}} is stunned and misses a turn",
+    "throw_creature": "{{unitName}} uses an ability and flips a creature over",
+    "add_move": "{{unitName}} uses an ability to make an extra move. {{qty}} charges left",
+    "replace_heals": "{{unitName}} uses a special feature to transfer life",
+    "finished_building": "Player {{player}} has finished building",
+    "incomplete_building": "Player {{player}} must summon {{unit}} and at least one creature",
+    "back_to_building": "Player {{player}} wants to change something",
+    "back_to_setup": "Player {{player}} has more to arrange",
+    "complete_positioning": "Player {{player}} has finished positioning",
+    "incomplete_positioning": "Player {{player}} must place {{unit}} and at least one creature on the board",
+    "round_ready": "Player {{player}} is ready for the next round",
+    "no_selection_targets": "{{unitName}} has no available targets to pick",
+    "leave": "{{player}} could not overcome the challenge and left the game",
+    "lost": "{{player}} could not overcome the challenge and was destroyed",
+    "dmg": "Player {{player}} deals {{qty}} damage to Player {{enemy}}",
+    "svjatulushe_impact": "Player {{player}} gets 8✾ thanks to {{building}}",
+    "sortie_impact": "Player {{player}} gains {{qty}}✾ from forays!",
+    "reinforcement": "Player {{player}} receives reinforcements!",
+    "battlefield_shrink": "Spatial collapse — the board got smaller!!!",
+    "skills": {
+      "surrounding": "{{unitName}} is surrounded and instantly dies!",
+      "raidBlock_up": "{{unitName}} gains the {{skill}} ability",
+      "block_dmg": "{{unitName}} blocked the damage using the {{skill}} ability",
+      "block_reduce": "{{unitName}} blocked the damage using the {{skill}} ability",
+      "skill_dmg": "{{unitName}} deals damage with the {{skill}} ability",
+      "raidBlock_down": "{{unitName}} loses the {{skill}} ability",
+      "wholeness_on_power": "{{unitName}}’s {{skill}} ability prevented a reduction in power",
+      "wholeness_on_ini": "{{unitName}}’s {{skill}} ability prevented a reduction in initiative",
+      "status_block": "{{unitName}} negates the negative effect and avoids the {{status}} status",
+      "deadly_dmg": "{{unitName}} takes lethal damage due to the {{skill}} ability",
+      "double_dmg_low_hp": "{{unitName}} takes double damage because {{enemy}} has more life",
+      "double_dmg": "{{unitName}} takes double damage because {{enemy}} initiated the battle",
+      "block_side": "{{unitName}} blocks damage from that side against {{enemy}}",
+      "injured_power": "{{unitName}} increases its power because of {{skill}}",
+      "addition": "Additional strike effect — initiative lowered!",
+      "round_dmg": "{{unitName}} deals cone damage to {{enemy}}",
+      "block_piercing": "Piercing strike on {{enemy}} is blocked",
+      "piercing": "Piercing strike on {{enemy}}",
+      "chained": "A chain-reaction hit on {{enemy}}",
+      "no_raid": "{{unitName}} has no raid today",
+      "stats_up": "{{unitName}}’s stats have been increased",
+      "fear": "{{unitName}} frightens everyone nearby!",
+      "deadly": "{{unitName}} delivers a fatal counterattack",
+      "add_charge": "{{unitName}} gains a charge for the {{skill}} ability"
+    }
+  },
+  "wiki": {
+    "type": "Type",
+    "name": "Name",
+    "power": "Power",
+    "hp": "Life",
+    "ini": "Initiative",
+    "skills": "Skills",
+    "specials": "Features",
+    "current_statuses": "Current Statuses",
+    "keyword": "<tooltip>{{keyword}}</tooltip>",
+    "skill": {
+      "text": "<tooltip>{{skill}} ➪</tooltip>",
+      "full_values": "Charges: {{chargeQty}}, Radius: {{radius}}, Phase: {{phase}}. {{endTurn}}",
+      "no_distance_values": "Charges: {{chargeQty}}, Phase: {{phase}}. {{endTurn}}"
+    }
+  }
+}

@@ -14,6 +14,9 @@ import {
   hasStatus,
   isNotSame,
   isSame,
+  logUnitKeyword,
+  logUnitName,
+  logUnitStatus,
   onEndFightTurn,
   removeStatus,
   resolveUnitsInteraction
@@ -29,6 +32,7 @@ import {
   UnitTypes
 } from "../helpers/Constants";
 import {handleAbility} from "./UnitSkills";
+import i18n from '../../i18n';
 
 export const moves = {
 
@@ -133,7 +137,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `Немає доступних цілей для пересування!`,
+        text: i18n.t('log.no_targets'),
       })
     }
     events.endStage();
@@ -159,7 +163,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${currentUnit.name} щось не може атакувати через статус "${UnitStatus.Unarmed}"`,
+        text: i18n.t('log.cannot_attack', {unitName: logUnitName(currentUnit.name), status: logUnitStatus('unarmed').name}),
       })
     } else {
       const mainTargetEnemies = enemies.filter(enemy => enemy.abilities.keywords.find(keyword => keyword === UnitKeywords.MainTarget) !== undefined)
@@ -170,7 +174,9 @@ export const moves = {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: `Спрацювала здібність "Головна Ціль" у ${mainTargetEnemies.length > 0 ? 'декількох істот' : mainTargetEnemies[0].name}!`,
+          text: i18n.t('log.main_target', {
+            unitName: (mainTargetEnemies.length > 0 ? i18n.t('log.several_creatures') : logUnitName(mainTargetEnemies[0].name)),
+            keyword: logUnitKeyword('mainTarget').name})
         })
       }
       const vengeanceStatus = getStatus(currentUnit, UnitStatus.Vengeance)
@@ -184,7 +190,7 @@ export const moves = {
               turn: ctx.turn,
               player: +ctx.currentPlayer,
               phase: ctx.phase,
-              text: `Мстивість дозволяє атакувати тільки ${vengeanceTarget.name}`,
+              text: i18n.t('log.vengeance', {unitName: logUnitName(currentUnit.name), status: logUnitStatus('vengeance').name}),
             })
           } else {
             enemies = []
@@ -193,7 +199,7 @@ export const moves = {
               turn: ctx.turn,
               player: +ctx.currentPlayer,
               phase: ctx.phase,
-              text: `Об'єкт для помсти ${vengeanceTarget.name} не є в зоні ураження`,
+              text: i18n.t('log.vengeance_error', {unitName: logUnitName(vengeanceTarget.name), status: logUnitStatus('vengeance').name}),
             })
           }
         }
@@ -276,7 +282,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та пересуває істоту. Залишилось ${actionQty} заряди`,
+      text: i18n.t('log.move_creature_action', {unitName: logUnitName(thisUnit.name), qty: actionQty}),
     })
     G.availablePoints = []
     events.endTurn()
@@ -291,7 +297,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та пересуває істоту`,
+      text: i18n.t('log.move_creature', {unitName: logUnitName(thisUnit.name)}),
     })
     thisUnit.unitState.isClickable = false
     thisUnit.unitState.isAttackedThisPhase = true
@@ -309,7 +315,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та перекидує істоту`,
+      text: i18n.t('log.throw_creature', {unitName: logUnitName(thisUnit.name)}),
     })
     thisUnit.unitState.isClickable = false
     thisUnit.unitState.isAttackedThisPhase = true
@@ -337,7 +343,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${unit.name} викорстовує здібність та робить додатковий хід. Залишилось ${actionQty} заряди`,
+      text: i18n.t('log.add_move', {unitName: logUnitName(unit.name), qty: actionQty}),
     })
     events.endTurn();
   },
@@ -464,7 +470,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує особливість та преливає життя`,
+      text: i18n.t('log.replace_heals', {unitName: logUnitName(thisUnit.name)}),
     })
 
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -516,7 +522,7 @@ export const moves = {
         turn: ctx.turn,
         player: +playerID,
         phase: ctx.phase,
-        text: `Гравець ${+playerID+1} завершив будування`,
+        text: i18n.t('log.finished_building', {player: +playerID+1}),
       })
       events.setStage('finishBuildingStage')
     } else {
@@ -525,7 +531,7 @@ export const moves = {
         turn: ctx.turn,
         player: +playerID,
         phase: ctx.phase,
-        text: `Гравцю ${+playerID+1} необхідно викликати Ідола та хоч одну істоту`,
+        text: i18n.t('log.incomplete_building', {player: +playerID+1, unit: logUnitName('idol')}),
       })
     }
   },
@@ -537,7 +543,7 @@ export const moves = {
       turn: ctx.turn,
       player: +playerID,
       phase: ctx.phase,
-      text: `Гравець ${+playerID+1} хоче щось доробити`,
+      text: i18n.t('log.back_to_building', {player: +playerID+1}),
     })
     events.setStage('purchase')
   },
@@ -551,7 +557,7 @@ export const moves = {
       turn: ctx.turn,
       player: +playerID,
       phase: ctx.phase,
-      text: `Гравець ${+playerID+1} хоче ще щось налаштувати`,
+      text: i18n.t('log.back_to_setup', {player: +playerID+1}),
     })
     events.setStage('pickUnit')
   },
@@ -575,7 +581,7 @@ export const moves = {
         turn: ctx.turn,
         player: +playerID,
         phase: ctx.phase,
-        text: `Гравець ${+playerID+1} завершив розташування`,
+        text: i18n.t('log.complete_positioning', {player: +playerID+1}),
       })
       events.setStage('finishSetupStage')
     } else {
@@ -584,7 +590,7 @@ export const moves = {
         turn: ctx.turn,
         player: +playerID,
         phase: ctx.phase,
-        text: `Гравцю ${+playerID+1} необхідно розмістити Ідола та хоч одну істоту на полі`,
+        text: i18n.t('log.incomplete_positioning', {player: +playerID+1, unit: logUnitName('idol')}),
       })
     }
   },
@@ -596,7 +602,7 @@ export const moves = {
       turn: ctx.turn,
       player: +playerID,
       phase: ctx.phase,
-      text: `Гравець ${+playerID+1} готов перйти до наступного раунду`,
+      text: i18n.t('log.round_ready', {player: +playerID+1}),
     })
     events.setStage('finishBattleResultStage')
   },
@@ -652,7 +658,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
+        text: i18n.t('log.no_selection_targets', {unitName: logUnitName(G.currentUnit.name)}),
       })
     }
 
@@ -667,7 +673,7 @@ export const moves = {
 
     let actionQty = 0
     unit.abilities.allTimeActions.forEach(action => {
-      if (action.name === UnitSkills.healAlly) {
+      if (action.name === UnitSkills.HealAlly) {
         action.qty--;
         actionQty = action.qty
       }
@@ -677,7 +683,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${unit.name} викорстовує здібність та зцілює істоту. Залишилось ${actionQty} заряди`,
+      text: i18n.t('log.heal_creature_action', {unitName: logUnitName(unit.name), qty: actionQty}),
     })
 
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -711,7 +717,7 @@ export const moves = {
 
     let actionQty = 0
     unit.abilities.allTimeActions.forEach(action => {
-      if (action.name === UnitSkills.abasuCurse) {
+      if (action.name === UnitSkills.AbasuCurse) {
         action.qty--;
         actionQty = action.qty
       }
@@ -723,7 +729,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${unit.name} викорстовує здібність та відновлює життя. Залишилось ${actionQty} заряди`,
+        text: i18n.t('log.heal_self_action', {unitName: logUnitName(unit.name), qty: actionQty}),
       })
       const healValue = Math.min(unit.unitState.baseStats.heals, unit.heals + 2) - unit.heals
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -750,7 +756,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${unit.name} викорстовує здібність та насилає прокляття. Залишилось ${actionQty} заряди`,
+        text: i18n.t('log.curse_creature_action', {unitName: logUnitName(unit.name), qty: actionQty}),
       })
       G.availablePoints = G.availablePoints.filter(isNotSame(enemy.unitState.point))
     }
@@ -779,7 +785,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
+        text: i18n.t('log.no_selection_targets', {unitName: logUnitName(G.currentUnit.name)}),
       })
     }
     G.currentActionUnitId = G.currentUnit.id
@@ -796,7 +802,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
+        text: i18n.t('log.no_selection_targets', {unitName: logUnitName(G.currentUnit.name)}),
       })
     }
     G.currentActionUnitId = G.currentUnit.id
@@ -813,7 +819,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
+        text: i18n.t('log.no_selection_targets', {unitName: logUnitName(G.currentUnit.name)}),
       })
     }
     G.currentActionUnitId = G.currentUnit.id
@@ -826,7 +832,7 @@ export const moves = {
 
     let actionQty = 0
     thisUnit.abilities.allTimeActions.forEach(action => {
-      if (action.name === UnitSkills.throwWeapon) {
+      if (action.name === UnitSkills.ThrowWeapon) {
         action.qty--;
         actionQty = action.qty
       }
@@ -836,7 +842,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та завдає пошкоджень. Залишилось ${actionQty} заряди`,
+      text: i18n.t('log.dmg_creature_action', {unitName: logUnitName(thisUnit.name), qty: actionQty}),
     })
 
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -879,15 +885,15 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та зачаровує ціль. Залишилось ${actionQty} заряди`,
+      text: i18n.t('log.glamour_creature_action', {unitName: logUnitName(thisUnit.name), qty: actionQty}),
     })
 
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
       currentUnit: thisUnit,
       enemy: enemy,
       updates: {
-        initiative: 3,
-        status: [{name: UnitStatus.Vengeance, qty: 99, enemyId: thisUnit.id}, {name: UnitStatus.InitiativeDown, qty: 3}]
+        initiative: 1,
+        status: [{name: UnitStatus.Vengeance, qty: 99, enemyId: thisUnit.id}, {name: UnitStatus.InitiativeDown, qty: 1}]
       }
     })
 
@@ -918,7 +924,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та випалює ціль. Залишилось ${actionQty} заряди`,
+      text: i18n.t('log.burn_creature_action', {unitName: logUnitName(thisUnit.name), qty: actionQty}),
     })
 
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -953,7 +959,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${G.currentUnit.name} не має доступних цілей для вибору`,
+        text: i18n.t('log.no_selection_targets', {unitName: logUnitName(G.currentUnit.name)}),
       })
     }
     G.currentActionUnitId = G.currentUnit.id
@@ -977,7 +983,7 @@ export const moves = {
 
     let actionQty = 0
     thisUnit.abilities.allTimeActions.forEach(action => {
-      if (action.name === UnitSkills.replaceUnits) {
+      if (action.name === UnitSkills.ReplaceUnits) {
         action.qty--;
         actionQty = action.qty
       }
@@ -987,7 +993,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та міняє місцями істот. Залишилось ${actionQty} заряди`,
+      text: i18n.t('log.replace_creature_action', {unitName: logUnitName(thisUnit.name), qty: actionQty}),
     })
 
     handleUnitMove(G, ctx, ally.id, enemy.unitState.point)
@@ -1004,7 +1010,7 @@ export const moves = {
 
     let actionQty = 0
     thisUnit.abilities.allTimeActions.forEach(action => {
-      if (action.name === UnitSkills.pauseToRecover) {
+      if (action.name === UnitSkills.PauseToRecover) {
         action.qty--;
         actionQty = action.qty
       }
@@ -1014,7 +1020,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та відновлює життя. Залишилось ${actionQty} заряди`,
+      text: i18n.t('log.heal_self_action', {unitName: logUnitName(thisUnit.name), qty: actionQty}),
     })
     const unitStatus = hasStatus(thisUnit, UnitStatus.Unfocused)
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -1038,7 +1044,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та відновлює життя`,
+      text: i18n.t('log.heal_self_no_action', {unitName: logUnitName(thisUnit.name)}),
     })
 
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -1071,7 +1077,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisUnit.name} викорстовує здібність та заряджає наступну атаку. Залишилось ${actionQty} заряди`,
+      text: i18n.t('log.concentrate_creature_action', {unitName: logUnitName(thisUnit.name), qty: actionQty}),
     })
 
     resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -1130,7 +1136,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${player.name} не подолав цей виклик та покинув гру`,
+      text: i18n.t('log.leave', {player: player.id+1}),
     })
 
     cleanPlayer(player)
@@ -1150,14 +1156,14 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: `${thisPlayer.name} завдає ${dmg} урону по Гравцю ${enemyPlayer.id+1}`,
+      text: i18n.t('log.dmg', {player: thisPlayer.id+1, qty: dmg, enemy: enemyPlayer.id+1}),
     })
 
     if (enemyPlayer.houses.find(h => h.name === Buildings.Zmicnenja.name)) {
       thisPlayer.units.filter(u => u.unitState.isInGame).forEach(u => {
         u.heals -= 2;
         if (u.heals <= 0) {
-          handleUnitDeath({G: G, ctx: ctx, events: events}, u)
+          handleUnitDeath({G: G, ctx: ctx, events: events}, u, enemyPlayer)
         }
       })
     }
@@ -1168,7 +1174,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: `${enemyPlayer.name} не подолав цей виклик та був знищений`,
+        text: i18n.t('log.lost', {player: enemyPlayer.id+1}),
       })
 
       cleanPlayer(enemyPlayer)

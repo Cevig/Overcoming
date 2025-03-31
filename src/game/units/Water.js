@@ -3,11 +3,11 @@ import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UWater {
 
-  static lerneyskiyRakName = "Лернійський Рак"
-  static bykavazName = "Букавац"
-  static aidaharName = "Айдахар"
-  static balorName = "Балор"
-  static vodyanoiName = "Водяний"
+  static lerneyskiyRakName = "lerneyskiy"
+  static bykavazName = "bykavaz"
+  static aidaharName = "aidahar"
+  static balorName = "balor"
+  static vodyanoiName = "vodyanoi"
   static getLerneyskiyRak = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [1, 2, 1]
@@ -58,7 +58,7 @@ export class UWater {
     if (level > 0) {
       abilities.actions.push({name: UnitSkills.Raid, qty: 99});
       abilities.keywords.push(UnitKeywords.Unfocused)
-      abilities.allTimeActions.push({name: UnitSkills.healAlly, qty: 1})
+      abilities.allTimeActions.push({name: UnitSkills.HealAlly, qty: 1})
       if (level > 2) {
         abilities.keywords.push(UnitKeywords.Support)
       }

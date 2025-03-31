@@ -1,14 +1,20 @@
 import React, {useState} from 'react';
 import {HexGrid, Token} from './HexGrid';
-import {getInGameUnits, isSame, setEnemyMarks} from '../helpers/Utils';
+import {
+  getInGameUnits,
+  isSame,
+  logGameUi,
+  logPlayerName,
+  setEnemyMarks
+} from '../helpers/Utils';
 import {motion} from 'framer-motion';
 import {Link} from "react-router-dom";
-import {BoardUser} from "./BoardUser";
-import {BoardLogs} from "./BoardLogs";
+import BoardUser from "./BoardUser";
+import BoardLogs from "./BoardLogs";
 import UnitInfoPopup from "./UnitInfoPopup";
 import {UnstablePointsUI} from "./UnstablePointsUI";
-import {BoardBuildings} from "./BoardBuildings";
-import {BattleResults} from "./BattleResults";
+import BoardBuildings from "./BoardBuildings";
+import BattleResults from "./BattleResults";
 import {createPoint, playerColors} from "../helpers/Constants";
 import {EssenceGiftsUI} from "./EssenceGiftsUI";
 import AllUnitsPopup from "./AllUnitsPopup";
@@ -269,11 +275,11 @@ export function Board (props) {
               transition={{ duration: 0.5 }}
             >
               <div className="winner-popup">
-                <h2>Вітаємо {props.G.winner === -1 ? "це нічия" : <span style={{color: playerColors[props.G.winner.id]}}>{props.G.players.find(p => p.id === props.G.winner.id).name}</span>}!</h2>
-                <p>Ти переміг!</p>
+                <h2>{logGameUi('congrats')} {props.G.winner === -1 ? logGameUi('its_draw') : <span style={{color: playerColors[props.G.winner.id]}}>{logPlayerName(props.G.players.find(p => p.id === props.G.winner.id).id+1)}</span>}!</h2>
+                <p>{logGameUi('you_won')}</p>
                 {props.isMultiplayer ?
-                  <div className="btn btn-primary"><Link to={"/"}>Нова Гра</Link></div> :
-                  <div className="btn btn-primary" onClick={() => props.reset()}>Нова Гра</div>
+                  <div className="btn btn-primary"><Link to={"/"}>{logGameUi('new_game')}</Link></div> :
+                  <div className="btn btn-primary" onClick={() => props.reset()}>{logGameUi('new_game')}</div>
                 }
               </div>
             </motion.div> :

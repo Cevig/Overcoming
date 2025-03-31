@@ -3,11 +3,11 @@ import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UTundra {
 
-  static ledyanoyJackName = "Ледяний Джек"
-  static bonakonName = "Бонакон"
-  static planetnickName = "Планетник"
-  static medvedOborotenName = "Ведмідь-перевертень"
-  static marenaName = "Марена"
+  static ledyanoyJackName = "ledyanoyJack"
+  static bonakonName = "bonakon"
+  static planetnickName = "planetnick"
+  static medvedOborotenName = "medvedOboroten"
+  static marenaName = "marena"
   static getLedyanoyJack = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 3]
@@ -76,7 +76,7 @@ export class UTundra {
     const stat = [1, 10, 1]
 
     const abilities = JSON.parse(JSON.stringify(UnitAbilities));
-    abilities.statUpdates.attack.push(UnitSkills.chainDamage, UnitSkills.AddFreezeEffect, UnitSkills.AddUnfocusedEffect, UnitSkills.HealOnAttack)
+    abilities.statUpdates.attack.push(UnitSkills.ChainDamage, UnitSkills.AddFreezeEffect, UnitSkills.AddUnfocusedEffect, UnitSkills.HealOnAttack)
     abilities.statUpdates.defence.push({name: UnitSkills.RaidBlock, origin: true})
 
     return getIdol(UTundra.marenaName, Biom.Tundra, id, ...stat, getUnitState(id, playerId, ...stat, createPosition), abilities)

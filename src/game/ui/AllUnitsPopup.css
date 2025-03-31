@@ -22,6 +22,20 @@
   cursor: pointer;
 }
 
+.top-panel-tools {
+  display: flex;
+  justify-content: center;
+}
+
+.top-panel-tools > select {
+  height: 25px;
+  border: 1px solid darkgray;
+  text-align: center;
+  margin: 0 0 5px 10px;
+  cursor: pointer;
+  align-self: center;
+}
+
 .creature-wiki-button:hover {
   background-color: #ffffa1;
 }
@@ -53,6 +67,7 @@
   height: 20px;
   position: absolute;
   right: 0;
+  cursor: pointer;
 }
 
 .creature-wiki-popup .popup {
@@ -131,31 +146,36 @@
 
 .tooltip-text {
   cursor: pointer;
-  font-style: italic;
-  color: blue;
+  color: #095a8b;
 }
 
 .tooltip {
   position: absolute;
   z-index: 1;
-  top: calc(100% - 82px);
-  left: -50px;
-  transform: translateX(-50%);
+  bottom: 100%;
+  right: 0;
   padding: 8px;
   background-color: beige;
   border-radius: 4px;
   font-size: 16px;
-  width: 325px;
   text-align: center;
+  white-space: normal;
+  min-width: 200px;
+  max-width: 400px;
+  width: max-content;
+  margin-bottom: 5px;
+  border-bottom-style: ridge;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.creature-popup .tooltip {
-  left: 100px;
-  top: calc(100% - 90px);
-}
+/*.creature-popup .tooltip {*/
+/*  left: 100px;*/
+/*  top: calc(100% - 90px);*/
+/*}*/
 
 .creature-popup .tooltip-text {
-  color: #2c2cbf;
+  color: #095a8b;
   font-style: normal;
 }
 

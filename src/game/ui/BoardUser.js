@@ -4,6 +4,7 @@ import UnitList from "./UnitList";
 import "./BoardUser.css";
 import {getNearestEnemies, getUnitById} from "../helpers/Utils";
 import UnitSortie from "./UnitSortie";
+import {withTranslation} from 'react-i18next';
 
 const styles = {
   moves: {
@@ -54,11 +55,12 @@ const styles = {
   }
 }
 
-export class BoardUser extends React.Component {
+class BoardUser extends React.Component {
   render () {
     const props = this.props.props
     const player = props.G.players.find(p => p.id === +props.ctx.currentPlayer);
     const playerClient = props.G.players.find(p => p.id === +props.playerID);
+    const { t } = this.props;
     return (
       <div style={styles.mainStyles}>
         <UnitList data={props} info={this.props.info}/>
@@ -68,93 +70,93 @@ export class BoardUser extends React.Component {
         }
         {(props.ctx.phase !== 'Setup' && props.ctx.phase !== 'Building') ?
           <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24, marginTop: 15}}>
-            <span style={{color: "#444444"}}>Хід:</span> Гравець {player ? player.id + 1 : "Невідомий"}
+            <span style={{color: "#444444"}}>{t('game.turn')}:</span> {t('game.player', {number: player ? player.id + 1 : t('game.unknown')})}
           </div>
           : <></>
         }
         {this.showFightQueue()}
         <div>
-          <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20, fontSize: 22}}>Дії</div>
+          <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20, fontSize: 22}}>{t('game.actions')}</div>
           {playerClient.isPlayerInGame ?
             <div style={styles.actions} className="user-actions">
               {props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight' ?
-                <button onClick={() => props.undo()}>Назад</button>
+                <button onClick={() => props.undo()}>{t('game.back')}</button>
                 : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "finishBuildingStage" || props.ctx.activePlayers[+props.playerID] === "finishSetupStage") ?
-                <button onClick={() => props.moves.returnBack()}>Повернутися</button>
+                <button onClick={() => props.moves.returnBack()}>{t('game.back2')}</button>
                 : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
-                <button onClick={() => props.moves.removeUnit()}>Повернути</button>
+                <button onClick={() => props.moves.removeUnit()}>{t('game.turn_around')}</button>
                 : <></>
               }
               {(props.ctx.phase === 'Building' || props.ctx.phase === 'Setup') && (props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] !== "finishBuildingStage" && props.ctx.activePlayers[+props.playerID] !== "finishSetupStage"))?
-                <button onClick={() => props.moves.complete()}>Завершити</button>
+                <button onClick={() => props.moves.complete()}>{t('game.end')}</button>
                 : <></>
               }
               {this.isSacrificeAvailable() ?
-                <button onClick={() => props.moves.sacrificeHeals()}>Пожертувати життям</button>
+                <button onClick={() => props.moves.sacrificeHeals()}>{t('game.sacrifice_health')}</button>
                 : <></>
               }
               {this.isDefaultSkipTurnAvailable() ?
-                <button onClick={() => props.moves.skipTurn()}>Пропустити</button>
+                <button onClick={() => props.moves.skipTurn()}>{t('game.skip')}</button>
                 : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "hookUnitAction") ?
-                <button onClick={() => props.moves.skipHook()}>Пропустити</button>
+                <button onClick={() => props.moves.skipHook()}>{t('game.skip')}</button>
                 : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "throwOverAction") ?
-                <button onClick={() => props.moves.skipHook()}>Пропустити</button>
+                <button onClick={() => props.moves.skipHook()}>{t('game.skip')}</button>
                 : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction") ?
-                <button onClick={() => props.moves.doActionToEnemy()}>Перемістити слугу</button>
+                <button onClick={() => props.moves.doActionToEnemy()}>{t('game.move_unit')}</button>
                 : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "curseAbasyActionStage") ?
-                <button onClick={() => props.moves.backFromAction()}>Повернутися до ходу</button>
+                <button onClick={() => props.moves.backFromAction()}>{t('game.back2')}</button>
                 : <></>
               }
               {props.ctx.activePlayers && (props.ctx.activePlayers[+playerClient.id] === "resultsStage") ?
-                <button onClick={() => props.moves.nextRound()}>Наступний раунд</button>
+                <button onClick={() => props.moves.nextRound()}>{t('game.next_round')}</button>
                 : <></>
               }
               {this.isHealAllyAvailable() ?
-                <button onClick={() => props.moves.healAllyAction()}>Зцілити життя</button>
+                <button onClick={() => props.moves.healAllyAction()}>{t('game.heal_lives')}</button>
                 : <></>
               }
               {this.isCurseAbasuAvailable() ?
-                <button onClick={() => props.moves.curseAction()}>Причинити біль</button>
+                <button onClick={() => props.moves.curseAction()}>{t('game.curse')}</button>
                 : <></>
               }
               {this.isWeaponThrowAvailable() ?
-                <button onClick={() => props.moves.throwWeaponAction()}>Шпурнути ікла</button>
+                <button onClick={() => props.moves.throwWeaponAction()}>{t('game.throw_weapon')}</button>
                 : <></>
               }
               {this.isReplaceUnitsAvailable() ?
-                <button onClick={() => props.moves.replaceUnitsAction()}>Поміняти місцями</button>
+                <button onClick={() => props.moves.replaceUnitsAction()}>{t('game.switch_pos')}</button>
                 : <></>
               }
               {this.isPauseToRecoverAvailable() ?
-                <button onClick={() => props.moves.pauseToRecoverAction()}>Час відновитись</button>
+                <button onClick={() => props.moves.pauseToRecoverAction()}>{t('game.time_to_heal')}</button>
                 : <></>
               }
               {this.isNotMovedRecoverAvailable() ?
-                <button onClick={() => props.moves.notMovedRecoverAction()}>Можна відновитись</button>
+                <button onClick={() => props.moves.notMovedRecoverAction()}>{t('game.recover')}</button>
                 : <></>
               }
               {this.isChargeAttackAvailable() ?
-                <button onClick={() => props.moves.chargeAttackAction()}>Зарядити атаку</button>
+                <button onClick={() => props.moves.chargeAttackAction()}>{t('game.attack_charge')}</button>
                 : <></>
               }
               {this.isSetElokoCurseAvailable() ?
-                <button onClick={() => props.moves.setElokoCurseAction()}>Зачарувати істоту</button>
+                <button onClick={() => props.moves.setElokoCurseAction()}>{t('game.glamour')}</button>
                 : <></>
               }
               {this.isSetItOnFireAvailable() ?
-                <button onClick={() => props.moves.setItOnFireAction()}>Спалити істоту</button>
+                <button onClick={() => props.moves.setItOnFireAction()}>{t('game.burn')}</button>
                 : <></>
               }
             </div>
@@ -167,7 +169,7 @@ export class BoardUser extends React.Component {
 
   isHealAllyAvailable() {
     const props = this.props.props
-    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.healAlly && skill.qty > 0)) {
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.HealAlly && skill.qty > 0)) {
       if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
         (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
         return true
@@ -178,7 +180,7 @@ export class BoardUser extends React.Component {
 
   isWeaponThrowAvailable() {
     const props = this.props.props
-    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.throwWeapon && skill.qty > 0)) {
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.ThrowWeapon && skill.qty > 0)) {
       if (props.ctx.activePlayers && props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") {
         return true
       }
@@ -209,7 +211,7 @@ export class BoardUser extends React.Component {
 
   isCurseAbasuAvailable() {
     const props = this.props.props
-    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.abasuCurse && skill.qty > 0)) {
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.AbasuCurse && skill.qty > 0)) {
       if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
         (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
         return true
@@ -220,7 +222,7 @@ export class BoardUser extends React.Component {
 
   isReplaceUnitsAvailable() {
     const props = this.props.props
-    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.replaceUnits && skill.qty > 0)) {
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.ReplaceUnits && skill.qty > 0)) {
       if (props.ctx.activePlayers && ((props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard") ||
         (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
         return true
@@ -231,7 +233,7 @@ export class BoardUser extends React.Component {
 
   isPauseToRecoverAvailable() {
     const props = this.props.props
-    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.pauseToRecover && skill.qty > 0)) {
+    if (props.G.currentUnit && props.G.currentUnit.abilities.allTimeActions.find(skill => skill.name === UnitSkills.PauseToRecover && skill.qty > 0)) {
       if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "placeUnitOnBoard" ||
         (props.ctx.activePlayers[+props.ctx.currentPlayer] === "makeDamage"))) {
         return true
@@ -275,12 +277,13 @@ export class BoardUser extends React.Component {
     if (props.ctx.activePlayers && playerStage === "purchase") {
       const player = props.G.players.find(p => p.id === +props.playerID);
       return player.isUsedSacrifice === false && player.heals > 2 && props.G.players.filter(p => p.isPlayerInGame).filter(p => p.heals > player.heals).length > 0 &&
-        (player.essence < 24 && player.houses.find(h => props.ctx.turn === h.turn) === undefined && player.units.length === 0)
+        (player.essence < 0 && player.houses.find(h => props.ctx.turn === h.turn) === undefined && player.units.length === 0) // disable this feature for now
     } else return false
   }
 
   showFightQueue() {
     const props = this.props.props
+    const { t } = this.props;
     if (props.ctx.phase !== 'Fight' || props.G.fightQueue.length <= 0) {
       return (<></>)
     }
@@ -288,13 +291,13 @@ export class BoardUser extends React.Component {
 
     return (
       <div className="fight-queue-container">
-        <div className="fight-queue-head">Порядок Ходів у Битві</div>
+        <div className="fight-queue-head">{t('game.fight_queue')}</div>
         <div className="fight-order" dangerouslySetInnerHTML={
           { __html: units
               .map((unit, i) =>
                 `<div>
                     <span>${i+1}. </span>
-                    <span style="color: ${playerColors[unit.unitState.playerId]}">${unit.name}</span>
+                    <span style="color: ${playerColors[unit.unitState.playerId]}">${t('unit.'+unit.name)}</span>
                     <span>[${unit.power}/${unit.heals}/${unit.initiative}]</span>
                   </div>`
               ).join('')}
@@ -303,3 +306,5 @@ export class BoardUser extends React.Component {
     )
   }
 }
+
+export default withTranslation()(BoardUser);

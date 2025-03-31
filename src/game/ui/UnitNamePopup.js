@@ -1,5 +1,7 @@
 import './UnitInfo.css';
 import React from "react";
+import {withTranslation} from "react-i18next";
+import {logUnitName} from "../helpers/Utils";
 
 const UnitNamePopup = (props) => {
 
@@ -15,7 +17,7 @@ const UnitNamePopup = (props) => {
     return (
       <div className="creature-name-popup" style={popupStyle}>
         <div className="popup">
-          {nameUnit.name}
+          {logUnitName(nameUnit.name)}
         </div>
       </div>
     )
@@ -24,4 +26,4 @@ const UnitNamePopup = (props) => {
   }
 }
 
-export default UnitNamePopup;
+export default withTranslation()(UnitNamePopup);

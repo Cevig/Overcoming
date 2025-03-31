@@ -5,11 +5,11 @@ import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class USteppe {
 
-  static polydnicaName = "Полудниця"
-  static maraName = "Мара"
-  static letavicaName = "Летавиця"
-  static urkaName = "Ирка"
-  static viyName = "Вій"
+  static polydnicaName = "polydnica"
+  static maraName = "mara"
+  static letavicaName = "letavica"
+  static urkaName = "urka"
+  static viyName = "viy"
   static getPolydnica = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 5, 4]

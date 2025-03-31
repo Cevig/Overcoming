@@ -1,12 +1,11 @@
 import React from 'react';
 import {Buildings, BuildingsType, UnitTypes} from "../helpers/Constants";
 import "./BoardBuildings.css";
-import {getHousePrice} from "../helpers/Utils";
+import {getHousePrice, logBuilding, logGameUi} from "../helpers/Utils";
+import {withTranslation} from "react-i18next";
 
-export class BoardBuildings extends React.Component {
+class BoardBuildings extends React.Component {
   render () {
-    const props = this.props.props
-    const player = props.G.players.find(p => p.id === +props.playerID);
     return (
       <div style={this.props.style}>
         {this.showBuildingsList()}
@@ -19,7 +18,7 @@ export class BoardBuildings extends React.Component {
     return (
       <div style={{width: '100%'}}>
         <div className="buildings-container">
-          <div className="buildings-head">Доступні Споруди</div>
+          <div className="buildings-head">{this.props.t('buildings.available')}</div>
           <div className="buildings-list">
             {this.showBuildings(BuildingsType.Peace)}
             {this.showBuildings(BuildingsType.Vivtar1)}
@@ -29,7 +28,7 @@ export class BoardBuildings extends React.Component {
         </div>
         <div className="buildings-divide"></div>
         <div className="buildings-container">
-          <div className="buildings-head">Придбані Споруди</div>
+          <div className="buildings-head">{this.props.t('buildings.own')}</div>
           <div className="buildings-list">
             {this.showMyBuildings()}
           </div>
@@ -72,17 +71,17 @@ export class BoardBuildings extends React.Component {
     }
     return (
       <div className="buildings-type">
-        <div className="buildings-type-name">{type} {
+        <div className="buildings-type-name">{this.props.t('buildingsType.'+type)} {
           type !== BuildingsType.Peace ?
-            <div style={{fontSize: 18, marginTop: 5}}>[{player.bioms[0]}, {player.bioms[1]}]</div> :
+            <div style={{fontSize: 18, marginTop: 5}}>[{this.props.t('biom.'+player.bioms[0])}, {this.props.t('biom.'+player.bioms[1])}]</div> :
             <></>
         }</div>
         <div className="buildings-type-content">
           {availableBuildings.map((house, i) => {
             return (
               <div className="building-info-wrapper" key={i}>
-                <div className="building-info-name" dangerouslySetInnerHTML={{ __html: house.name}}></div>
-                <div className="building-info-description" dangerouslySetInnerHTML={{ __html: house.description}}></div>
+                <div className="building-info-name" dangerouslySetInnerHTML={{ __html: logBuilding(house.name).name}}></div>
+                <div className="building-info-description" dangerouslySetInnerHTML={{ __html: logBuilding(house.name).description}}></div>
                 <div className="building-info-price" dangerouslySetInnerHTML={{ __html: house.price > 0 ? `${getHousePrice(house, player)}✾` : ''}}></div>
                 {this.getBuildingBuyPrice(house)}
               </div>
@@ -103,8 +102,8 @@ export class BoardBuildings extends React.Component {
           {player.houses.map((house, i) => {
             return (
               <div className="building-info-wrapper" key={i}>
-                <div className="building-info-name" dangerouslySetInnerHTML={{ __html: house.name}}></div>
-                <div className="building-info-description" dangerouslySetInnerHTML={{ __html: house.description}}></div>
+                <div className="building-info-name" dangerouslySetInnerHTML={{ __html: logBuilding(house.name).name}}></div>
+                <div className="building-info-description" dangerouslySetInnerHTML={{ __html: logBuilding(house.name).description}}></div>
                 <div className="building-info-price" dangerouslySetInnerHTML={{ __html: house.price > 0 ? `${getHousePrice(house, player)}✾` : ''}}></div>
                 {this.getBuildingSellPrice(house)}
               </div>
@@ -152,9 +151,9 @@ export class BoardBuildings extends React.Component {
     const props = this.props.props
     const player = props.G.players.find(p => p.id === +props.playerID);
     if (getHousePrice(house, player) > player.essence || house.notAllowed) {
-      return (<div className="building-info-buy disabled">Придбати</div>)
+      return (<div className="building-info-buy disabled">{logGameUi('buy')}</div>)
     } else {
-      return (<div className='building-info-buy' onClick={() => props.moves.buyHouse(house)}>Придбати</div>)
+      return (<div className='building-info-buy' onClick={() => props.moves.buyHouse(house)}>{logGameUi('buy')}</div>)
     }
   }
 
@@ -162,10 +161,12 @@ export class BoardBuildings extends React.Component {
     const props = this.props.props
     if (props.ctx.turn === house.turn) {
       const isAllowedToSell = this.isSellBuildingAvailable(house)
-      return (<div className={isAllowedToSell?'building-info-buy':'building-info-buy disabled'} onClick={() => isAllowedToSell ? props.moves.sellHouse(house) : 0}>Повернути</div>)
+      return (<div className={isAllowedToSell?'building-info-buy':'building-info-buy disabled'} onClick={() => isAllowedToSell ? props.moves.sellHouse(house) : 0}>{logGameUi('return')}</div>)
     } else {
       return (<></>)
     }
   }
 
 }
+
+export default withTranslation()(BoardBuildings)

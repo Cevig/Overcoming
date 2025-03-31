@@ -3,11 +3,11 @@ import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UJungle {
 
-  static blemmiiName = "Блемміі"
-  static petsyhosName = "Петсухос"
-  static kaieryName = "Кайєрі"
-  static elokoName = "Елоко"
-  static adjatarName = "Аджатар"
+  static blemmiiName = "blemmii"
+  static petsyhosName = "petsyhos"
+  static kaieryName = "kaiery"
+  static elokoName = "eloko"
+  static adjatarName = "adjatar"
   static getBlemmii = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 6, 3]

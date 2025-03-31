@@ -3,11 +3,11 @@ import {getCreature, getIdol, getUnitState, UnitAbilities} from "./Unit";
 
 export class UMash {
 
-  static mohovikName = "Моховік"
-  static drekavazName = "Дрекавац"
-  static mavkaName = "Мавка"
-  static begemotName = "Бегемот"
-  static fekstName = "Фекст"
+  static mohovikName = "mohovik"
+  static drekavazName = "drekavaz"
+  static mavkaName = "mavka"
+  static begemotName = "begemot"
+  static fekstName = "fekst"
   static getMohovik = (id, playerId, level, createPosition, price) => {
     const stat = () => {
       if (level === 1) return [2, 4, 4]
@@ -62,7 +62,7 @@ export class UMash {
       if (level > 1) {
         abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffectOnRaid)
         if (level > 2) {
-          abilities.allTimeActions.push({name: UnitSkills.replaceUnits, qty: 1})
+          abilities.allTimeActions.push({name: UnitSkills.ReplaceUnits, qty: 1})
         }
       }
     }
