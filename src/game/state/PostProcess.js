@@ -121,7 +121,7 @@ export const onPositioningStart = (G, ctx, events) => {
     })
     const unstablePoints = getUnstablePoints(G, ctx)
     units.filter(unit => unstablePoints.find(isSame(unit.unitState.point)))
-      .forEach(unit => handleUnitDeath({G: G, ctx: ctx, events: events}, unit))
+      .forEach(unit => handleUnitDeath({G: G, ctx: ctx, events: events}, unit, null, true))
     G.grid.levels--;
   }
   if ((G.shrinkZone >= 1) && (G.shrinkZone % 2 === 1)) {
@@ -253,9 +253,12 @@ export const endFightPhase = (G, ctx) =>
 export const setInFightUnits = (G, ctx, events) => {
   if ((G.setupComplete === G.players.filter(p => p.isPlayerInGame).length) && (G.players.filter(p => p.isPlayerInBattle).length <= 1)) {
     const remainPlayer = G.players.find(p => p.isPlayerInBattle)
-    if(remainPlayer) {
+    if (remainPlayer) {
       remainPlayer.wins++;
     }
+    G.players.filter(p => p.isPlayerInBattle === false).forEach(p => {
+      p.unitsToPlaceQty = G.finishedRounds + 3
+    })
     return G
   }
   getInGameUnits(G).forEach(unit => {

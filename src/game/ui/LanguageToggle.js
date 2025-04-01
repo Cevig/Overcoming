@@ -9,8 +9,8 @@ export const LanguageToggle = () => {
       value={i18n.language}
       onChange={(e) => i18n.changeLanguage(e.target.value)}
     >
-      <option value="ua">ua</option>
       <option value="en">en</option>
+      <option value="ua">ua</option>
     </select>
   );
 };

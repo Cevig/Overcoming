@@ -354,7 +354,7 @@ export const removeStatus = (unit, keyword) => {
 export const hasKeyword = (unit, keyword) =>
   unit.abilities.keywords.find(key => key === keyword) !== undefined
 
-export const handleUnitDeath = (data, target, killer = null) => {
+export const handleUnitDeath = (data, target, killer = null, isFallDown = false) => {
   const {G, ctx} = data
 
   G.serverMsgLog.push({
@@ -392,6 +392,19 @@ export const handleUnitDeath = (data, target, killer = null) => {
       text: i18n.t('log.receive_essence', {qty: essence, player: +killer.unitState.playerId+1}),
     })
   }
+  if (isFallDown) {
+    let player = G.players[target.unitState.playerId]
+    if (player.essence > 1) {
+      player.essence -= 2
+      G.serverMsgLog.push({
+        id: Math.random().toString(10).slice(2),
+        turn: ctx.turn,
+        player: +ctx.currentPlayer,
+        phase: ctx.phase,
+        text: i18n.t('log.loose_essence', {qty: 2, player: +player.id+1}),
+      })
+    }
+  }
 }
 
 export const setEnemyMarks = (props, unit) =>
@@ -420,7 +433,9 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
     const playerValue = essenceIndex+powerIndex
 
     let essence = 1;
-    if (inGamePlayers.length === 4) {
+    if (G.finishedRounds === 0) {
+      essence = [1, 2, 3][Math.floor(Math.random() * 3)]
+    } else if (inGamePlayers.length === 4) {
       if (playerValue >= 7) {
         essence = 5
       } else if (playerValue >= 6) {
@@ -434,9 +449,9 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
       essence = playerValue - 1
     } else if (inGamePlayers.length === 2) {
       if (playerValue === 4) {
-        essence = 5
+        essence = [4, 5][Math.floor(Math.random() * 2)]
       } else if (playerValue > 2) {
-        essence = 3
+        essence = [2, 3][Math.floor(Math.random() * 2)]
       }
     }
 
@@ -493,6 +508,18 @@ export const getHousePrice = (house, player) => {
     return house.price - player.houses.filter(h => h.name === Buildings.VivtarPoplichnukiv.name || h.name === Buildings.VivtarVisnukiv.name).length
   } else if (house.name === Buildings.VivtarVisnukiv.name) {
     return house.price - player.houses.filter(h => h.name === Buildings.VivtarProminkoriv.name || h.name === Buildings.VivtarPoplichnukiv.name).length
+  } else if (house.name === Buildings.VivtarPoplichnukiv2.name) {
+    return house.price - player.houses.filter(h => h.name === Buildings.VivtarProminkoriv2.name || h.name === Buildings.VivtarVisnukiv2.name).length
+  } else if (house.name === Buildings.VivtarProminkoriv2.name) {
+    return house.price - player.houses.filter(h => h.name === Buildings.VivtarPoplichnukiv2.name || h.name === Buildings.VivtarVisnukiv2.name).length
+  } else if (house.name === Buildings.VivtarVisnukiv2.name) {
+    return house.price - player.houses.filter(h => h.name === Buildings.VivtarProminkoriv2.name || h.name === Buildings.VivtarPoplichnukiv2.name).length
+  } else if (house.name === Buildings.VivtarPoplichnukiv3.name) {
+    return house.price - player.houses.filter(h => h.name === Buildings.VivtarProminkoriv3.name || h.name === Buildings.VivtarVisnukiv3.name).length*2
+  } else if (house.name === Buildings.VivtarProminkoriv3.name) {
+    return house.price - player.houses.filter(h => h.name === Buildings.VivtarPoplichnukiv3.name || h.name === Buildings.VivtarVisnukiv3.name).length*2
+  } else if (house.name === Buildings.VivtarVisnukiv3.name) {
+    return house.price - player.houses.filter(h => h.name === Buildings.VivtarProminkoriv3.name || h.name === Buildings.VivtarPoplichnukiv3.name).length*2
   } else return house.price
 }
 

@@ -185,12 +185,12 @@ export const Buildings = Object.freeze({
   },
   VivtarPoplichnukiv2: {
     name: `vivtarPoplichnukiv2`,
-    price: 7,
+    price: 5,
     type: BuildingsType.Vivtar1
   },
   VivtarPoplichnukiv3: {
     name: `vivtarPoplichnukiv3`,
-    price: 10,
+    price: 6,
     type: BuildingsType.Vivtar1
   },
   VivtarProminkoriv: {
@@ -200,12 +200,12 @@ export const Buildings = Object.freeze({
   },
   VivtarProminkoriv2: {
     name: `vivtarProminkoriv2`,
-    price: 7,
+    price: 5,
     type: BuildingsType.Vivtar2
   },
   VivtarProminkoriv3: {
     name: `vivtarProminkoriv3`,
-    price: 10,
+    price: 6,
     type: BuildingsType.Vivtar2
   },
   VivtarVisnukiv: {
@@ -215,12 +215,12 @@ export const Buildings = Object.freeze({
   },
   VivtarVisnukiv2: {
     name: `vivtarVisnukiv2`,
-    price: 7,
+    price: 5,
     type: BuildingsType.Vivtar3
   },
   VivtarVisnukiv3: {
     name: `vivtarVisnukiv3`,
-    price: 10,
+    price: 6,
     type: BuildingsType.Vivtar3
   }
 })

@@ -14,6 +14,7 @@ import {
   hasStatus,
   isNotSame,
   isSame,
+  logPlayerName,
   logUnitKeyword,
   logUnitName,
   logUnitStatus,
@@ -52,10 +53,17 @@ export const moves = {
     if (currentUnit.unitState.isInSortie) {
       player.availablePoints = []
     } else {
-      if (currentUnit.type === UnitTypes.Idol)
+      if (currentUnit.type === UnitTypes.Idol) {
         player.availablePoints = [startPositions(ctx.numPlayers)[+playerID][0]]
-      else
-        player.availablePoints = startPositions(ctx.numPlayers)[+playerID].slice(1, startPositions(ctx.numPlayers)[+playerID].length)
+      }
+      else {
+        let availablePoints = startPositions(ctx.numPlayers)[+playerID].slice(1, startPositions(ctx.numPlayers)[+playerID].length)
+        let placedUnits = player.units.filter(unit => (unit.type !== UnitTypes.Idol) && (unit.unitState.point !== null))
+        if (player.unitsToPlaceQty <= placedUnits.length ) {
+          availablePoints = availablePoints.filter(point => placedUnits.find(unit => isSame(point)(unit.unitState.point)))
+        }
+        player.availablePoints = availablePoints
+      }
     }
     player.currentUnit = currentUnit
     events.endStage();
@@ -1136,7 +1144,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: i18n.t('log.leave', {player: player.id+1}),
+      text: i18n.t('log.leave', {player: logPlayerName(player.id+1)}),
     })
 
     cleanPlayer(player)
@@ -1174,7 +1182,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: i18n.t('log.lost', {player: enemyPlayer.id+1}),
+        text: i18n.t('log.lost', {player: logPlayerName(enemyPlayer.id+1)}),
       })
 
       cleanPlayer(enemyPlayer)

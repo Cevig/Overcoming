@@ -130,7 +130,7 @@ const handleMaraAura = ({G, ctx, events}, {unitId}) => {
       value = value - enemyStatus.qty
     }
     if (nearMaras.length > 0) {
-      value = value + nearMaras.reduce((val, mara) => val + ((mara.level >= 1) ? 3 : 2), 0)
+      value = value + nearMaras.reduce((val, mara) => val + ((mara.level > 1) ? 3 : 2), 0)
     }
     if (value !== 0) {
       resolveUnitsInteraction({G: G, ctx: ctx, events: events}, {
@@ -776,7 +776,7 @@ const handleRaid = ({G, events, ctx}, {unitId}) => {
   }
 
   const thisUnit = getUnitById(G, unitId)
-  if (getNearestEnemies(G, thisUnit.unitState).length > 0 && !hasKeyword(thisUnit, UnitKeywords.AbsoluteRaid)) {
+  if ((getNearestEnemies(G, thisUnit.unitState).length > 0 && !hasKeyword(thisUnit, UnitKeywords.AbsoluteRaid)) || hasStatus(thisUnit, UnitStatus.Unarmed)) {
     endTurn(G, ctx, events, thisUnit)
   } else {
     let raidEnemies

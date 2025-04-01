@@ -13,6 +13,7 @@ const createPlayer = (id, name, allPlayersNum) => ({
   isPlayerInBattle: false,
   isPlayerInGame: true,
   availablePoints: [],
+  unitsToPlaceQty: 2,
   currentUnit: null,
   grid: {
     colorMap: getColorMap(allPlayersNum)

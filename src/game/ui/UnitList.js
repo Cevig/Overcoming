@@ -176,7 +176,7 @@ const UnitList = (data) => {
 
   return (
     <div className="unit-list">
-      {ctx.phase === 'Setup' || ctx.phase === 'Building' ?
+      {ctx.phase === 'Building' ?
         <div className="unit-types">
           <h2>{logGameUi('available')}</h2>
           {renderUnitTypes()}
