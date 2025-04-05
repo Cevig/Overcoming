@@ -570,7 +570,7 @@
     "own": "Summoned Creatures",
     "sortie": "Foray",
     "invite_code": "Join using an invite code",
-    "go_to": "Go to",
+    "go_to": "Join Game",
     "unavailable_mobile": "Sorry, the game is not available on phones.",
     "create_for_players": "Create a new room for {{qty}} players",
     "qty_players": "{{qty}} players",

@@ -1171,7 +1171,7 @@ export const moves = {
       thisPlayer.units.filter(u => u.unitState.isInGame).forEach(u => {
         u.heals -= 2;
         if (u.heals <= 0) {
-          handleUnitDeath({G: G, ctx: ctx, events: events}, u, enemyPlayer)
+          handleUnitDeath({G: G, ctx: ctx, events: events}, u, null, true)
         }
       })
     }

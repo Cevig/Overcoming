@@ -16,15 +16,18 @@ const UnitUI = (data) => {
   const [isNamePopupOpen, setIsNamePopupOpen, nameUnit, setNameUnit, nameUnitPosition, setNameUnitPosition] = data.nameInfo
 
   const handleMouseEnter = (event) => {
+    if (event.target.tagName.toLowerCase() !== 'polygon') {
+      return;
+    }
     const target = event.target.getBoundingClientRect()
     const x = target.x + 20;
     const y = target.y - 43;
     setNameUnit(unit)
     setNameUnitPosition({x, y})
     setIsNamePopupOpen(true);
-    setTimeout(() => {
-      setIsNamePopupOpen(false);
-    }, "2000");
+    // setTimeout(() => {
+    //   setIsNamePopupOpen(false);
+    // }, "2000");
   };
 
   const handleMouseLeave = () => {
@@ -341,9 +344,9 @@ const UnitUI = (data) => {
   return (
     <g transform="scale(.0029,.0029)" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <g style={{cursor: (unit.unitState.isClickable || data.markEnemy) ? "pointer" : "not-allowed"}}>
-        <polygon strokeWidth="10" id="svg_3" points="7,299.9999694824219 178.5,597.0379638671875 521.5,597.0379638671875 693,299.9999694824219 521.5,2.96197509765625 178.5,2.96197509765625 " style={{
+        <polygon strokeWidth="10" id={'svg_unit_'+unit.id} points="7,299.9999694824219 178.5,597.0379638671875 521.5,597.0379638671875 693,299.9999694824219 521.5,2.96197509765625 178.5,2.96197509765625 " style={{
           stroke: playerColors[unit.unitState.playerId],
-          fill: getUnitColor()
+          fill: getUnitColor(),
         }}/>
         {drawUnitTop()}
         <path stroke="#000000" id="svg_13" d="m505.93503,341.05112c10.2526,19.65778 12.25416,25.62757 8.86429,26.43829c-6.6219,1.58372 -5.29123,10.64126 3.97724,27.0718c11.62364,20.60569 34.3908,33.25947 55.77617,30.99989c8.30057,-0.87704 17.68472,-2.68706 20.85368,-4.0223c3.16894,-1.33525 1.22436,1.15218 -4.32131,5.52759c-27.74264,21.88829 -62.00602,20.36358 -89.34076,-3.97558c-10.89888,-9.70452 -25.89403,-38.0584 -25.89403,-48.96229c0,-3.089 -2.47219,-6.08212 -5.49374,-6.65135c-4.9414,-0.93091 -4.27779,-3.382 6.60047,-24.37945c6.65182,-12.83948 12.91342,-24.26548 13.91465,-25.39112c1.00126,-1.12564 7.77974,9.37939 15.06332,23.3445l0,0l0.00003,0.00001zm88.12996,37.89778c-10.25262,-19.65778 -12.25416,-25.62758 -8.8643,-26.43829c6.6219,-1.58369 5.29123,-10.64126 -3.97722,-27.0718c-11.62365,-20.6057 -34.39083,-33.25947 -55.77619,-30.99991c-8.30057,0.87703 -17.68471,2.68707 -20.85367,4.02233c-3.16896,1.33523 -1.22437,-1.1522 4.3213,-5.5276c27.74264,-21.8883 62.00602,-20.36361 89.34076,3.97559c10.89888,9.70448 25.89402,38.05838 25.89402,48.96226c0,3.08902 2.47221,6.08212 5.49373,6.65135c4.94142,0.93092 4.2778,3.382 -6.60045,24.37945c-6.65182,12.83946 -12.91342,24.26548 -13.91465,25.39112c-1.00126,1.12564 -7.77974,-9.37937 -15.06332,-23.34449l0,0l0,-0.00001z" strokeWidth="0" fill="#027242"/>

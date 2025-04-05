@@ -15,7 +15,7 @@ const BattleResults = (props) => {
   const style = props.style
   const player = data.G.players.find(p => p.id === +data.playerID);
 
-  const [isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit] = props.info
+  const [setIsPopupOpen, setInfoUnit, setIsNamePopupOpen] = props.info
   const togglePopup = (unit, e) => {
     if(e && e.stopPropagation) e.stopPropagation();
     setInfoUnit(unit)
@@ -31,6 +31,7 @@ const BattleResults = (props) => {
         <div>{logGameUi('survived_creatures')}</div>
         <div>
           {units.map((u, i) => {
+            setIsNamePopupOpen(false);
             return (
               <div className="unit-instance" key={Math.random().toString(10).slice(2)} style={{border: "none", padding: 0, margin: "0 auto"}}>
                 <h3 style={{color: playerColors[+p.id], fontSize: 18}} >{logUnitName(u.name)} <span onClick={togglePopup.bind(this, u)} style={{color: "grey", fontSize: 19}}>&#9432;</span></h3>

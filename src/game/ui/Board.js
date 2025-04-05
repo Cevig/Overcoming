@@ -20,12 +20,11 @@ import {EssenceGiftsUI} from "./EssenceGiftsUI";
 import AllUnitsPopup from "./AllUnitsPopup";
 import UnitUI from "./UnitUI";
 import UnitNamePopup from "./UnitNamePopup";
+import './Hex.css';
 
 const style = {
   display: 'flex',
   margin: 5
-  // backgroundImage: `url(${Background})`
-  // backgroundColor: "#39546a",
 };
 
 const hexStyle = {
@@ -34,24 +33,8 @@ const hexStyle = {
   flexBasis: `58%`,
   maxWidth: 1085,
   backgroundColor: "#39546a"
-}
-
-const getCellColor_old = HexGrid.prototype._getCellColor;
-
-HexGrid.prototype._getCellColor = function(...coords) {
-  const color = getCellColor_old.bind(this)(...coords);
-  let result = color
-  if (color === 'white') {
-    let point = createPoint(...coords)
-    for (const playerColor in this.props.colorMap) {
-      let found = this.props.colorMap[playerColor].find(isSame(point))
-      if (found !== undefined && isSame(found)(point)) {
-        result = playerColor;
-        break;
-      }
-    }
-  }
-  return result;
+  // backgroundImage: `url(${Background})`,
+  // backgroundColor: "#39546a",
 }
 
 export function Board (props) {
@@ -223,7 +206,7 @@ export function Board (props) {
           : <></>
         }
         {(props.ctx.phase === 'FinishBattle' ||  props.ctx.phase === null)?
-          <BattleResults style={hexStyle} props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
+          <BattleResults style={hexStyle} props={props} info={[setIsPopupOpen, setInfoUnit, setIsNamePopupOpen]} />
           : <></>
         }
         {(props.ctx.phase === 'Setup' || props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight') ?
@@ -234,9 +217,16 @@ export function Board (props) {
             colorMap={colorMapSecret}
             onClick={cellClicked}>
             {
+              props.G.grid.unstablePoints.map((point, i) => {
+                return <Token x={point.x} y={point.y} z={point.z} key={i+10000} id={i+10000}>
+                  <UnstablePointsUI id={i+10000} />
+                </Token>
+              })
+            }
+            {
               getInGameUnits(props.G, (unit) => (props.ctx.phase === "Setup") ? props.playerID && (unit.unitState.playerId === +props.playerID) : true).map((unit, i) => {
                 const { x, y, z } = unit.unitState.point;
-                return <Token x={x} y={y} z={z} key={i}>
+                return <Token x={x} y={y} z={z} key={unit.id} id={unit.id}>
                   <UnitUI
                     unit={unit}
                     highlight={((props.G.currentUnit && props.G.currentUnit.id === unit.id) || (props.playerID && props.G.players[+props.playerID].currentUnit && props.G.players[+props.playerID].currentUnit.id === unit.id))}
@@ -249,16 +239,9 @@ export function Board (props) {
               })
             }
             {
-              props.G.grid.unstablePoints.map((point, i) => {
-                return <Token x={point.x} y={point.y} z={point.z} key={i+10000}>
-                  <UnstablePointsUI />
-                </Token>
-              })
-            }
-            {
               props.G.grid.essencePoints.map((point, i) => {
-                return <Token x={point.x} y={point.y} z={point.z} key={i+20000}>
-                  <EssenceGiftsUI />
+                return <Token x={point.x} y={point.y} z={point.z} key={i+20000} id={i+20000}>
+                  <EssenceGiftsUI id={i+20000}/>
                 </Token>
               })
             }
