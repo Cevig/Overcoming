@@ -31,9 +31,6 @@
 }
 
 /* === BACKGROUND === */
-.board-svg {
-  background-image: radial-gradient(circle at center, #334851 0%, #1f2e38 100%);
-}
 
 /* === ANIMATIONS === */
 @keyframes pulse {
