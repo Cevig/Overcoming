@@ -10,24 +10,25 @@
 .game-code {
   margin: 18px;
   font-size: 30px;
-  color: #1b1b1b;
+  color: #bbc1bc;
 }
 .game-link-box {
   border: solid;
   border-radius: 8px;
   margin: 8px;
   border-color: #757575;
-  background-color: #cbba83;
+  background-color: #bbc1bc;
+  color: black;
 }
 .game-link-button {
   font-family: Varela Round;
-  background-color: #9fa8da;
+  background-color: #6b99ad;
   font-size: 2vmin;
   color: #1b1b1b;
   border-radius: 8px;
   margin-bottom: 8px;
   cursor: pointer;
-  box-shadow: -0px 8px 0px 0px #616161;
+  box-shadow: 0 5px 0 0 #005c54;
 }
 .game-link-button:hover {
   background-color: #9575cd;
@@ -58,13 +59,13 @@
   height: 4px;
   width: 100%;
   margin: auto;
-  background-color: #66bb6a;
+  background-color: #64ceaa;
 }
 .player-waiting {
   height: 4px;
   width: 100%;
   margin: auto;
-  background-color: #ffca28;
+  background-color: #6b99ad;
   animation-name: pulse;
   animation-duration: 2s;
   animation-iteration-count: infinite;

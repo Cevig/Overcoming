@@ -364,7 +364,7 @@
     },
     "unfocusedAura": {
       "name": "Confusion Aura",
-      "description": "Enemy creatures within radius 1 receive {{status}} -> {{statusEffect}}",
+      "description": "Enemy creatures within radius 1 receive {{status}} ⇒ {{statusEffect}}",
       "descriptionTooltip": "Enemy creatures receive the <tooltip>{{status}}</tooltip> status",
       "effect": "Affects enemy creatures within radius 1."
     },
@@ -380,7 +380,7 @@
     },
     "lethalBlow": {
       "name": "Horror Blast",
-      "description": "Upon death, disarms enemy creatures in radius 1 -> {{statusEffect}}",
+      "description": "Upon death, disarms enemy creatures in radius 1 ⇒ {{statusEffect}}",
       "descriptionTooltip": "Upon death, <tooltip>disarms</tooltip> enemy creatures in radius 1",
       "effect": "Applies the {{status}} status — {{statusEffect}}"
     },
@@ -433,7 +433,7 @@
     },
     "replaceUnits": {
       "name": "Swap Places",
-      "description": "Swaps positions of an allied and an enemy creature that are standing next to each other.",
+      "description": "Swaps positions of an allied and an enemy unit that are standing next to each other.",
       "descriptionTooltip": "May swap places of adjacent allied and enemy units (except an Idol), IGNORING <tooltip>ZoC</tooltip>"
     },
     "pauseToRecover": {

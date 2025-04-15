@@ -8,7 +8,7 @@ class MobileCover extends Component {
     return (
       <TemplatePage
         content={
-          <div style={{ fontSize: 35 }}>
+          <div style={{ fontSize: 35, color: "#01b6c6" }}>
             {logGameUi('unavailable_mobile')}
           </div>
         }

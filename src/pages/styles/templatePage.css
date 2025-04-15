@@ -5,8 +5,8 @@ body {
 }
 .full_height {
   height: 100%;
-  background: #fff9c4;
   text-align: center;
+  font-size: 18px;
 }
 .title {
   display: inline-block;
@@ -31,7 +31,7 @@ body {
   margin: auto;
   font-size: 5vh;
   padding: 12px;
-  color: #414141;
+  color: #bbc1bc;
 }
 
 .title > select {

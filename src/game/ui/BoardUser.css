@@ -1,6 +1,6 @@
 .fight-queue-container {
   margin-top: 10px;
-  background: #f2f2f2;
+  background: #6b99ad42;
 }
 
 .fight-queue-head {
@@ -15,4 +15,52 @@
 }
 .fight-order div {
   padding: 5px 5px;
+}
+
+.user-actions-wrapper {
+  border: 1px solid #bbc1bc;
+  padding: 10px 0;
+  margin: 10px 0;
+}
+
+.user-actions {
+  padding: 5px;
+  text-align: center;
+  margin-top: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+
+.user-actions .user-actions-btn-first-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+}
+
+.user-actions .user-actions-btn-other {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
+}
+
+.user-actions button {
+  height: 35px;
+  border: 1px solid #1e75a5;
+  background-color: #005f6b;
+  text-align: center;
+  line-height: 35px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #bbc1bc;
+  width: 40%;
+  min-width: fit-content;
+}
+
+.user-actions button:hover {
+  background-color: #008CBA;
 }

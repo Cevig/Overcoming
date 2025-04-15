@@ -17,6 +17,10 @@
   filter: drop-shadow(0 0 0.03px #334851);
 }
 
+.tile-g polygon {
+  fill: url(#generalTile);
+}
+
 .token-g:hover {
   filter: drop-shadow(0 0 0.2px #006350);
 }
@@ -29,24 +33,6 @@
 /* === BACKGROUND === */
 .board-svg {
   background-image: radial-gradient(circle at center, #334851 0%, #1f2e38 100%);
-}
-
-/* === HEX COLOR THEMES === */
-.hex-default {
-  fill: url(#defaultPattern);
-}
-
-.hex-blue {
-  fill: #3a82f6;
-}
-
-.hex-red {
-  fill: #e72828;
-}
-
-.hex-essence {
-  fill: url(#runePattern);
-  /*animation: pulse 2s infinite ease-in-out;*/
 }
 
 /* === ANIMATIONS === */

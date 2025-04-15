@@ -1,8 +1,8 @@
 .creature-wiki-button {
   width: 120px;
   height: 35px;
-  border: 1px solid darkgray;
-  background-color: lightyellow;
+  border: 1px solid #1e75a5;
+  background-color: #005F6B;
   text-align: center;
   line-height: 35px;
   font-size: 22px;
@@ -13,13 +13,21 @@
 .leave-game-button {
   width: 150px;
   height: 35px;
-  border: 1px solid darkgray;
-  background-color: #dddddd;
+  border: 1px solid #1e75a5;
+  background-color: #005F6B;
   text-align: center;
   line-height: 35px;
   font-size: 22px;
-  margin: 0 0 5px 10px;
+  margin: 0 10px 5px 0;
   cursor: pointer;
+}
+
+.creature-wiki-button:hover {
+  background-color: #008CBA;
+}
+
+.leave-game-button:hover {
+  background-color: #008CBA;
 }
 
 .top-panel-tools {
@@ -36,19 +44,11 @@
   align-self: center;
 }
 
-.creature-wiki-button:hover {
-  background-color: #ffffa1;
-}
-
-.leave-game-button:hover {
-  background-color: #9a9898;
-}
-
 .creature-wiki-popup {
   position: absolute;
   top: 10%;
   left: 10%;
-  background-color: white;
+  background-color: #1c403c;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
   overflow: hidden;
@@ -60,6 +60,7 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  color: #d6d9d9;
 }
 
 .creature-wiki-popup .close-button {
@@ -83,10 +84,12 @@
 .creature-wiki-popup .popup-biome {
   grid-column: span 3;
   font-weight: bold;
-  margin: 10px 0;
+  padding: 10px 0;
   text-align: center;
-  background-color: beige;
+  background-color: #002e23;
   font-size: 24px;
+  border: 1px solid #d6d9d9;
+  border-bottom: 0;
 }
 
 .creature-wiki-popup .popup-creature {
@@ -98,10 +101,6 @@
   border: 1px solid darkgray;
   padding-left: 10px;
   font-size: 22px;
-}
-
-.creature-wiki-popup .popup-creature > div {
-  background-color: white;
 }
 
 .creature-wiki-popup .popup-creature-header {
@@ -119,7 +118,7 @@
 .creature-wiki-popup .popup-creature-damage {
   grid-column: 3;
   text-align: center;
-  color: #3867f9;
+  color: #7194ff;
 }
 
 .creature-wiki-popup .popup-creature-heals {
@@ -131,7 +130,7 @@
 .creature-wiki-popup .popup-creature-initiative {
   grid-column: 5;
   text-align: center;
-  color: green;
+  color: #43af30;
 }
 
 .creature-wiki-popup .popup-creature-abilities {
@@ -146,7 +145,7 @@
 
 .tooltip-text {
   cursor: pointer;
-  color: #095a8b;
+  color: #ff2dc6;
 }
 
 .tooltip {
@@ -155,9 +154,10 @@
   bottom: 100%;
   right: 0;
   padding: 8px;
-  background-color: beige;
+  background-color: #7f1462;
+  border-bottom-color: #c569ac;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 18px;
   text-align: center;
   white-space: normal;
   min-width: 200px;
@@ -167,6 +167,7 @@
   border-bottom-style: ridge;
   left: 50%;
   transform: translateX(-50%);
+  color: #d6d9d9;
 }
 
 /*.creature-popup .tooltip {*/
@@ -175,7 +176,7 @@
 /*}*/
 
 .creature-popup .tooltip-text {
-  color: #095a8b;
+  color: #ff2dc6;
   font-style: normal;
 }
 
@@ -189,11 +190,12 @@
 
 .creature-name-popup {
   position: absolute;
-  background-color: #f5f5dc;
+  background-color: #39546a;
   height: 40px;
   line-height: 40px;
   border-radius: 10px;
   text-transform: uppercase;
+  color: #d6d9d9;
 }
 
 .creature-name-popup .popup {

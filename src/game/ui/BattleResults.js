@@ -34,7 +34,7 @@ const BattleResults = (props) => {
             setIsNamePopupOpen(false);
             return (
               <div className="unit-instance" key={Math.random().toString(10).slice(2)} style={{border: "none", padding: 0, margin: "0 auto"}}>
-                <h3 style={{color: playerColors[+p.id], fontSize: 18}} >{logUnitName(u.name)} <span onClick={togglePopup.bind(this, u)} style={{color: "grey", fontSize: 19}}>&#9432;</span></h3>
+                <h3 style={{color: playerColors[+p.id], fontSize: 18}} >{logUnitName(u.name)} <span onClick={togglePopup.bind(this, u)} style={{color: "#d6d9d9", fontSize: 19}}>&#9432;</span></h3>
               </div>
             )
           })
@@ -85,7 +85,7 @@ const BattleResults = (props) => {
             <div key={Math.random().toString(10).slice(2)}>
               <div style={{color: playerColors[p.id]}} className="results-p-name">{logPlayerName(p.id+1)}</div>
               <div className="player-info" style={{fontSize: 24}}>
-                <div><span style={{color: "red"}}>{p.heals}&hearts;</span> [<span style={{color: "black", fontWeight: "bold"}}>{p.essence}✾</span>]</div>
+                <div><span style={{color: "red"}}>{p.heals}&hearts;</span> [<span>{p.essence}✾</span>]</div>
                 <div>{logGameUi('player_won')} {p.wins}</div>
                 <div>{logGameUi('player_killed')} {p.killedUnits}</div>
                 {showRemainUnits(p)}

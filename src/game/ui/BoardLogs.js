@@ -38,6 +38,7 @@ const BoardLogs = (data) => {
       {props.ctx.phase === 'Building' || props.ctx.phase === 'Setup' ?
         <div>
           <div className="player-info">
+            <div className="player-name" style={{color: playerColors[player.id]}}>{logPlayerName(player.id+1)}</div>
             <div className="player-heals">{logGameUi('heals_cap')}: <span>{player.heals}&hearts;</span></div>
             <div className="player-resources">{logGameUi('essence')}: <span>{player.essence}✾</span></div>
             <div className="player-wins">{logGameUi('player_won')} {player.wins}</div>
@@ -51,7 +52,7 @@ const BoardLogs = (data) => {
                                       <span style="color: ${playerColors[p.id]}">${logPlayerName(p.id+1)}</span>
                                       <span style="font-size: 12px">[${i18n.t('biom.'+p.bioms[0])}, ${i18n.t('biom.'+p.bioms[1])}]</span> -
                                       <span style="color: red">${p.heals}&hearts;</span>
-                                      [<span style="color: black; font-weight: bold">${p.essenceFreeze}✾</span>]
+                                      [<span>${p.essenceFreeze}✾</span>]
                                   </div>
                                 </div>`).join('')}
             } />
@@ -62,7 +63,8 @@ const BoardLogs = (data) => {
       {props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight' || props.ctx.phase === 'FinishBattle' ?
         <div>
           <div className="player-info" style={{fontSize: 18}}>
-            <div><span style={{color: "red"}}>{player.heals}&hearts;</span> [<span style={{color: "black", fontWeight: "bold"}}>{player.essence}✾</span>]</div>
+            <div className="player-name small-name" style={{color: playerColors[player.id]}}>{logPlayerName(player.id+1)}</div>
+            <div><span style={{color: "red"}}>{player.heals}&hearts;</span> [<span>{player.essence}✾</span>]</div>
             <div style={{}}>{logGameUi('player_won')} {player.wins}</div>
             <div style={{}}>{logGameUi('player_killed')} {player.killedUnits}</div>
           </div>
@@ -74,7 +76,7 @@ const BoardLogs = (data) => {
                                     <span style="color: ${playerColors[p.id]}">${logPlayerName(p.id+1)}</span>
                                     <span style="font-size: 12px">[${i18n.t('biom.'+p.bioms[0])}, ${i18n.t('biom.'+p.bioms[1])}]</span> -
                                     <span style="color: red">${p.heals}&hearts;</span>
-                                    [<span style="color: black; font-weight: bold">${p.essence}✾</span>] -
+                                    [<span>${p.essence}✾</span>] -
                                     <span style="font-size: 14px;">${p.houses.map(h => logBuilding(h.name).name).join(', ')}</span>
                                   </div>
                                 </div>`).join('')}

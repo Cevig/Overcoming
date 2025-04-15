@@ -448,11 +448,12 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
     } else if (inGamePlayers.length === 3) {
       essence = playerValue - 1
     } else if (inGamePlayers.length === 2) {
-      if (playerValue === 4) {
-        essence = [4, 5][Math.floor(Math.random() * 2)]
-      } else if (playerValue > 2) {
-        essence = [2, 3][Math.floor(Math.random() * 2)]
-      }
+      // if (playerValue === 4) {
+      //   essence = [4, 5][Math.floor(Math.random() * 2)]
+      // } else if (playerValue > 2) {
+      //   essence = [2, 3][Math.floor(Math.random() * 2)]
+      // }
+      essence = [3, 4, 5][Math.floor(Math.random() * 3)]
     }
 
     G.serverMsgLog.push({

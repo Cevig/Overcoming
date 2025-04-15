@@ -70,97 +70,18 @@ class BoardUser extends React.Component {
         }
         {(props.ctx.phase !== 'Setup' && props.ctx.phase !== 'Building') ?
           <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24, marginTop: 15}}>
-            <span style={{color: "#444444"}}>{t('game.turn')}:</span> {t('game.player', {number: player ? player.id + 1 : t('game.unknown')})}
+            <span style={{color: "#bbc1bc"}}>{t('game.turn')}:</span> {t('game.player', {number: player ? player.id + 1 : t('game.unknown')})}
           </div>
           : <></>
         }
         {this.showFightQueue()}
-        <div>
-          <div style={{color: playerColors[+props.playerID], textAlign: "center", marginTop: 20, fontSize: 22}}>{t('game.actions')}</div>
+        <div className="user-actions-wrapper">
+          <div style={{color: playerColors[+props.playerID], textAlign: "center", fontSize: 22}}>{t('game.actions')}</div>
           {playerClient.isPlayerInGame ?
-            <div style={styles.actions} className="user-actions">
-              {props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight' ?
-                <button onClick={() => props.undo()}>{t('game.back')}</button>
-                : <></>
-              }
-              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "finishBuildingStage" || props.ctx.activePlayers[+props.playerID] === "finishSetupStage") ?
-                <button onClick={() => props.moves.returnBack()}>{t('game.back2')}</button>
-                : <></>
-              }
-              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit") ?
-                <button onClick={() => props.moves.removeUnit()}>{t('game.turn_around')}</button>
-                : <></>
-              }
-              {(props.ctx.phase === 'Building' || props.ctx.phase === 'Setup') && (props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] !== "finishBuildingStage" && props.ctx.activePlayers[+props.playerID] !== "finishSetupStage"))?
-                <button onClick={() => props.moves.complete()}>{t('game.end')}</button>
-                : <></>
-              }
-              {this.isSacrificeAvailable() ?
-                <button onClick={() => props.moves.sacrificeHeals()}>{t('game.sacrifice_health')}</button>
-                : <></>
-              }
-              {this.isDefaultSkipTurnAvailable() ?
-                <button onClick={() => props.moves.skipTurn()}>{t('game.skip')}</button>
-                : <></>
-              }
-              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "hookUnitAction") ?
-                <button onClick={() => props.moves.skipHook()}>{t('game.skip')}</button>
-                : <></>
-              }
-              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "throwOverAction") ?
-                <button onClick={() => props.moves.skipHook()}>{t('game.skip')}</button>
-                : <></>
-              }
-              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction") ?
-                <button onClick={() => props.moves.doActionToEnemy()}>{t('game.move_unit')}</button>
-                : <></>
-              }
-              {props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "curseAbasyActionStage") ?
-                <button onClick={() => props.moves.backFromAction()}>{t('game.back2')}</button>
-                : <></>
-              }
-              {props.ctx.activePlayers && (props.ctx.activePlayers[+playerClient.id] === "resultsStage") ?
-                <button onClick={() => props.moves.nextRound()}>{t('game.next_round')}</button>
-                : <></>
-              }
-              {this.isHealAllyAvailable() ?
-                <button onClick={() => props.moves.healAllyAction()}>{t('game.heal_lives')}</button>
-                : <></>
-              }
-              {this.isCurseAbasuAvailable() ?
-                <button onClick={() => props.moves.curseAction()}>{t('game.curse')}</button>
-                : <></>
-              }
-              {this.isWeaponThrowAvailable() ?
-                <button onClick={() => props.moves.throwWeaponAction()}>{t('game.throw_weapon')}</button>
-                : <></>
-              }
-              {this.isReplaceUnitsAvailable() ?
-                <button onClick={() => props.moves.replaceUnitsAction()}>{t('game.switch_pos')}</button>
-                : <></>
-              }
-              {this.isPauseToRecoverAvailable() ?
-                <button onClick={() => props.moves.pauseToRecoverAction()}>{t('game.time_to_heal')}</button>
-                : <></>
-              }
-              {this.isNotMovedRecoverAvailable() ?
-                <button onClick={() => props.moves.notMovedRecoverAction()}>{t('game.recover')}</button>
-                : <></>
-              }
-              {this.isChargeAttackAvailable() ?
-                <button onClick={() => props.moves.chargeAttackAction()}>{t('game.attack_charge')}</button>
-                : <></>
-              }
-              {this.isSetElokoCurseAvailable() ?
-                <button onClick={() => props.moves.setElokoCurseAction()}>{t('game.glamour')}</button>
-                : <></>
-              }
-              {this.isSetItOnFireAvailable() ?
-                <button onClick={() => props.moves.setItOnFireAction()}>{t('game.burn')}</button>
-                : <></>
-              }
+            <div className="user-actions">
+              {this.getAvailableActions()}
             </div>
-            : <></>
+            : null
           }
         </div>
       </div>
@@ -304,6 +225,95 @@ class BoardUser extends React.Component {
         } />
       </div>
     )
+  }
+
+  getAvailableActions() {
+    const props = this.props.props
+    const playerClient = props.G.players.find(p => p.id === +props.playerID);
+    const { t } = this.props;
+    let actions = []
+    if (props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight') {
+      actions.push(<button onClick={() => props.undo()}>{t('game.back')}</button>)
+    }
+    if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "finishBuildingStage" || props.ctx.activePlayers[+props.playerID] === "finishSetupStage")) {
+      actions.push(<button onClick={() => props.moves.returnBack()}>{t('game.back2')}</button>)
+    }
+    if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] === "placeUnit")) {
+      actions.push(<button onClick={() => props.moves.removeUnit()}>{t('game.turn_around')}</button>)
+    }
+    if ((props.ctx.phase === 'Building' || props.ctx.phase === 'Setup') && (props.ctx.activePlayers && (props.ctx.activePlayers[+props.playerID] !== "finishBuildingStage" && props.ctx.activePlayers[+props.playerID] !== "finishSetupStage"))) {
+      actions.push(<button onClick={() => props.moves.complete()}>{t('game.end')}</button>)
+    }
+    if (this.isSacrificeAvailable()) {
+      actions.push(<button onClick={() => props.moves.sacrificeHeals()}>{t('game.sacrifice_health')}</button>)
+    }
+    if (this.isDefaultSkipTurnAvailable()) {
+      actions.push(<button onClick={() => props.moves.skipTurn()}>{t('game.skip')}</button>)
+    }
+    if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "hookUnitAction")) {
+      actions.push(<button onClick={() => props.moves.skipHook()}>{t('game.skip')}</button>)
+    }
+    if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "throwOverAction")) {
+      actions.push(<button onClick={() => props.moves.skipHook()}>{t('game.skip')}</button>)
+    }
+    if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "showUrkaAction")) {
+      actions.push(<button onClick={() => props.moves.doActionToEnemy()}>{t('game.move_unit')}</button>)
+    }
+    if (props.ctx.activePlayers && (props.ctx.activePlayers[+props.ctx.currentPlayer] === "curseAbasyActionStage")) {
+      actions.push(<button onClick={() => props.moves.backFromAction()}>{t('game.back2')}</button>)
+    }
+    if (props.ctx.activePlayers && (props.ctx.activePlayers[+playerClient.id] === "resultsStage")) {
+      actions.push(<button onClick={() => props.moves.nextRound()}>{t('game.next_round')}</button>)
+    }
+    if (this.isHealAllyAvailable()) {
+      actions.push(<button onClick={() => props.moves.healAllyAction()}>{t('game.heal_lives')}</button>)
+    }
+    if (this.isCurseAbasuAvailable()) {
+      actions.push(<button onClick={() => props.moves.curseAction()}>{t('game.curse')}</button>)
+    }
+    if (this.isWeaponThrowAvailable()) {
+      actions.push(<button onClick={() => props.moves.throwWeaponAction()}>{t('game.throw_weapon')}</button>)
+    }
+    if (this.isReplaceUnitsAvailable()) {
+      actions.push(<button onClick={() => props.moves.replaceUnitsAction()}>{t('game.switch_pos')}</button>)
+    }
+    if (this.isPauseToRecoverAvailable()) {
+      actions.push(<button onClick={() => props.moves.pauseToRecoverAction()}>{t('game.time_to_heal')}</button>)
+    }
+    if (this.isNotMovedRecoverAvailable()) {
+      actions.push(<button onClick={() => props.moves.notMovedRecoverAction()}>{t('game.recover')}</button>)
+    }
+    if (this.isChargeAttackAvailable()) {
+      actions.push(<button onClick={() => props.moves.chargeAttackAction()}>{t('game.attack_charge')}</button>)
+    }
+    if (this.isSetElokoCurseAvailable()) {
+      actions.push(<button onClick={() => props.moves.setElokoCurseAction()}>{t('game.glamour')}</button>)
+    }
+    if (this.isSetItOnFireAvailable()) {
+      actions.push(<button onClick={() => props.moves.setItOnFireAction()}>{t('game.burn')}</button>)
+    }
+
+    if (actions.length > 2) {
+      return (
+        <>
+          <div className="user-actions-btn-first-row">
+            {actions[0]}
+            {actions[1]}
+          </div>
+          <div className="user-actions-btn-other">
+            {actions.slice(2)}
+          </div>
+        </>
+      );
+    } else if (actions.length > 0) {
+      return (
+        <div className="user-actions-btn-first-row">
+          {actions}
+        </div>
+      );
+    } else {
+      return null;
+    }
   }
 }
 

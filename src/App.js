@@ -64,7 +64,7 @@ const AppLocal =
   //   game: Overcoming,
   //   board: Board,
   //   // multiplayer: Local(),
-  //   numPlayers: getPlayersNumber(),
+  //   numPlayers: 2,
   //   debug: true
   // });
 0

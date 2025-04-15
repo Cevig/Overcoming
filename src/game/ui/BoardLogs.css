@@ -5,6 +5,7 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column-reverse;
+  color: #bbc1bc;
 }
 
 .log-container > div {
@@ -12,15 +13,22 @@
 }
 
 .player-info{
-  background: white;
+  color: #d6d9d9;
+  background-color: #6b99ad42;
   padding: 10px;
   margin: 0 10px 10px 10px;
   font-size: 26px;
   line-height: 1.5;
 }
 
-.player-resources span{
-  font-weight: bold;
+.player-name {
+  text-align: center;
+  font-size: 28px;
+}
+
+.player-name.small-name {
+  text-align: start;
+  font-size: 24px;
 }
 
 .player-heals span{
@@ -28,7 +36,8 @@
 }
 
 .enemy-info {
-  background: white;
+  color: #d6d9d9;
+  background-color: #6b99ad42;
   display: flex;
   padding: 10px;
   flex-direction: column;

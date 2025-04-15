@@ -28,10 +28,10 @@ export const HexGrid = (props) => {
   const getCellColor = (x, y, z, colorMap) => {
     // Default behavior: try to get the color by coordinate key.
     const key = `${x},${y},${z}`;
-    let color = (colorMap && colorMap[key]) || 'white';
+    let color = (colorMap && colorMap[key]) || 'url(#generalTile)';
 
     // If the default is white, run your custom logic.
-    if (color === 'white' && colorMap) {
+    if (color === 'url(#generalTile)' && colorMap) {
       const point = createPoint(x, y, z);
       for (const playerColor in colorMap) {
         const points = colorMap[playerColor];
@@ -39,9 +39,27 @@ export const HexGrid = (props) => {
           const found = points.find(isSame(point));
           if (found !== undefined && isSame(found)(point)) {
             color = playerColor;
+            if (playerColor === '#e72828') {
+              color = 'url(#redTile)'
+            }
+            if (playerColor === '#7194ff') {
+              color = 'url(#blueTile)'
+            }
+            if (playerColor === '#2ecb00') {
+              color = 'url(#greenTile)'
+            }
+            if (playerColor === '#ffc107') {
+              color = 'url(#yellowTile)'
+            }
             break;
           }
         }
+      }
+      if (colorMap['url(#rootedTile)'] !== undefined && colorMap['url(#rootedTile)'].find(isSame(point))) {
+        color = 'url(#rootedTile)'
+      }
+      if (colorMap['#dd666f'] !== undefined && colorMap['#dd666f'].find(isSame(point))) {
+        color = 'url(#selectionTile)'
       }
     }
     return color;
@@ -124,8 +142,26 @@ export const HexGrid = (props) => {
   return (
     <svg viewBox={viewBox} style={style} className="board-svg">
       <defs>
-        <pattern id="runePattern" patternUnits="userSpaceOnUse" width={2} height={2}>
-          <image href="/assets/rune-hex.png" x={0} y={0} width={2} height={2} />
+        <pattern id="generalTile" patternUnits="objectBoundingBox" width={1} height={1} patternTransform="scale(1.2)">
+          <image href="/assets/tile.png" x={0} y={-0.125} width={2} height={2} />
+        </pattern>
+        <pattern id="redTile" patternUnits="objectBoundingBox" width={1} height={1} patternTransform="scale(1.2)">
+          <image href="/assets/red-tile.png" x={0} y={-0.125} width={2} height={2} />
+        </pattern>
+        <pattern id="blueTile" patternUnits="objectBoundingBox" width={1} height={1} patternTransform="scale(1.2)">
+          <image href="/assets/blue-tile.png" x={0} y={-0.125} width={2} height={2} />
+        </pattern>
+        <pattern id="greenTile" patternUnits="objectBoundingBox" width={1} height={1} patternTransform="scale(1.2)">
+          <image href="/assets/green-tile.png" x={0} y={-0.125} width={2} height={2} />
+        </pattern>
+        <pattern id="yellowTile" patternUnits="objectBoundingBox" width={1} height={1} patternTransform="scale(1.2)">
+          <image href="/assets/yellow-tile.png" x={0} y={-0.125} width={2} height={2} />
+        </pattern>
+        <pattern id="rootedTile" patternUnits="objectBoundingBox" width={1} height={1} patternTransform="scale(1.2)">
+          <image href="/assets/rooted-tile.png" x={0} y={-0.125} width={2} height={2} />
+        </pattern>
+        <pattern id="selectionTile" patternUnits="objectBoundingBox" width={1} height={1} patternTransform="scale(1.2)">
+          <image href="/assets/selection-tile.png" x={0} y={-0.125} width={2} height={2} />
         </pattern>
       </defs>
       <g transform="translate(0, -1)">{hexes}<HoverOverlay /></g>

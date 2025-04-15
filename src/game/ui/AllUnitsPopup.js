@@ -779,7 +779,7 @@ const AllUnitsPopup = (data) => {
               tooltip: <Tooltip text={i18n.t('wiki.skill.no_distance_values', {chargeQty: '∞', phase: logPhase('move'),endTurn: i18n.t('game.action_ending_turn')})} />
               }}/>&nbsp; {logUnitSkill('notMovedRecover').description}<br />
               {getSimpleSkillTooltip('healOnAttack')}, {getSimpleSkillTooltip('blockStatuses')}<br />
-              <Trans i18nKey="unitSkills.lethalGrab.descriptionTooltip" values={{ unitName: logUnitName('letavica') }} components={{
+              <Trans i18nKey="unitSkills.lethalGrab.descriptionTooltip" values={{ unitName: logUnitName('fekst') }} components={{
                 tooltip: <Tooltip text={i18n.t('unitSkills.lethalGrab.effect', {qty: 1})} />
               }}/>
             </div>

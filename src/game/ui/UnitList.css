@@ -3,8 +3,9 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  background-color: #f2f2f2;
+  background-color: #6b99ad42;
   padding: 10px;
+  color: #d6d9d9;
 }
 
 .unit-section {
@@ -88,10 +89,10 @@
 }
 
 .unit-create-button {
-  background-color: #4b4b4b;
-  color: #fff;
+  border: 1px solid #1e75a5;
+  background-color: #005F6B;
+  color: #f5f5f5;
   padding: 5px 10px;
-  border: none;
   border-radius: 5px;
   cursor: pointer;
   margin-left: auto;
@@ -103,6 +104,7 @@
 .unit-create-button.disabled{
   cursor: not-allowed;
   background-color: #ababab;
+  border: 1px solid #ccccd0;
 }
 
 .unit-create-button.disabled:hover {
@@ -110,7 +112,7 @@
 }
 
 .unit-create-button:hover {
-  background-color: #333;
+  background-color: #008CBA;
 }
 
 .unit-instance-list {
@@ -123,8 +125,7 @@
 }
 
 .unit-instance {
-  background-color: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid #bbc1bc;
   border-radius: 5px;
   padding: 10px;
   margin-bottom: 10px;
@@ -133,22 +134,23 @@
   display: flex;
   flex-direction: column;
   margin-right: 10px;
+  color: white;
 }
 
 .unit-instance:hover{
-  background-color: #e5e5e5;
+  background-color: #008CBA !important;
 }
 
 .unit-instance.in-battle {
-  background-color: #fddede;
+  box-shadow: 0 0 25px #00ff2891;
 }
 
 .unit-instance.already-dead {
-  background-color: #a5a5a5;
+  background-color: #a5a5a5 !important;
 }
 
 .unit-instance.in-sortie {
-  background-color: #89c5b2;
+  box-shadow: 0 0 25px #bb00ff;
 }
 
 .unit-instance h3 {
@@ -177,19 +179,18 @@
 
 .unit-removal {
   padding: 3px 5px;
-  border: 1px solid #999999;
+  border: 2px solid #bbc1bc;
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
   width: 35px;
   text-align: center;
-  color: black;
   margin: auto auto 0 auto;
+  color: white;
 }
 
 .unit-removal:hover {
-  background-color: black;
-  color: white;
+  background-color: #005f6b;
 }
 
 .sortie-add {

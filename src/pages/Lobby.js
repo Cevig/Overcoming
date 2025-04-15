@@ -208,7 +208,7 @@ class Lobby extends Component {
   gameNotFoundView = () => {
     return (
       <>
-        <div>
+        <div style={{ color: "#01b6c6" }}>
           {logGameUi('sorry_no_game')}
           <br />
           <Link to="/">{logGameUi('create_game')}</Link>

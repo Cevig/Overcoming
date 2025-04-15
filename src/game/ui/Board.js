@@ -12,7 +12,6 @@ import {Link} from "react-router-dom";
 import BoardUser from "./BoardUser";
 import BoardLogs from "./BoardLogs";
 import UnitInfoPopup from "./UnitInfoPopup";
-import {UnstablePointsUI} from "./UnstablePointsUI";
 import BoardBuildings from "./BoardBuildings";
 import BattleResults from "./BattleResults";
 import {createPoint, playerColors} from "../helpers/Constants";
@@ -32,9 +31,15 @@ const hexStyle = {
   flexGrow: 1,
   flexBasis: `58%`,
   maxWidth: 1085,
-  backgroundColor: "#39546a"
+  // backgroundColor: "#3f5542",
   // backgroundImage: `url(${Background})`,
   // backgroundColor: "#39546a",
+  // background-color: #6b99ad42;
+  // color: #d6d9d9;
+
+  // border: 1px solid #1e75a5;
+  // background-color: #005F6B;
+  // background-color: #008CBA;
 }
 
 export function Board (props) {
@@ -189,7 +194,10 @@ export function Board (props) {
   if ((props.ctx.phase === "Setup")) {
     colorMapSecret = props.G.players[+props.playerID].grid.colorMap;
   } else {
-    colorMapSecret = props.G.grid.colorMap;
+    colorMapSecret = {...props.G.grid.colorMap};
+    if (props.G.grid.unstablePoints.length > 0) {
+      colorMapSecret['url(#rootedTile)'] = props.G.grid.unstablePoints
+    }
   }
 
   const [isPopupAllUnitsOpen, setIsPopupAllUnitsOpen] = useState(false);
@@ -216,13 +224,6 @@ export function Board (props) {
             style={hexStyle}
             colorMap={colorMapSecret}
             onClick={cellClicked}>
-            {
-              props.G.grid.unstablePoints.map((point, i) => {
-                return <Token x={point.x} y={point.y} z={point.z} key={i+10000} id={i+10000}>
-                  <UnstablePointsUI id={i+10000} />
-                </Token>
-              })
-            }
             {
               getInGameUnits(props.G, (unit) => (props.ctx.phase === "Setup") ? props.playerID && (unit.unitState.playerId === +props.playerID) : true).map((unit, i) => {
                 const { x, y, z } = unit.unitState.point;

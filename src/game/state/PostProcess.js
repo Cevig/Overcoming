@@ -26,7 +26,7 @@ import {
   UnitStatus,
   UnitTypes
 } from '../helpers/Constants';
-import {getColorMap} from "./Setup";
+import {getColorMap, startPositions} from "./Setup";
 import {handleOnMoveActions} from "./GameActions";
 import {createUnitObject} from "../units/Unit";
 import i18n from "i18next";
@@ -76,10 +76,7 @@ export const onBuildingBegin = (G, ctx, events) => {
   G.players.filter(p => p.bioms.length === 0).forEach(p => {
     p.bioms = [getRandomBiom(), getRandomBiom()]
   })
-}
 
-export const onSetupBegin = (G, ctx, events) => {
-  const availableBioms = {...Biom}
   const pBioms = G.players.filter(p => p.isPlayerInGame).flatMap(p => p.bioms)
   const freeBioms =  Object.values(availableBioms).filter(biom => pBioms.find(pBiom => biom === pBiom) === undefined)
   G.players.filter(p => p.isPlayerInGame && !p.isUsedReinforce && p.heals <= 5).forEach(p => {
@@ -95,6 +92,15 @@ export const onSetupBegin = (G, ctx, events) => {
       phase: ctx.phase,
       text: i18n.t('log.reinforcement', {player: p.id+1})
     })
+  })
+}
+
+export const onSetupBegin = (G, ctx, events) => {
+  G.players.filter(p => p.isPlayerInGame).forEach(player => {
+    const availablePoint = startPositions(ctx.numPlayers)[+player.id][0]
+    let unit = player.units.find(u => u.type === UnitTypes.Idol)
+    unit.unitState.point = availablePoint
+    unit.unitState.isInGame = true
   })
 }
 

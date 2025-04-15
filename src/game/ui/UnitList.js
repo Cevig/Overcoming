@@ -3,12 +3,14 @@ import {createUnitObject} from "../units/Unit";
 import {
   Buildings,
   playerColors,
+  playerUnitColors,
   UnitKeywords,
   UnitTypes
 } from "../helpers/Constants";
 import {hasKeyword, logGameUi, logUnitName} from "../helpers/Utils";
 import {withTranslation} from "react-i18next";
 import i18n from "i18next";
+import React from "react";
 
 const UnitList = (data) => {
 
@@ -126,12 +128,14 @@ const UnitList = (data) => {
         <ul className="unit-instance-list">
           {player.units.map((unit) => {
             return (
-              <li className={getSummonedUnitClass(unit)} key={unit.id} onClick={() => data.data.moves.selectNewUnit(unit)}>
-                <h3 style={{color: playerColors[+player.id]}} >{logUnitName(unit.name)} <span onClick={togglePopup.bind(this, unit)} style={{color: "grey", fontSize: 20}}>&#9432;</span></h3>
+              <li className={getSummonedUnitClass(unit)} key={unit.id} style={{backgroundColor: playerUnitColors[+unit.unitState.playerId]}} onClick={() => data.data.moves.selectNewUnit(unit)}>
+                <h3>{logUnitName(unit.name)} <span onClick={togglePopup.bind(this, unit)} style={{color: "white", fontSize: 20}}>&#9432;</span></h3>
                 <div className="unit-stars">
                   {unit.level !== undefined ? renderStars(unit.level) : ""}
                 </div>
-                <div className="unit-removal" onClick={() => data.data.moves.sellUnit(unit)} dangerouslySetInnerHTML={{ __html: `${unit.price}✾` }}></div>
+                {unit.price > 0 ? (
+                  <div className="unit-removal" onClick={() => data.data.moves.sellUnit(unit)} dangerouslySetInnerHTML={{ __html: `${unit.price}✾` }}></div>
+                ): (<></>)}
               </li>
             );
           })}
@@ -158,7 +162,7 @@ const UnitList = (data) => {
     }
     else {
       isDisable = player.units.filter(u => u.type !== UnitTypes.Idol).length >= 6
-      price = unit.price + (player.units.filter(u => u.type === unit.type).length * 2) + unit.level-1
+      price = unit.price + (player.units.filter(u => u.type === unit.type && u.price > 0).length * 2) + unit.level-1
       if (hasKeyword(unit, UnitKeywords.LowCost)) {
         price = 3;
       }

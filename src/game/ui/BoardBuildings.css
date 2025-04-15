@@ -64,9 +64,9 @@
 }
 
 .building-info-buy {
-  background-color: #008CBA;
-  border: none;
-  color: #fff;
+  border: 1px solid #1e75a5;
+  background-color: #005F6B;
+  color: #f5f5f5;
   padding: 10px 20px;
   border-radius: 5px;
   cursor: pointer;
@@ -79,10 +79,11 @@
 .building-info-buy.disabled{
   cursor: not-allowed;
   background-color: #8a9497;
+  border: 1px solid #ccccd0;
 }
 
 .building-info-buy:hover {
-  background-color: #005F6B;
+  background-color: #008CBA;
 }
 
 .building-info-buy.disabled:hover {
@@ -90,7 +91,7 @@
 }
 
 .buildings-divide{
-  border: 3px solid white;
+  border: 3px solid #005f6b;
 }
 
 .results-p-container{

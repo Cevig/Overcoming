@@ -364,7 +364,7 @@
     },
     "unfocusedAura": {
       "name": "Аура розгубленості",
-      "description": "Ворожі істоти поруч (у радіусі 1) отримують {{status}} -> {{statusEffect}}",
+      "description": "Ворожі істоти поруч (у радіусі 1) отримують {{status}} ⇒ {{statusEffect}}",
       "descriptionTooltip": "Ворожі істоти отримують статус <tooltip>{{status}}</tooltip>",
       "effect": "Діє на ворожих істот у радіусі 1"
     },
@@ -380,7 +380,7 @@
     },
     "lethalBlow": {
       "name": "Вибух Жаху",
-      "description": "При смерті роззброює ворожі істоти у радіусі 1 -> {{statusEffect}}",
+      "description": "При смерті роззброює ворожі істоти у радіусі 1 ⇒ {{statusEffect}}",
       "descriptionTooltip": "При смерті <tooltip>роззброює</tooltip> ворожі істоти у радіусі 1",
       "effect": "Накладає статус {{status}} - {{statusEffect}}"
     },
@@ -433,7 +433,7 @@
     },
     "replaceUnits": {
       "name": "Поміняти місцями",
-      "description": "Поміняти місцями союзну та ворожу істоту, що стоять поруч",
+      "description": "Поміняти місцями союзного та ворожого юніта, що стоять поруч",
       "descriptionTooltip": "може поміняти місцями поруч розташованих союзну та ворожого юніта (окрім Ідола), ІГНОРУЮЧИ <tooltip>ЗК</tooltip>"
     },
     "pauseToRecover": {

@@ -1,9 +1,16 @@
 export const playerColors = [
   '#e72828',
-  '#3867f9',
+  '#7194ff',
   '#2ecb00',
   '#ffc107'
 ];
+
+export const playerUnitColors = [
+  '#753232',
+  '#354f7d',
+  '#058726',
+  '#cfa012',
+]
 
 export const createPoint = (...pos) => {
   const [x, y, z] = pos;
