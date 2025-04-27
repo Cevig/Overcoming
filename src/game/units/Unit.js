@@ -9,7 +9,7 @@ import {UWater} from "./Water";
 import {UMash} from "./Mash";
 import {UGeysers} from "./Geysers";
 
-export const getCreature = (name, type, biom, id, power, heals, initiative, level, unitState, abilities = JSON.parse(JSON.stringify(UnitAbilities)), price = 3, status = []) => ({
+export const getCreature = (name, type, biom, id, power, heals, initiative, level, unitState, abilities = structuredClone(UnitAbilities), price = 3, status = []) => ({
   id: id,
   name: name,
   type: type,
@@ -24,7 +24,7 @@ export const getCreature = (name, type, biom, id, power, heals, initiative, leve
   status: status
 })
 
-export const getIdol = (name, biom, id, power, heals, initiative, unitState, abilities = JSON.parse(JSON.stringify(UnitAbilities)), status = []) => ({
+export const getIdol = (name, biom, id, power, heals, initiative, unitState, abilities = structuredClone(UnitAbilities), status = []) => ({
   id: id,
   name: name,
   type: UnitTypes.Idol,

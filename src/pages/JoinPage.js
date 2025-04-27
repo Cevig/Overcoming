@@ -1,46 +1,45 @@
-import React, {Component} from "react";
+import React, {useState} from "react";
 import TemplatePage from "./TemplatePage";
 import "./styles/joinPage.css";
 import {logGameUi} from "../game/helpers/Utils";
-import {withTranslation} from "react-i18next";
+import {useHistory} from "react-router-dom";
 
-class JoinPage extends Component {
-  state = { id: "0000" };
-  handleSubmit = () => {
-    //Route to page
-    const history = this.props.history;
-    history.push("/lobby/" + this.state.id);
+const JoinPage = () => {
+  const [gameId, setGameId] = useState("0000");
+  const history = useHistory();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    history.push(`/lobby/${gameId}`);
   };
-  handleChange = (event) => {
-    this.setState({
-      id: event.target.value,
-    });
+
+  const handleChange = (event) => {
+    setGameId(event.target.value);
   };
-  render() {
-    return (
-      <TemplatePage
-        content={
-          <>
+
+  return (
+    <TemplatePage
+      content={
+        <>
           {logGameUi('join_via_code')}:
-            <form onSubmit={this.handleSubmit}>
-              <input
-                type="text"
-                className="game-code-tb"
-                value={this.state.id}
-                onChange={this.handleChange}
-              />
-              <br />
-              <input
-                type="submit"
-                value={logGameUi('lets_go')}
-                className="game-code-submit"
-              />
-            </form>
-          </>
-        }
-      />
-    );
-  }
-}
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              className="game-code-tb"
+              value={gameId}
+              onChange={handleChange}
+            />
+            <br />
+            <input
+              type="submit"
+              value={logGameUi('lets_go')}
+              className="game-code-submit"
+            />
+          </form>
+        </>
+      }
+    />
+  );
+};
 
-export default withTranslation()(JoinPage);
+export default JoinPage;

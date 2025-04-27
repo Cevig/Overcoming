@@ -362,7 +362,7 @@ export const handleUnitDeath = (data, target, killer = null, isFallDown = false)
     turn: ctx.turn,
     player: +ctx.currentPlayer,
     phase: ctx.phase,
-    text: i18n.t('log.unit_killed', {unitName: logUnitName(target.name), player: +target.unitState.playerId+1}),
+    text: i18n.t('log.unit_killed', {unitName: logUnitName(target.name), player: G.players[target.unitState.playerId].name}),
   })
 
   const unitsWithOnDeath = getInGameUnits(G, unit => unit.abilities.onDeath.length)
@@ -382,14 +382,15 @@ export const handleUnitDeath = (data, target, killer = null, isFallDown = false)
     let essence = target.level ? 3+((target.level-1)*2) : 3
     if (target.type === UnitTypes.Idol) essence += 2;
     if (hasKeyword(killer, UnitKeywords.AdditionalEssence)) essence += 2;
-    G.players[killer.unitState.playerId].essence += essence;
-    G.players[killer.unitState.playerId].killedUnits++;
+    let killingPlayer = G.players[killer.unitState.playerId]
+    killingPlayer.essence += essence;
+    killingPlayer.killedUnits++;
     G.serverMsgLog.push({
       id: Math.random().toString(10).slice(2),
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: i18n.t('log.receive_essence', {qty: essence, player: +killer.unitState.playerId+1}),
+      text: i18n.t('log.receive_essence', {qty: essence, player: killingPlayer.name}),
     })
   }
   if (isFallDown) {
@@ -401,7 +402,7 @@ export const handleUnitDeath = (data, target, killer = null, isFallDown = false)
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: i18n.t('log.loose_essence', {qty: 2, player: +player.id+1}),
+        text: i18n.t('log.loose_essence', {qty: 2, player: player.name}),
       })
     }
   }
@@ -461,7 +462,7 @@ export const handleUnitMove = (G, ctx, unitId, point) => {
       turn: ctx.turn,
       player: thisUnit.unitState.playerId,
       phase: ctx.phase,
-      text: i18n.t('log.receive_gift', {qty: essence, player: thisPlayer.id+1}),
+      text: i18n.t('log.receive_gift', {qty: essence, player: thisPlayer.name}),
     })
     thisPlayer.essence += essence;
     G.grid.essencePoints = G.grid.essencePoints.filter(isNotSame(thisUnit.unitState.point))
@@ -532,24 +533,24 @@ export const calculateSortie = (G, p1) => {
     const pamyatnickEp = ep.houses.find(h => h.name === Buildings.Pamjatnuk.name)
     if (pUnits.length - epUnits.length >= 2) {
       if (pamyatnickEp) {
-        results.push({playerId: ep.id, type: SortieTypes.Y})
+        results.push({player: ep, type: SortieTypes.Y})
       } else {
-        results.push({playerId: ep.id, type: SortieTypes.A})
+        results.push({player: ep, type: SortieTypes.A})
       }
     } else if (pUnits.length - epUnits.length > 0) {
       if (pamyatnickEp) {
-        results.push({playerId: ep.id, type: SortieTypes.Y})
+        results.push({player: ep, type: SortieTypes.Y})
       } else {
-        results.push({playerId: ep.id, type: SortieTypes.B})
+        results.push({player: ep, type: SortieTypes.B})
       }
     } else if (pUnits.length - epUnits.length === 0) {
-      results.push({playerId: ep.id, type: SortieTypes.C})
+      results.push({player: ep, type: SortieTypes.C})
     } else if (p1.houses.find(h => h.name === Buildings.Pamjatnuk.name) !== undefined) {
-      results.push({playerId: ep.id, type: SortieTypes.X})
+      results.push({player: ep, type: SortieTypes.X})
     } else if (epUnits.length - pUnits.length >= 2) {
-      results.push({playerId: ep.id, type: SortieTypes.E})
+      results.push({player: ep, type: SortieTypes.E})
     } else if (epUnits.length - pUnits.length > 0) {
-      results.push({playerId: ep.id, type: SortieTypes.D})
+      results.push({player: ep, type: SortieTypes.D})
     }
   })
   return results

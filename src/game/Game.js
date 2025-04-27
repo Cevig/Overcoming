@@ -24,6 +24,7 @@ import {
 } from "./helpers/Utils";
 import {GAME_NAME} from "../config";
 import {TurnOrder} from "boardgame.io/core";
+import {PluginPlayer} from 'boardgame.io/plugins';
 
 export const Overcoming = {
   name: GAME_NAME,
@@ -31,7 +32,7 @@ export const Overcoming = {
   moves,
   phases: {
     Building: {
-      onBegin: ({ G, ctx, events }) => { onBuildingBegin(G, ctx, events) },
+      onBegin: ({ G, ctx }) => { onBuildingBegin(G, ctx) },
       turn: {
         activePlayers: {
           all: { stage: 'purchase' }
@@ -39,6 +40,7 @@ export const Overcoming = {
         stages: {
           purchase: {
             moves: {
+              syncPlayerName: { move: moves.syncPlayerNameMove, noLimit: true },
               buyHouse: { move: moves.buyHouseMove, noLimit: true },
               sellHouse: { move: moves.sellHouseMove, noLimit: true },
               summonUnit: { move: moves.summonUnit, noLimit: true },
@@ -315,5 +317,8 @@ export const Overcoming = {
     }
   },
   endIf: ({ G, ctx }) => (handleGameOver(G, ctx)),
-  onEnd: ({ G, ctx }) => { onGameOver(G, ctx) }
+  onEnd: ({ G, ctx }) => { onGameOver(G, ctx) },
+  plugins: [
+    PluginPlayer({})
+  ],
 };

@@ -70,7 +70,7 @@ class BoardUser extends React.Component {
         }
         {(props.ctx.phase !== 'Setup' && props.ctx.phase !== 'Building') ?
           <div style={{textAlign: "center", color: playerColors[+props.ctx.currentPlayer], fontSize: 24, marginTop: 15}}>
-            <span style={{color: "#bbc1bc"}}>{t('game.turn')}:</span> {t('game.player', {number: player ? player.id + 1 : t('game.unknown')})}
+            <span style={{color: "#bbc1bc"}}>{t('game.turn')}:</span> {player.name}
           </div>
           : <></>
         }

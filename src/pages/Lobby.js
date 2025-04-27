@@ -1,13 +1,10 @@
-import React, {Component} from "react";
-import {Link} from "react-router-dom";
+import React from "react";
+import {Link, useParams} from "react-router-dom";
 import {SocketIO} from "boardgame.io/multiplayer";
 import {Client} from "boardgame.io/react";
 
 // Styles
 import "./styles/lobby.css";
-
-// API Helper
-import {LobbyAPI} from "../api";
 
 // Components
 import {Overcoming} from "../game/Game";
@@ -16,118 +13,58 @@ import TemplatePage from "./TemplatePage";
 
 // Constants
 import {APP_PRODUCTION, GAME_SERVER_URL, WEB_SERVER_URL} from "../config.js";
-import {
-  getPlayersNumber,
-  logGameUi,
-  logPlayerName,
-  setPlayerNumber
-} from "../game/helpers/Utils";
+import {getPlayersNumber, logGameUi} from "../game/helpers/Utils";
 
-const api = new LobbyAPI();
+// Hooks
+import {useLobby} from "../hooks/useLobby";
+
+// Configure the game client
 const server = APP_PRODUCTION
   ? `https://${window.location.hostname}`
   : GAME_SERVER_URL;
+
 const GameClient = Client({
   game: Overcoming,
   board: Board,
   multiplayer: SocketIO({
     server: server,
   }),
+  debug: false,
 });
-class Lobby extends Component {
-  state = {};
-  constructor(props) {
-    super(props);
-    console.log("construct");
-    this.state.id = props.match.params.id;
-    this.state.joined = [];
-    this.state.myID = null;
-    this.state.userAuthToken = null;
-  }
-  componentDidMount() {
-    this.checkRoomStateAndJoin();
-    this.interval = setInterval(this.checkRoomState, 2000);
-    window.addEventListener("beforeunload", this.cleanup.bind(this));
-  }
-  cleanup() {
-    console.log("cleaning up");
-    api.leaveRoom(this.state.id, this.state.myID, this.state.userAuthToken);
-    if(this.interval) clearInterval(this.interval);
-  }
-  componentWillUnmount() {
-    window.removeEventListener("beforeunload", this.cleanup.bind(this));
-  }
-  joinRoom = (player_no) => {
-    const username = logPlayerName(player_no+1);
-    if (this.state.id) {
-      const metadata = (Math.random() + 1).toString(36).substring(7);
-      api.joinRoom(this.state.id, username, player_no, metadata).then(
-        (authToken) => {
-          sessionStorage.setItem(`metadata-${player_no}`, metadata);
-          console.log("Joined room as player ", player_no);
-          this.setState({ myID: player_no, userAuthToken: authToken });
-          sessionStorage.setItem(`localAuth-${player_no}`, authToken);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    }
-  };
-  checkRoomStateAndJoin = () => {
-    console.log("pinging room endpoint to check who is there...");
-    if (this.state.id) {
-      api.whoIsInRoom(this.state.id).then(
-        (players) => {
-          const joinedPlayers = players.filter((p) => p.name);
-          this.setState({
-            joined: joinedPlayers,
-          });
-          const notOrderedPlayer = [...Array(joinedPlayers.length).keys()].find(i => !joinedPlayers.some(p => p.id === i));
 
-          const metadataConnectionPlayer = players.find(p => [...Array(players.length).keys()].some(id => p.data === sessionStorage.getItem(`metadata-${id}`)))
+const Lobby = () => {
+  const { id } = useParams();
+  const {
+    joined,
+    myID,
+    userAuthToken,
+    playerName,
+    setPlayerName,
+    nameSubmitted,
+    setNameSubmitted,
+    copied,
+    lobbyExists,
+    gameLinkBoxRef,
+    joinRoom,
+    copyToClipboard,
+    clearPollInterval
+  } = useLobby(id);
 
-          if (metadataConnectionPlayer !== undefined) { //) && (metadataConnectionPlayer.isConnected === true)
-            api.leaveRoom(this.state.id, metadataConnectionPlayer.id, sessionStorage.getItem(`localAuth-${metadataConnectionPlayer.id}`));
-          }
-          const myPlayerNum = metadataConnectionPlayer !== undefined ? metadataConnectionPlayer.id : (notOrderedPlayer !== undefined) ? notOrderedPlayer : joinedPlayers.length;
-          setPlayerNumber(players.length)
-          this.joinRoom(myPlayerNum);
-        },
-        (error) => {
-          console.log("room does not exist");
-          this.setState({
-            id: null,
-          });
-        }
-      );
+  const handleNameSubmit = (e) => {
+    e.preventDefault();
+    if (playerName.trim()) {
+      joinRoom(myID, playerName.trim());
     }
   };
-  checkRoomState = () => {
-    if (this.state.id) {
-      api.whoIsInRoom(this.state.id).then(
-        (players) => {
-          const joinedPlayers = players.filter((p) => p.name);
-          this.setState({
-            joined: joinedPlayers,
-          });
-        },
-        (error) => {
-          console.log("room does not exist");
-          this.setState({
-            id: null,
-          });
-        }
-      );
-    }
-  };
-  getPlayerItem = (player) => {
+
+  // Player item component
+  const PlayerItem = ({ player }) => {
     if (player) {
-      if (player.id === this.state.myID) {
+      if (player.id === myID) {
         return (
           <div>
             <div className="player-item">
-              {logPlayerName(player.id+1)} - {logGameUi('you')}
+              {player.name} - {logGameUi('you')}
               <div className="player-ready"></div>
             </div>
           </div>
@@ -136,7 +73,7 @@ class Lobby extends Component {
         return (
           <div>
             <div className="player-item">
-              {logPlayerName(player.id+1)}
+              {player.name}
               <div className="player-ready"></div>
             </div>
           </div>
@@ -153,49 +90,56 @@ class Lobby extends Component {
       );
     }
   };
-  copyToClipboard = () => {
-    var textField = document.createElement("textarea");
-    textField.innerText = this.gameLinkBox.innerText;
-    textField.style.opacity = "0";
-    document.body.appendChild(textField);
-    textField.select();
-    document.execCommand("copy");
-    textField.remove();
-    this.setState({ copied: true });
-    setTimeout(
-      function () {
-        this.setState({ copied: false });
-      }.bind(this),
-      2000
-    );
-  };
-  gameExistsView = () => {
+
+  // Game exists view
+  const GameExistsView = () => {
     const players = [...Array(getPlayersNumber()).keys()];
-    const server = APP_PRODUCTION
+    const serverUrl = APP_PRODUCTION
       ? `https://${window.location.hostname}`
       : WEB_SERVER_URL;
+
     return (
       <>
         <div>{logGameUi('invite_friends')}:</div>
         <div className="game-link">
           <div
             className="game-link-box"
-            ref={(gameLinkBox) => (this.gameLinkBox = gameLinkBox)}
+            ref={gameLinkBoxRef}
           >
-            {`${server}/lobby/${this.state.id}`}
+            {`${serverUrl}/lobby/${id}`}
           </div>
-          <div className="game-link-button" onClick={this.copyToClipboard}>
-            {this.state.copied ? logGameUi('ready')+"!" : " "+logGameUi('copy')+" "}
+          <div className="game-link-button" onClick={copyToClipboard}>
+            {copied ? logGameUi('ready') + "!" : " " + logGameUi('copy') + " "}
           </div>
         </div>
         <div>
           {logGameUi('game_code')}
-          <br /> <div className="game-code">{this.state.id}</div>
+          <br /> <div className="game-code">{id}</div>
         </div>
+
+        {myID !== null && !nameSubmitted && (
+          <div className="name-form-container">
+            <form onSubmit={handleNameSubmit}>
+              <div>{logGameUi('enter_name')}:</div>
+              <input
+                type="text"
+                value={playerName || sessionStorage.getItem(`bgio-userName${myID}`)}
+                onChange={(e) => setPlayerName(e.target.value)}
+                className="player-name-input"
+                placeholder={logGameUi('your_name')}
+                autoFocus
+              />
+              <button type="submit" className="game-link-button">
+                {logGameUi('go_to')}
+              </button>
+            </form>
+          </div>
+        )}
+
         <div className="player-list">
           {players.map((p) => {
-            const joinedPlayer = this.state.joined[p];
-            return this.getPlayerItem(joinedPlayer);
+            const joinedPlayer = joined[p];
+            return <PlayerItem key={p} player={joinedPlayer} />;
           })}
         </div>
         <div>
@@ -205,39 +149,38 @@ class Lobby extends Component {
       </>
     );
   };
-  gameNotFoundView = () => {
-    return (
-      <>
-        <div style={{ color: "#01b6c6" }}>
-          {logGameUi('sorry_no_game')}
-          <br />
-          <Link to="/">{logGameUi('create_game')}</Link>
-        </div>
-      </>
-    );
-  };
-  getGameClient = () => {
+
+  // Game not found view
+  const GameNotFoundView = () => (
+    <div style={{ color: "#01b6c6" }}>
+      {logGameUi('sorry_no_game')}
+      <br />
+      <Link to="/">{logGameUi('create_game')}</Link>
+    </div>
+  );
+
+  // Render game client when all players have joined
+  if (joined.length === getPlayersNumber()) {
+    clearPollInterval();
     return (
       <GameClient
-        matchID={this.state.id}
-        playerID={String(this.state.myID)}
-        credentials={this.state.userAuthToken}
-      ></GameClient>
-    );
-  };
-  render() {
-    if (this.state.joined.length === getPlayersNumber()) {
-      if(this.interval) clearInterval(this.interval);
-      return this.getGameClient();
-    }
-    return (
-      <TemplatePage
-        content={
-          this.state.id ? this.gameExistsView() : this.gameNotFoundView()
-        }
+        matchID={id}
+        playerID={String(myID)}
+        credentials={userAuthToken}
+        matchData={[playerName]}
+        debug={false}
       />
     );
   }
-}
+
+  // Render lobby
+  return (
+    <TemplatePage
+      content={
+        lobbyExists ? <GameExistsView /> : <GameNotFoundView />
+      }
+    />
+  );
+};
 
 export default Lobby;

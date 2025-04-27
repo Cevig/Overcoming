@@ -4,10 +4,12 @@ import {
   essencePoints,
   playerColors
 } from "../helpers/Constants";
+import {logPlayerName} from "../helpers/Utils";
 
-const createPlayer = (id, name, allPlayersNum) => ({
+const createPlayer = (id, allPlayersNum) => ({
   id,
-  name,
+  name: logPlayerName(id+1),
+  isNameSet: false,
   units: [],
   bioms: [],
   isPlayerInBattle: false,
@@ -60,7 +62,7 @@ export const getColorMap = (allPlayersNum) => {
 
 export const setup = ({ ctx }) => ({
   currentUnit: null,
-  players: [...Array(ctx.numPlayers).keys()].map(num => createPlayer(num, `Player ${num+1}`, ctx.numPlayers)),
+  players: [...Array(ctx.numPlayers).keys()].map(num => createPlayer(num, ctx.numPlayers)),
   grid: {
     levels: ctx.numPlayers === 2 ? 3 : 4,
     colorMap: getColorMap(ctx.numPlayers),

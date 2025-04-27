@@ -48,7 +48,7 @@ const setColorMap = (G, ctx, playerID) => {
   }
 };
 
-export const onBuildingBegin = (G, ctx, events) => {
+export const onBuildingBegin = (G, ctx) => {
   G.players.filter(p => p.isPlayerInGame).forEach(p => {
     p.houses.forEach(h => {
       if (h.name === Buildings.Svjatulushe.name) {
@@ -58,7 +58,7 @@ export const onBuildingBegin = (G, ctx, events) => {
           turn: ctx.turn,
           player: +ctx.currentPlayer,
           phase: ctx.phase,
-          text: i18n.t('log.svjatulushe_impact', {player: p.id+1, building: logBuilding("svjatulushe").name}),
+          text: i18n.t('log.svjatulushe_impact', {player: p.name, building: logBuilding("svjatulushe").name}),
         })
       }
     })
@@ -90,7 +90,7 @@ export const onBuildingBegin = (G, ctx, events) => {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: i18n.t('log.reinforcement', {player: p.id+1})
+      text: i18n.t('log.reinforcement', {player: p.name})
     })
   })
 }
@@ -333,7 +333,7 @@ export const handleSortieRewards = (G, events, ctx) => {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: i18n.t('log.sortie_impact', {player: p.id+1, qty: essence})
+        text: i18n.t('log.sortie_impact', {player: p.name, qty: essence})
       })
     }
   })

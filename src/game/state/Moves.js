@@ -530,7 +530,7 @@ export const moves = {
         turn: ctx.turn,
         player: +playerID,
         phase: ctx.phase,
-        text: i18n.t('log.finished_building', {player: +playerID+1}),
+        text: i18n.t('log.finished_building', {player: player.name}),
       })
       events.setStage('finishBuildingStage')
     } else {
@@ -539,7 +539,7 @@ export const moves = {
         turn: ctx.turn,
         player: +playerID,
         phase: ctx.phase,
-        text: i18n.t('log.incomplete_building', {player: +playerID+1, unit: logUnitName('idol')}),
+        text: i18n.t('log.incomplete_building', {player: player.name, unit: logUnitName('idol')}),
       })
     }
   },
@@ -551,7 +551,7 @@ export const moves = {
       turn: ctx.turn,
       player: +playerID,
       phase: ctx.phase,
-      text: i18n.t('log.back_to_building', {player: +playerID+1}),
+      text: i18n.t('log.back_to_building', {player: G.players[+playerID].name}),
     })
     events.setStage('purchase')
   },
@@ -565,7 +565,7 @@ export const moves = {
       turn: ctx.turn,
       player: +playerID,
       phase: ctx.phase,
-      text: i18n.t('log.back_to_setup', {player: +playerID+1}),
+      text: i18n.t('log.back_to_setup', {player: G.players[+playerID].name}),
     })
     events.setStage('pickUnit')
   },
@@ -589,7 +589,7 @@ export const moves = {
         turn: ctx.turn,
         player: +playerID,
         phase: ctx.phase,
-        text: i18n.t('log.complete_positioning', {player: +playerID+1}),
+        text: i18n.t('log.complete_positioning', {player: player.name}),
       })
       events.setStage('finishSetupStage')
     } else {
@@ -598,7 +598,7 @@ export const moves = {
         turn: ctx.turn,
         player: +playerID,
         phase: ctx.phase,
-        text: i18n.t('log.incomplete_positioning', {player: +playerID+1, unit: logUnitName('idol')}),
+        text: i18n.t('log.incomplete_positioning', {player: player.name, unit: logUnitName('idol')}),
       })
     }
   },
@@ -1123,6 +1123,11 @@ export const moves = {
 
   ///////////////////////////////////////////////////////////
 
+  syncPlayerNameMove: ({ G, playerID }, matchData) => {
+    G.players[+playerID].isNameSet = true
+    G.players[+playerID].name = matchData[+playerID].name || logPlayerName(+playerID+1)
+  },
+
   buyHouseMove: ({ G, ctx, events, playerID }, house) => {
     const player = G.players.find(p => p.id === +playerID);
     player.essence = player.essence - getHousePrice(house, player)
@@ -1144,7 +1149,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: i18n.t('log.leave', {player: logPlayerName(player.id+1)}),
+      text: i18n.t('log.leave', {player: player.name}),
     })
 
     cleanPlayer(player)
@@ -1164,7 +1169,7 @@ export const moves = {
       turn: ctx.turn,
       player: +ctx.currentPlayer,
       phase: ctx.phase,
-      text: i18n.t('log.dmg', {player: thisPlayer.id+1, qty: dmg, enemy: enemyPlayer.id+1}),
+      text: i18n.t('log.dmg', {player: thisPlayer.name, qty: dmg, enemy: enemyPlayer.name}),
     })
 
     if (enemyPlayer.houses.find(h => h.name === Buildings.Zmicnenja.name)) {
@@ -1182,7 +1187,7 @@ export const moves = {
         turn: ctx.turn,
         player: +ctx.currentPlayer,
         phase: ctx.phase,
-        text: i18n.t('log.lost', {player: logPlayerName(enemyPlayer.id+1)}),
+        text: i18n.t('log.lost', {player: enemyPlayer.name}),
       })
 
       cleanPlayer(enemyPlayer)

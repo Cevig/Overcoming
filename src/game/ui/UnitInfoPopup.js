@@ -181,7 +181,12 @@ const UnitInfoPopup = (props) => {
         <div className="popup-content">
           <div className="popup-main-info">
             <div className="creature-image">
-              <img width="190" src={unitImgMap(infoUnit.name)} alt={logUnitName(infoUnit.name)} />
+              <img
+                width="190"
+                src={unitImgMap(infoUnit.name)}
+                alt={logUnitName(infoUnit.name)}
+                loading="eager"
+              />
             </div>
             <div className="creature-info">
               <div className="creature-name">{logUnitName(infoUnit.name)}</div>

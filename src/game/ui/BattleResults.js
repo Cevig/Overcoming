@@ -4,7 +4,6 @@ import {
   calculateSortie,
   logBuilding,
   logGameUi,
-  logPlayerName,
   logUnitName
 } from "../helpers/Utils";
 import i18n from "../../i18n";
@@ -52,7 +51,7 @@ const BattleResults = (props) => {
           {calculateSortie(data.G, p).map((res, i) => {
             return (
               <div style={{marginBottom: 10}}>
-                <div style={{color: playerColors[res.playerId], fontSize: 16}}>{logPlayerName(res.playerId+1)}:</div>
+                <div style={{color: playerColors[res.player.id], fontSize: 16}}>{player.name}:</div>
                 <div style={{fontSize: 16}}>{i18n.t('sortieTypes.'+res.type)}</div>
               </div>
             )
@@ -83,7 +82,7 @@ const BattleResults = (props) => {
         {data.G.players.filter(p => p.isPlayerInGame).map((p, i) => {
           return (
             <div key={Math.random().toString(10).slice(2)}>
-              <div style={{color: playerColors[p.id]}} className="results-p-name">{logPlayerName(p.id+1)}</div>
+              <div style={{color: playerColors[p.id]}} className="results-p-name">{p.name}</div>
               <div className="player-info" style={{fontSize: 24}}>
                 <div><span style={{color: "red"}}>{p.heals}&hearts;</span> [<span>{p.essence}✾</span>]</div>
                 <div>{logGameUi('player_won')} {p.wins}</div>

@@ -4,7 +4,6 @@ import {
   getInGameUnits,
   isSame,
   logGameUi,
-  logPlayerName,
   setEnemyMarks
 } from '../helpers/Utils';
 import {motion} from 'framer-motion';
@@ -190,6 +189,9 @@ export function Board (props) {
     }
   }
 
+  if (!props.G.players[+props.playerID].isNameSet && props.matchData) {
+    props.moves.syncPlayerName(props.matchData);
+  }
   let colorMapSecret = {}
   if ((props.ctx.phase === "Setup")) {
     colorMapSecret = props.G.players[+props.playerID].grid.colorMap;
@@ -259,7 +261,7 @@ export function Board (props) {
               transition={{ duration: 0.5 }}
             >
               <div className="winner-popup">
-                <h2>{logGameUi('congrats')} {props.G.winner === -1 ? logGameUi('its_draw') : <span style={{color: playerColors[props.G.winner.id]}}>{logPlayerName(props.G.players.find(p => p.id === props.G.winner.id).id+1)}</span>}!</h2>
+                <h2>{logGameUi('congrats')} {props.G.winner === -1 ? logGameUi('its_draw') : <span style={{color: playerColors[props.G.winner.id]}}>{props.G.players.find(p => p.id === props.G.winner.id).name}</span>}!</h2>
                 <p>{logGameUi('you_won')}</p>
                 {props.isMultiplayer ?
                   <div className="btn btn-primary"><Link to={"/"}>{logGameUi('new_game')}</Link></div> :

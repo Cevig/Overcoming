@@ -1,107 +1,83 @@
-import React, {Component} from "react";
+import React from "react";
 import "./styles/homePage.css";
 import {LobbyAPI} from "../api";
 import TemplatePage from "./TemplatePage";
 import {setPlayerNumber} from "../game/helpers/Utils";
-import i18n from "../i18n";
-import {withTranslation} from "react-i18next";
+import {useTranslation} from "react-i18next";
+import {useHistory} from "react-router-dom";
+import {useMenuPage} from "../hooks/useMenuPage";
 
-const info_texts = () => {
-  return {
-    start2: i18n.t('game.create_for_players', {qty: 2}),
-    start3: i18n.t('game.create_for_players', {qty: 3}),
-    start4: i18n.t('game.create_for_players', {qty: 4})
-  }
-};
 const api = new LobbyAPI();
-class SelectPlayersNumberPage extends Component {
-  state = {
-    text: "",
-    loading: false,
-    redirect: null,
+
+const SelectPlayersNumberPage = () => {
+  const { t } = useTranslation();
+  const history = useHistory();
+
+  const infoTexts = {
+    start2: t('game.create_for_players', {qty: 2}),
+    start3: t('game.create_for_players', {qty: 3}),
+    start4: t('game.create_for_players', {qty: 4})
   };
-  hoverIn = (src) => {
-    let infoText = "";
-    if (Object.keys(info_texts()).includes(src)) {
-      infoText = info_texts()[src];
-    } else {
-      console.log("Unrecognized key for info_text");
+
+  const { text, loading, setLoading, handleHoverIn, handleHoverOut } = useMenuPage(infoTexts);
+
+  const createGame = async (num) => {
+    if (loading) return;
+
+    try {
+      setLoading(true);
+      setPlayerNumber(num);
+      const roomID = await api.createRoom(num);
+      console.log("Created room with roomID = ", roomID);
+      history.push("/lobby/" + roomID);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
     }
-    this.setState({
-      text: infoText,
-    });
   };
-  hoverOut = () => {
-    this.setState({
-      text: "",
-    });
-  };
-  createGame = (num) => {
-    console.log("createGame");
-    if (this.state.loading) {
-      return;
-    } else {
-      this.setState({
-        loading: true,
-      });
-    }
-    setPlayerNumber(num)
-    api.createRoom(num).then(
-      (roomID) => {
-        const history = this.props.history;
-        console.log("Created room with roomID = ", roomID);
-        this.setState({ loading: false });
-        history.push("/lobby/" + roomID);
-      },
-      (err) => {
-        console.log(err);
-        this.setState({ loading: false });
-      }
-    );
-  };
-  render() {
-    return (
-      <TemplatePage
-        content={
-          <>
-            <div className="menu-cards">
-              <div
-                className="card start"
-                onMouseEnter={() => this.hoverIn("start2")}
-                onMouseLeave={() => this.hoverOut()}
-                onClick={() => this.createGame(2)}
-              >
-                <div className="card-inside">
-                  <h1>{i18n.t('game.qty_players',{qty: 2})}</h1>
-                </div>
-              </div>
-              <div
-                className="card join"
-                onMouseEnter={() => this.hoverIn("start3")}
-                onMouseLeave={() => this.hoverOut()}
-                onClick={() => this.createGame(3)}
-              >
-                <div className="card-inside">
-                  <h1>{i18n.t('game.qty_players',{qty: 3})}</h1>
-                </div>
-              </div>
-              <div
-                className="card other"
-                onMouseEnter={() => this.hoverIn("start4")}
-                onMouseLeave={() => this.hoverOut()}
-                onClick={() => this.createGame(4)}
-              >
-                <div className="card-inside">
-                  <h1>{i18n.t('game.qty_players',{qty: 4})}</h1>
-                </div>
+
+  return (
+    <TemplatePage
+      content={
+        <>
+          <div className="menu-cards">
+            <div
+              className="card start"
+              onMouseEnter={() => handleHoverIn("start2")}
+              onMouseLeave={handleHoverOut}
+              onClick={() => createGame(2)}
+            >
+              <div className="card-inside">
+                <h1>{t('game.qty_players', {qty: 2})}</h1>
               </div>
             </div>
-            <div id="menu-description">{this.state.text}</div>
-          </>
-        }
-      />
-    );
-  }
-}
+            <div
+              className="card join"
+              onMouseEnter={() => handleHoverIn("start3")}
+              onMouseLeave={handleHoverOut}
+              onClick={() => createGame(3)}
+            >
+              <div className="card-inside">
+                <h1>{t('game.qty_players', {qty: 3})}</h1>
+              </div>
+            </div>
+            <div
+              className="card other"
+              onMouseEnter={() => handleHoverIn("start4")}
+              onMouseLeave={handleHoverOut}
+              onClick={() => createGame(4)}
+            >
+              <div className="card-inside">
+                <h1>{t('game.qty_players', {qty: 4})}</h1>
+              </div>
+            </div>
+          </div>
+          <div id="menu-description">{text}</div>
+        </>
+      }
+    />
+  );
+};
 
-export default withTranslation()(SelectPlayersNumberPage);
+export default SelectPlayersNumberPage;

@@ -1,7 +1,7 @@
 import {playerColors, UnitTypes} from "../helpers/Constants";
 import React from "react";
 import {withTranslation} from "react-i18next";
-import {logGameUi, logPlayerName, logUnitName} from "../helpers/Utils";
+import {logGameUi, logUnitName} from "../helpers/Utils";
 
 const UnitSortie = (props) => {
   const data = props.data;
@@ -30,7 +30,7 @@ const UnitSortie = (props) => {
         return (
           <div key={p.id} style={{ position: "relative", height: 40 }}>
             <div style={{ color: playerColors[p.id], fontSize: 18, margin: 0 }} className="results-p-name">
-              {logPlayerName(p.id + 1)}
+              {p.name}
             </div>
             {getSortieUnits(p)}
           </div>

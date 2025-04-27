@@ -2,7 +2,7 @@ import React from 'react';
 import {playerColors} from "../helpers/Constants";
 import './BoardLogs.css';
 import {LanguageToggle} from "./LanguageToggle";
-import {logBuilding, logGameUi, logPlayerName} from "../helpers/Utils";
+import {logBuilding, logGameUi} from "../helpers/Utils";
 import i18n from "../../i18n";
 import {withTranslation} from "react-i18next";
 
@@ -38,7 +38,7 @@ const BoardLogs = (data) => {
       {props.ctx.phase === 'Building' || props.ctx.phase === 'Setup' ?
         <div>
           <div className="player-info">
-            <div className="player-name" style={{color: playerColors[player.id]}}>{logPlayerName(player.id+1)}</div>
+            <div className="player-name" style={{color: playerColors[player.id]}}>{player.name}</div>
             <div className="player-heals">{logGameUi('heals_cap')}: <span>{player.heals}&hearts;</span></div>
             <div className="player-resources">{logGameUi('essence')}: <span>{player.essence}✾</span></div>
             <div className="player-wins">{logGameUi('player_won')} {player.wins}</div>
@@ -49,7 +49,7 @@ const BoardLogs = (data) => {
               { __html: props.G.players.filter(p => p.id !== player.id)
                   .map(p => `<div>
                                   <div>
-                                      <span style="color: ${playerColors[p.id]}">${logPlayerName(p.id+1)}</span>
+                                      <span style="color: ${playerColors[p.id]}">${p.name}</span>
                                       <span style="font-size: 12px">[${i18n.t('biom.'+p.bioms[0])}, ${i18n.t('biom.'+p.bioms[1])}]</span> -
                                       <span style="color: red">${p.heals}&hearts;</span>
                                       [<span>${p.essenceFreeze}✾</span>]
@@ -63,7 +63,7 @@ const BoardLogs = (data) => {
       {props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight' || props.ctx.phase === 'FinishBattle' ?
         <div>
           <div className="player-info" style={{fontSize: 18}}>
-            <div className="player-name small-name" style={{color: playerColors[player.id]}}>{logPlayerName(player.id+1)}</div>
+            <div className="player-name small-name" style={{color: playerColors[player.id]}}>{player.name}</div>
             <div><span style={{color: "red"}}>{player.heals}&hearts;</span> [<span>{player.essence}✾</span>]</div>
             <div style={{}}>{logGameUi('player_won')} {player.wins}</div>
             <div style={{}}>{logGameUi('player_killed')} {player.killedUnits}</div>
@@ -73,7 +73,7 @@ const BoardLogs = (data) => {
               { __html: props.G.players.filter(p => p.id !== player.id)
                   .map(p => `<div>
                                   <div>
-                                    <span style="color: ${playerColors[p.id]}">${logPlayerName(p.id+1)}</span>
+                                    <span style="color: ${playerColors[p.id]}">${p.name}</span>
                                     <span style="font-size: 12px">[${i18n.t('biom.'+p.bioms[0])}, ${i18n.t('biom.'+p.bioms[1])}]</span> -
                                     <span style="color: red">${p.heals}&hearts;</span>
                                     [<span>${p.essence}✾</span>] -
