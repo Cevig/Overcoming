@@ -1,13 +1,11 @@
 import React from "react";
 import "./styles/homePage.css";
 import TemplatePage from "./TemplatePage";
-import {useTranslation} from "react-i18next";
 import {useHistory} from "react-router-dom";
 import {logGameUi} from "../game/helpers/Utils";
 import {useMenuPage} from "../hooks/useMenuPage";
 
 const HomePage = () => {
-  const { t } = useTranslation();
   const history = useHistory();
 
   const infoTexts = {

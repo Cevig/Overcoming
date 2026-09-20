@@ -41,7 +41,7 @@ export class UWater {
           if (level > 1) {
             abilities.onMove.push({name: UnitSkills.Surround3});
             if (level > 2) {
-              abilities.statUpdates.attack.push(UnitSkills.InstantKill);
+              abilities.statUpdates.attack.push({name: UnitSkills.InstantKill});
             }
           }
         }
@@ -52,7 +52,7 @@ export class UWater {
           abilities.keywords.push(UnitKeywords.Sneaky);
           abilities.keywords.push(UnitKeywords.Support);
           if (level > 1) {
-            abilities.statUpdates.attack.push(UnitSkills.AddStunEffect);
+            abilities.statUpdates.attack.push({name: UnitSkills.AddStunEffect});
           }
         }
         break;
@@ -70,7 +70,7 @@ export class UWater {
 
       case UWater.balorName:
         abilities.keywords.push(UnitKeywords.AbsoluteMove);
-        abilities.statUpdates.attack.push(UnitSkills.InstantKillOnCounter);
+        abilities.statUpdates.attack.push({name: UnitSkills.InstantKillOnCounter});
         abilities.statUpdates.defence.push({name: UnitSkills.DoubleDamageInDefence});
         break;
 

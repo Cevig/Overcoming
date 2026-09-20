@@ -52,7 +52,7 @@ export class UDesert {
           abilities.keywords.push(UnitKeywords.Sneaky);
           abilities.onMove.push({ name: UnitSkills.ObajifoAura });
           if (level > 1) {
-            abilities.statUpdates.attack.push(UnitSkills.HealOnAttack);
+            abilities.statUpdates.attack.push({name: UnitSkills.HealOnAttack});
             if (level > 2) {
               abilities.keywords.push(UnitKeywords.Support);
             }
@@ -80,7 +80,7 @@ export class UDesert {
         break;
 
       case UDesert.vasiliskName:
-        abilities.statUpdates.attack.push(UnitSkills.RoundDamage, UnitSkills.AddPoisonEffect);
+        abilities.statUpdates.attack.push({name: UnitSkills.RoundDamage}, {name: UnitSkills.AddPoisonEffect});
         break;
 
       default:

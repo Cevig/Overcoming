@@ -610,7 +610,7 @@ export const moves = {
       turn: ctx.turn,
       player: +playerID,
       phase: ctx.phase,
-      text: i18n.t('log.round_ready', {player: +playerID+1}),
+      text: i18n.t('log.round_ready', {player: G.players[+playerID].name}),
     })
     events.setStage('finishBattleResultStage')
   },
@@ -1096,7 +1096,7 @@ export const moves = {
         status: [{name: UnitStatus.PowerUpCharge, qty: 1}]
       }
     })
-    thisUnit.abilities.statUpdates.attack.push(UnitSkills.RemoveChargeAttack)
+    thisUnit.abilities.statUpdates.attack.push({name: UnitSkills.RemoveChargeAttack})
 
     G.currentUnit = null
     thisUnit.unitState.isClickable = false

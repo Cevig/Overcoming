@@ -41,7 +41,6 @@ const Lobby = () => {
     playerName,
     setPlayerName,
     nameSubmitted,
-    setNameSubmitted,
     copied,
     lobbyExists,
     gameLinkBoxRef,

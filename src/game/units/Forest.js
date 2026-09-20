@@ -39,7 +39,7 @@ export class UForest {
         if (level > 0) {
           abilities.afterHitActions.push({name: UnitSkills.Lesavka, qty: 99});
           if (level > 1) {
-            abilities.statUpdates.attack.push(UnitSkills.DecreaseInitiative);
+            abilities.statUpdates.attack.push({name: UnitSkills.DecreaseInitiative});
           }
         }
         break;
@@ -76,9 +76,9 @@ export class UForest {
       case UForest.chygaysterName:
         abilities.keywords.push(UnitKeywords.ExtendedMove);
         abilities.statUpdates.attack.push(
-          UnitSkills.AddUnfocusedEffect,
-          UnitSkills.AddPoisonEffect,
-          UnitSkills.AddVengeanceEffect
+          {name: UnitSkills.AddUnfocusedEffect},
+          {name: UnitSkills.AddPoisonEffect},
+          {name: UnitSkills.AddVengeanceEffect}
         );
         break;
 

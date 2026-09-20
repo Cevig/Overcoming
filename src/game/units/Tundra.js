@@ -54,7 +54,7 @@ export class UTundra {
         if (level > 0) {
           abilities.actions.push({name: UnitSkills.Raid, qty: 99});
           abilities.keywords.push(UnitKeywords.Unfocused);
-          abilities.statUpdates.attack.push(UnitSkills.DecreaseInitiative);
+          abilities.statUpdates.attack.push({name: UnitSkills.DecreaseInitiative});
           if (level > 1) {
             abilities.keywords.push(UnitKeywords.ExtendedMove);
             if (level > 2) {
@@ -71,10 +71,10 @@ export class UTundra {
 
       case UTundra.marenaName:
         abilities.statUpdates.attack.push(
-          UnitSkills.ChainDamage,
-          UnitSkills.AddFreezeEffect,
-          UnitSkills.AddUnfocusedEffect,
-          UnitSkills.HealOnAttack
+          {name: UnitSkills.ChainDamage},
+          {name: UnitSkills.AddFreezeEffect},
+          {name: UnitSkills.AddUnfocusedEffect},
+          {name: UnitSkills.HealOnAttack}
         );
         abilities.statUpdates.defence.push({name: UnitSkills.RaidBlock, origin: true});
         break;

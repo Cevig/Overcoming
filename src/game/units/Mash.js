@@ -61,9 +61,9 @@ export class UMash {
         if (level > 0) {
           abilities.keywords.push(UnitKeywords.Unfocused);
           abilities.actions.push({name: UnitSkills.Raid, qty: 99});
-          abilities.statUpdates.attack.push(UnitSkills.AddVengeanceEffect);
+          abilities.statUpdates.attack.push({name: UnitSkills.AddVengeanceEffect});
           if (level > 1) {
-            abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffectOnRaid);
+            abilities.statUpdates.attack.push({name: UnitSkills.AddPoisonEffectOnRaid});
             if (level > 2) {
               abilities.allTimeActions.push({name: UnitSkills.ReplaceUnits, qty: 1});
             }
@@ -79,7 +79,7 @@ export class UMash {
       case UMash.fekstName:
         abilities.allTimeActions.push({name: UnitSkills.NotMovedRecover, qty: 99});
         abilities.statUpdates.defence.push({name: UnitSkills.BlockStatuses, unitId: id});
-        abilities.statUpdates.attack.push(UnitSkills.HealOnAttack);
+        abilities.statUpdates.attack.push({name: UnitSkills.HealOnAttack});
         abilities.onDeath.push({name: UnitSkills.LethalGrab});
         break;
 

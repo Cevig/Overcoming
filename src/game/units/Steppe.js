@@ -41,7 +41,7 @@ export class USteppe {
           if (level > 1) {
             abilities.statUpdates.defence.push({name: UnitSkills.Wholeness, unitId: id});
             if (level > 2) {
-              abilities.statUpdates.attack.push(UnitSkills.AddFreezeEffect);
+              abilities.statUpdates.attack.push({name: UnitSkills.AddFreezeEffect});
             }
           }
         }
@@ -66,12 +66,12 @@ export class USteppe {
         break;
 
       case USteppe.urkaName:
-        abilities.statUpdates.attack.push(UnitSkills.AddFreezeEffect);
+        abilities.statUpdates.attack.push({name: UnitSkills.AddFreezeEffect});
         abilities.actions.push({name: UnitSkills.Urka, qty: 2});
         break;
 
       case USteppe.viyName:
-        abilities.statUpdates.attack.push(UnitSkills.InstantKill);
+        abilities.statUpdates.attack.push({name: UnitSkills.InstantKill});
         break;
 
       default:

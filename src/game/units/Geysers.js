@@ -37,11 +37,11 @@ export class UGeysers {
     switch (unitName) {
       case UGeysers.himeraName:
         if (level > 0) {
-          abilities.statUpdates.attack.push(UnitSkills.ThroughDamage);
+          abilities.statUpdates.attack.push({name: UnitSkills.ThroughDamage});
           if (level > 1) {
             abilities.statUpdates.defence.push({name: UnitSkills.InjuredDamage});
             if (level > 2) {
-              abilities.statUpdates.attack.push(UnitSkills.RoundDamage);
+              abilities.statUpdates.attack.push({name: UnitSkills.RoundDamage});
               abilities.keywords.push(UnitKeywords.RestrictedRoundDamage);
             }
           }
@@ -64,11 +64,11 @@ export class UGeysers {
         if (level > 0) {
           abilities.actions.push({name: UnitSkills.Raid, qty: 99});
           abilities.keywords.push(UnitKeywords.Unfocused);
-          abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffect);
+          abilities.statUpdates.attack.push({name: UnitSkills.AddPoisonEffect});
           if (level > 1) {
             abilities.statUpdates.defence.push({name: UnitSkills.Wholeness, unitId: id});
             if (level > 2) {
-              abilities.statUpdates.attack.push(UnitSkills.AddPoisonEffectOnRaid);
+              abilities.statUpdates.attack.push({name: UnitSkills.AddPoisonEffectOnRaid});
             }
           }
         }
@@ -83,7 +83,7 @@ export class UGeysers {
         abilities.keywords.push(UnitKeywords.AdditionalEssence);
         abilities.statUpdates.defence.push({name: UnitSkills.BlockStatuses, unitId: id});
         abilities.allTimeActions.push({name: UnitSkills.HealAlly, qty: 3});
-        abilities.statUpdates.attack.push(UnitSkills.ThroughDamage);
+        abilities.statUpdates.attack.push({name: UnitSkills.ThroughDamage});
         break;
 
       default:

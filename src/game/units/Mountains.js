@@ -36,7 +36,7 @@ export class UMountains {
 
     switch (unitName) {
       case UMountains.beytirName:
-        abilities.statUpdates.attack.push(UnitSkills.ChainDamage);
+        abilities.statUpdates.attack.push({name: UnitSkills.ChainDamage});
         break;
 
       case UMountains.garzykName:

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {HexGrid, Token} from './HexGrid';
 import {
   getInGameUnits,
@@ -19,263 +19,358 @@ import AllUnitsPopup from "./AllUnitsPopup";
 import UnitUI from "./UnitUI";
 import UnitNamePopup from "./UnitNamePopup";
 import './Hex.css';
+import './Board.css'; // Create this file for the styles defined below
 
-const style = {
-  display: 'flex',
-  margin: 5
+// Extracted the action handler to make it more maintainable
+const useActionHandlers = (G, ctx, moves, playerID) => {
+  // Generic function to handle unit clicks
+  const handleUnitClick = useCallback((point, unitPredicate, moveFunction) => {
+    const found = getInGameUnits(G).find((unit) => isSame(point)(unit.unitState.point));
+    if (found && unitPredicate(found)) {
+      moveFunction(found);
+    }
+  }, [G]);
+
+  // Generic function to handle point clicks - optimized with early return
+  const handlePointClick = useCallback((point, pointsToCheck, moveFunction, conditionalFunc = null) => {
+    if (!pointsToCheck || pointsToCheck.length === 0) return;
+
+    const found = pointsToCheck.find(isSame(point));
+    if (found === undefined) return;
+
+    if (conditionalFunc) {
+      conditionalFunc(found);
+    } else if (moveFunction) {
+      moveFunction(found);
+    }
+  }, []);
+
+  // Handle setup phase moves
+  const handleSetupMoves = useCallback((point) => {
+    const stage = ctx.activePlayers[+playerID];
+    if (!stage) return;
+
+    switch (stage) {
+      case 'pickUnit':
+        handleUnitClick(
+          point,
+          (unit) => unit.unitState.playerId === +playerID && unit.unitState.isClickable === true,
+          moves.selectOldUnit
+        );
+        break;
+      case 'placeUnit':
+      case 'chooseBlockSideActionStage':
+        handlePointClick(
+          point,
+          G.players[+playerID].availablePoints,
+          stage === 'placeUnit' ? moves.moveUnit : moves.setBlockSide
+        );
+        break;
+      default:
+        break;
+    }
+  }, [ctx.activePlayers, playerID, G.players, handleUnitClick, handlePointClick, moves]);
+
+  // Handle positioning phase moves
+  const handlePositioningMoves = useCallback((point) => {
+    const stage = ctx.activePlayers[+ctx.currentPlayer];
+    if (!stage) return;
+
+    const currentPlayer = +ctx.currentPlayer;
+
+    switch (stage) {
+      case 'pickUnitOnBoard':
+        handleUnitClick(
+          point,
+          (unit) => unit.unitState.playerId === currentPlayer && unit.unitState.isClickable === true,
+          moves.selectUnitOnBoard
+        );
+        break;
+      case 'placeUnitOnBoard':
+        handlePointClick(point, G.availablePoints, moves.moveUnitOnBoard);
+        break;
+      case 'doRaid':
+        handlePointClick(
+          point,
+          G.availablePoints,
+          null,
+          (found) => G.currentEnemySelectedId ? moves.replaceHeals(found) : moves.attackTarget(found)
+        );
+        break;
+      case 'showUrkaAction':
+        handlePointClick(point, G.availablePoints, moves.moveAgain);
+        break;
+      case 'selectEnemyByUrka':
+      case 'curseAbasyActionStage':
+        const found = getInGameUnits(G).find((unit) => isSame(point)(unit.unitState.point));
+        const isAvailable = G.availablePoints.find(isSame(point));
+        if (found && isAvailable) {
+          stage === 'selectEnemyByUrka' ? moves.selectEnemy(found) : moves.curseOrRecover(found);
+        }
+        break;
+      case 'placeEnemyByUrka':
+        handlePointClick(point, G.availablePoints, moves.moveEnemy);
+        break;
+      case 'healAllyActionStage':
+        handlePointClick(point, G.availablePoints, moves.healAlly);
+        break;
+      case 'throwWeaponActionStage':
+        handlePointClick(point, G.availablePoints, moves.throwWeapon);
+        break;
+      case 'replaceUnitsActionStage':
+        handlePointClick(
+          point,
+          G.availablePoints,
+          null,
+          (found) => G.currentEnemySelectedId ? moves.replaceUnits(found) : moves.replaceUnitsFirst(found)
+        );
+        break;
+      case 'setElokoCurseActionStage':
+        handlePointClick(point, G.availablePoints, moves.setElokoCurse);
+        break;
+      case 'setItOnFireActionStage':
+        handlePointClick(point, G.availablePoints, moves.setItOnFire);
+        break;
+      default:
+        break;
+    }
+  }, [ctx.activePlayers, ctx.currentPlayer, G.availablePoints, G.currentEnemySelectedId, handleUnitClick, handlePointClick, moves, G]);
+
+  // Handle fight phase moves
+  const handleFightMoves = useCallback((point) => {
+    const stage = ctx.activePlayers[+ctx.currentPlayer];
+    if (!stage) return;
+
+    switch (stage) {
+      case 'pickUnitForAttack':
+        const unit = getInGameUnits(G).find((unit) => isSame(point)(unit.unitState.point));
+        if (unit && G.fightQueue[0].unitId === unit.unitState.unitId) {
+          moves.selectUnitForAttack(unit);
+        }
+        break;
+      case 'makeDamage':
+        handlePointClick(point, G.availablePoints, moves.attackTarget);
+        break;
+      case 'hookUnitAction':
+        handlePointClick(point, G.availablePoints, moves.hookUnit);
+        break;
+      case 'healAllyActionStage':
+        handlePointClick(point, G.availablePoints, moves.healAlly);
+        break;
+      case 'curseAbasyActionStage':
+        const found = getInGameUnits(G).find((unit) => isSame(point)(unit.unitState.point));
+        const isAvailable = G.availablePoints.find(isSame(point));
+        if (found && isAvailable) {
+          moves.curseOrRecover(found);
+        }
+        break;
+      case 'replaceUnitsActionStage':
+        handlePointClick(
+          point,
+          G.availablePoints,
+          null,
+          (found) => G.currentEnemySelectedId ? moves.replaceUnits(found) : moves.replaceUnitsFirst(found)
+        );
+        break;
+      case 'throwOverAction':
+        handlePointClick(point, G.availablePoints, moves.throwOver);
+        break;
+      case 'setItOnFireActionStage':
+        handlePointClick(point, G.availablePoints, moves.setItOnFire);
+        break;
+      default:
+        break;
+    }
+  }, [ctx.activePlayers, ctx.currentPlayer, G.availablePoints, G.currentEnemySelectedId, G.fightQueue, handlePointClick, moves, G]);
+
+  // Cell click handler
+  const cellClicked = useCallback(({ x, y, z }) => {
+    const phase = ctx.phase;
+    const point = createPoint(x, y, z);
+
+    switch (phase) {
+      case 'Setup':
+        handleSetupMoves(point);
+        break;
+      case 'Positioning':
+        handlePositioningMoves(point);
+        break;
+      case 'Fight':
+        handleFightMoves(point);
+        break;
+      default:
+        break;
+    }
+  }, [ctx.phase, handleSetupMoves, handlePositioningMoves, handleFightMoves]);
+
+  return { cellClicked };
 };
 
-const hexStyle = {
-  display: 'flex',
-  flexGrow: 1,
-  flexBasis: `58%`,
-  maxWidth: 1085,
-  // backgroundColor: "#3f5542",
-  // backgroundImage: `url(${Background})`,
-  // backgroundColor: "#39546a",
-  // background-color: #6b99ad42;
-  // color: #d6d9d9;
-
-  // border: 1px solid #1e75a5;
-  // background-color: #005F6B;
-  // background-color: #008CBA;
-}
-
-export function Board (props) {
-
-  const cellClicked = ({ x, y, z }) => {
-    const phase = props.ctx.phase;
-    const point = createPoint(x, y, z);
-    if (phase === 'Setup') {
-      handleSetupMoves(point)
-    } else if (phase === 'Positioning') {
-      handlePositioningMoves(point)
-    } else if (phase === 'Fight') {
-      handleFightMoves(point)
-    }
-  }
-  const handleSetupMoves = (point) => {
-    const stage = props.ctx.activePlayers[+props.playerID]
-    if (stage && stage === 'pickUnit') {
-      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
-      if (found && found.unitState.playerId === +props.playerID && found.unitState.isClickable === true) {
-        props.moves.selectOldUnit(found);
-      }
-    } else if (stage && stage === 'placeUnit') {
-      const found = props.G.players[+props.playerID].availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.moveUnit(found);
-      }
-    } else if (stage && stage === 'chooseBlockSideActionStage') {
-      const found = props.G.players[+props.playerID].availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.setBlockSide(found);
-      }
-    }
-  }
-
-  const handlePositioningMoves = (point) => {
-    const stage = props.ctx.activePlayers[+props.ctx.currentPlayer]
-    if (stage && stage === 'pickUnitOnBoard') {
-      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
-      if (found && found.unitState.playerId === +props.ctx.currentPlayer && found.unitState.isClickable === true) {
-        props.moves.selectUnitOnBoard(found);
-      }
-    } else if (stage && stage === 'placeUnitOnBoard') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.moveUnitOnBoard(found);
-      }
-    } else if (stage && stage === 'doRaid') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.G.currentEnemySelectedId ? props.moves.replaceHeals(found) : props.moves.attackTarget(found);
-      }
-    } else if (stage && stage === 'showUrkaAction') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.moveAgain(found);
-      }
-    } else if (stage && stage === 'selectEnemyByUrka') {
-      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
-      const isItAvailablePoint = props.G.availablePoints.find(isSame(point));
-      if (found && isItAvailablePoint) {
-        props.moves.selectEnemy(found);
-      }
-    } else if (stage && stage === 'placeEnemyByUrka') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.moveEnemy(found);
-      }
-    } else if (stage && stage === 'healAllyActionStage') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.healAlly(found);
-      }
-    } else if (stage && stage === 'curseAbasyActionStage') {
-      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
-      const isItAvailablePoint = props.G.availablePoints.find(isSame(point));
-      if (found && isItAvailablePoint) {
-        props.moves.curseOrRecover(found);
-      }
-    } else if (stage && stage === 'throwWeaponActionStage') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.throwWeapon(found);
-      }
-    } else if (stage && stage === 'replaceUnitsActionStage') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        if (props.G.currentEnemySelectedId) props.moves.replaceUnits(found);
-        else props.moves.replaceUnitsFirst(found);
-      }
-    } else if (stage && stage === 'setElokoCurseActionStage') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.setElokoCurse(found);
-      }
-    } else if (stage && stage === 'setItOnFireActionStage') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.setItOnFire(found);
-      }
-    }
-  }
-
-  const handleFightMoves = (point) => {
-    const stage = props.ctx.activePlayers[+props.ctx.currentPlayer]
-    if (stage && stage === 'pickUnitForAttack') {
-      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
-      if (found && props.G.fightQueue[0].unitId === found.unitState.unitId) {
-        props.moves.selectUnitForAttack(found);
-      }
-    } else if (stage && stage === 'makeDamage') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.attackTarget(found);
-      }
-    } else if (stage && stage === 'hookUnitAction') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.hookUnit(found);
-      }
-    } else if (stage && stage === 'healAllyActionStage') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.healAlly(found);
-      }
-    } else if (stage && stage === 'curseAbasyActionStage') {
-      const found = getInGameUnits(props.G).find((unit) => isSame(point)(unit.unitState.point))
-      const isItAvailablePoint = props.G.availablePoints.find(isSame(point));
-      if (found && isItAvailablePoint) {
-        props.moves.curseOrRecover(found);
-      }
-    } else if (stage && stage === 'replaceUnitsActionStage') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        if (props.G.currentEnemySelectedId) props.moves.replaceUnits(found);
-        else props.moves.replaceUnitsFirst(found);
-      }
-    } else if (stage && stage === 'throwOverAction') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.throwOver(found);
-      }
-    } else if (stage && stage === 'setItOnFireActionStage') {
-      const found = props.G.availablePoints.find(isSame(point));
-      if (found !== undefined) {
-        props.moves.setItOnFire(found);
-      }
-    }
-  }
-
-  if (!props.G.players[+props.playerID].isNameSet && props.matchData) {
-    props.moves.syncPlayerName(props.matchData);
-  }
-  let colorMapSecret = {}
-  if ((props.ctx.phase === "Setup")) {
-    colorMapSecret = props.G.players[+props.playerID].grid.colorMap;
-  } else {
-    colorMapSecret = {...props.G.grid.colorMap};
-    if (props.G.grid.unstablePoints.length > 0) {
-      colorMapSecret['url(#rootedTile)'] = props.G.grid.unstablePoints
-    }
-  }
-
+// Extract popup state management to a custom hook
+const usePopupState = () => {
   const [isPopupAllUnitsOpen, setIsPopupAllUnitsOpen] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isNamePopupOpen, setIsNamePopupOpen] = useState(false);
-  const [nameUnit, setNameUnit] = useState(false);
-  const [nameUnitPosition, setNameUnitPosition] = useState(false);
-  const [infoUnit, setInfoUnit] = useState(false);
+  const [nameUnit, setNameUnit] = useState(null);
+  const [nameUnitPosition, setNameUnitPosition] = useState(null);
+  const [infoUnit, setInfoUnit] = useState(null);
+
+  return {
+    allUnits: [isPopupAllUnitsOpen, setIsPopupAllUnitsOpen],
+    info: [isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit],
+    name: [isNamePopupOpen, setIsNamePopupOpen, nameUnit, setNameUnit, nameUnitPosition, setNameUnitPosition]
+  };
+};
+
+// Main Board component
+export function Board(props) {
+  const { G, ctx, playerID, moves, matchData, isMultiplayer, reset } = props;
+  const popupStates = usePopupState();
+  const { cellClicked } = useActionHandlers(G, ctx, moves, playerID);
+
+  // Sync player name effect
+  useEffect(() => {
+    if (!G.players[+playerID].isNameSet && matchData) {
+      moves.syncPlayerName(matchData);
+    }
+  }, [G.players, playerID, matchData, moves]);
+
+  // Compute color map
+  const colorMapSecret = useMemo(() => {
+    let colorMap = {};
+
+    if (ctx.phase === "Setup") {
+      colorMap = G.players[+playerID].grid.colorMap;
+    } else {
+      colorMap = {...G.grid.colorMap};
+      if (G.grid.unstablePoints.length > 0) {
+        colorMap['url(#rootedTile)'] = G.grid.unstablePoints;
+      }
+    }
+
+    return colorMap;
+  }, [G.grid, G.players, playerID, ctx.phase]);
+
+  // Determine if a unit should be highlighted
+  const isUnitHighlighted = useCallback((unitId) => {
+    return (
+      (G.currentUnit && G.currentUnit.id === unitId) ||
+      (playerID && G.players[+playerID].currentUnit && G.players[+playerID].currentUnit.id === unitId)
+    );
+  }, [G.currentUnit, G.players, playerID]);
+
+  // Filter units based on phase
+  const filteredUnits = useMemo(() => {
+    return getInGameUnits(
+      G,
+      (unit) => ctx.phase === "Setup"
+        ? playerID && (unit.unitState.playerId === +playerID)
+        : true
+    );
+  }, [G, ctx.phase, playerID]);
+
+  // Winner popup component
+  const WinnerPopup = useMemo(() => {
+    if (!G.winner) return null;
+
+    const winnerText = G.winner === -1
+      ? logGameUi('its_draw')
+      : <span style={{color: playerColors[G.winner.id]}}>
+          {G.players.find(p => p.id === G.winner.id).name}
+        </span>;
+
+    const newGameButton = isMultiplayer
+      ? <Link to="/" className="btn btn-primary">{logGameUi('new_game')}</Link>
+      : <button className="btn btn-primary" onClick={reset}>{logGameUi('new_game')}</button>;
+
+    return (
+      <motion.div
+        className="winner-popup-container"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="winner-popup">
+          <h2>{logGameUi('congrats')} {winnerText}!</h2>
+          <p>{logGameUi('you_won')}</p>
+          {newGameButton}
+        </div>
+      </motion.div>
+    );
+  }, [G.winner, G.players, isMultiplayer, reset]);
+
+  // Render game board based on phase
+  const renderGameBoard = () => {
+    const { phase } = ctx;
+    const hexContainerStyle = {
+      display: 'flex',
+      flexGrow: 1,
+      flexBasis: '58%',
+      maxWidth: 1085
+    };
+
+    if (phase === 'Building') {
+      return <BoardBuildings style={hexContainerStyle} props={props} />;
+    }
+
+    if (phase === 'FinishBattle' || phase === null) {
+      return <BattleResults
+        style={hexContainerStyle}
+        props={props}
+        info={[popupStates.info[1], popupStates.info[3], popupStates.name[1]]}
+      />;
+    }
+
+    if (phase === 'Setup' || phase === 'Positioning' || phase === 'Fight') {
+      return (
+        <HexGrid
+          levels={G.grid.levels}
+          players={ctx.numPlayers}
+          style={hexContainerStyle}
+          colorMap={colorMapSecret}
+          onClick={cellClicked}
+        >
+          {filteredUnits.map((unit) => {
+            const { x, y, z } = unit.unitState.point;
+            return (
+              <Token x={x} y={y} z={z} key={unit.id} id={unit.id}>
+                <UnitUI
+                  unit={unit}
+                  highlight={isUnitHighlighted(unit.id)}
+                  markEnemy={setEnemyMarks(props, unit)}
+                  fightQueue={G.fightQueue}
+                  info={popupStates.info}
+                  nameInfo={popupStates.name}
+                />
+              </Token>
+            );
+          })}
+
+          {G.grid.essencePoints.map((point, i) => (
+            <Token x={point.x} y={point.y} z={point.z} key={`essence-${i}`} id={i+20000}>
+              <EssenceGiftsUI id={i+20000} />
+            </Token>
+          ))}
+        </HexGrid>
+      );
+    }
+
+    return null;
+  };
+
   return (
-      <div style={style}>
-        <BoardUser props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
-        {props.ctx.phase === 'Building' ?
-          <BoardBuildings style={hexStyle} props={props} />
-          : <></>
-        }
-        {(props.ctx.phase === 'FinishBattle' ||  props.ctx.phase === null)?
-          <BattleResults style={hexStyle} props={props} info={[setIsPopupOpen, setInfoUnit, setIsNamePopupOpen]} />
-          : <></>
-        }
-        {(props.ctx.phase === 'Setup' || props.ctx.phase === 'Positioning' || props.ctx.phase === 'Fight') ?
-          <HexGrid
-            levels={props.G.grid.levels}
-            players={props.ctx.numPlayers}
-            style={hexStyle}
-            colorMap={colorMapSecret}
-            onClick={cellClicked}>
-            {
-              getInGameUnits(props.G, (unit) => (props.ctx.phase === "Setup") ? props.playerID && (unit.unitState.playerId === +props.playerID) : true).map((unit, i) => {
-                const { x, y, z } = unit.unitState.point;
-                return <Token x={x} y={y} z={z} key={unit.id} id={unit.id}>
-                  <UnitUI
-                    unit={unit}
-                    highlight={((props.G.currentUnit && props.G.currentUnit.id === unit.id) || (props.playerID && props.G.players[+props.playerID].currentUnit && props.G.players[+props.playerID].currentUnit.id === unit.id))}
-                    markEnemy={setEnemyMarks(props, unit)}
-                    fightQueue={props.G.fightQueue}
-                    info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]}
-                    nameInfo={[isNamePopupOpen, setIsNamePopupOpen, nameUnit, setNameUnit, nameUnitPosition, setNameUnitPosition]}
-                  />
-                </Token>
-              })
-            }
-            {
-              props.G.grid.essencePoints.map((point, i) => {
-                return <Token x={point.x} y={point.y} z={point.z} key={i+20000} id={i+20000}>
-                  <EssenceGiftsUI id={i+20000}/>
-                </Token>
-              })
-            }
-          </HexGrid>
-          : <></>
-        }
-        <BoardLogs data={props} info={[isPopupAllUnitsOpen, setIsPopupAllUnitsOpen]}></BoardLogs>
-        {
-          props.G.winner !== undefined ?
-            <motion.div
-              className="winner-popup-container"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <div className="winner-popup">
-                <h2>{logGameUi('congrats')} {props.G.winner === -1 ? logGameUi('its_draw') : <span style={{color: playerColors[props.G.winner.id]}}>{props.G.players.find(p => p.id === props.G.winner.id).name}</span>}!</h2>
-                <p>{logGameUi('you_won')}</p>
-                {props.isMultiplayer ?
-                  <div className="btn btn-primary"><Link to={"/"}>{logGameUi('new_game')}</Link></div> :
-                  <div className="btn btn-primary" onClick={() => props.reset()}>{logGameUi('new_game')}</div>
-                }
-              </div>
-            </motion.div> :
-            <div></div>
-        }
-        <UnitInfoPopup props={props} info={[isPopupOpen, setIsPopupOpen, infoUnit, setInfoUnit]} />
-        <UnitNamePopup props={props} info={[isNamePopupOpen, setIsNamePopupOpen, nameUnit, setNameUnit, nameUnitPosition, setNameUnitPosition]} />
-        <AllUnitsPopup props={props} info={[isPopupAllUnitsOpen, setIsPopupAllUnitsOpen]} />
+    <div className="board-container">
+      <BoardUser props={props} info={popupStates.info} />
 
-      </div>
+      {renderGameBoard()}
 
-  )
+      <BoardLogs data={props} info={popupStates.allUnits} />
+
+      {WinnerPopup}
+
+      <UnitInfoPopup props={props} info={popupStates.info} />
+      <UnitNamePopup props={props} info={popupStates.name} />
+      <AllUnitsPopup props={props} info={popupStates.allUnits} />
+    </div>
+  );
 }

@@ -46,7 +46,7 @@ export class UJungle {
 
       case UJungle.petsyhosName:
         abilities.keywords.push(UnitKeywords.Sneaky);
-        abilities.statUpdates.attack.push(UnitSkills.AddUnfocusedEffect);
+        abilities.statUpdates.attack.push({name: UnitSkills.AddUnfocusedEffect});
         break;
 
       case UJungle.kaieryName:
